@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Board">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="305.0" minWidth="10.0" prefWidth="301.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="299.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="299.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="299.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="299.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="299.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="299.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="299.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="299.0" />
+  </columnConstraints>
+  <rowConstraints>
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <Label fx:id="F8Lab" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+      <Label fx:id="A8Lab" prefHeight="101.0" prefWidth="123.0" GridPane.rowIndex="1" />
+      <Label fx:id="B8Lab" layoutX="10.0" layoutY="85.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Label fx:id="C8Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+      <Label fx:id="D8Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+      <Label fx:id="A7Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.rowIndex="2" />
+      <Label fx:id="B7Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Label fx:id="A6Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.rowIndex="3" />
+      <Label fx:id="B6Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <Label fx:id="A4Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.rowIndex="5" />
+      <Label fx:id="A5Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.rowIndex="4" />
+      <Label fx:id="A3Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.rowIndex="6" />
+      <Label fx:id="A2Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.rowIndex="7" />
+      <Label fx:id="A1Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.rowIndex="8" />
+      <Label fx:id="B1Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+      <Label fx:id="B5Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <Label fx:id="B4Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <Label fx:id="B3Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      <Label fx:id="E8Lab" layoutX="310.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+      <Label fx:id="C7Lab" layoutX="86.0" layoutY="77.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+      <Label fx:id="D7Lab" layoutX="235.0" layoutY="77.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+      <Label fx:id="E7Lab" layoutX="310.0" layoutY="77.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+      <Label fx:id="C6Lab" layoutX="235.0" layoutY="144.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+      <Label fx:id="D6Lab" layoutX="86.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+      <Label fx:id="E5Lab" layoutX="86.0" layoutY="144.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+      <Label fx:id="F4Lab" layoutX="86.0" layoutY="77.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="5" GridPane.rowIndex="5" />
+      <Label fx:id="G3Lab" layoutX="86.0" layoutY="144.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="6" GridPane.rowIndex="6" />
+      <Label fx:id="H2Lab" layoutX="160.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="7" GridPane.rowIndex="7" />
+      <Label fx:id="F3Lab" layoutX="235.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="5" GridPane.rowIndex="6" />
+      <Label fx:id="F2Lab" layoutX="160.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="5" GridPane.rowIndex="7" />
+      <Label fx:id="G2Lab" layoutX="160.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="6" GridPane.rowIndex="7" />
+      <Label fx:id="H1Lab" layoutX="160.0" layoutY="144.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="7" GridPane.rowIndex="8" />
+      <Label fx:id="G1Lab" layoutX="160.0" layoutY="144.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="6" GridPane.rowIndex="8" />
+      <Label fx:id="F1Lab" layoutX="160.0" layoutY="144.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="5" GridPane.rowIndex="8" />
+      <Label fx:id="H8Lab" layoutX="160.0" layoutY="144.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="7" GridPane.rowIndex="1" />
+      <Label fx:id="H7Lab" layoutX="310.0" layoutY="77.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="7" GridPane.rowIndex="2" />
+      <Label fx:id="H6Lab" layoutX="310.0" layoutY="144.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="7" GridPane.rowIndex="3" />
+      <Label fx:id="H5Lab" layoutX="310.0" layoutY="144.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="7" GridPane.rowIndex="4" />
+      <Label fx:id="H4Lab" layoutX="235.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="7" GridPane.rowIndex="5" />
+      <Label fx:id="H3Lab" layoutX="235.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="7" GridPane.rowIndex="6" />
+      <Label fx:id="G4Lab" layoutX="310.0" layoutY="278.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="6" GridPane.rowIndex="5" />
+      <Label fx:id="G7Lab" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="6" GridPane.rowIndex="2" />
+      <Label fx:id="G8Lab" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+      <Label fx:id="F7Lab" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+      <Label fx:id="E6Lab" layoutX="310.0" layoutY="278.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+      <Label fx:id="F6Lab" layoutX="310.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+      <Label fx:id="G6Lab" layoutX="310.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="6" GridPane.rowIndex="3" />
+      <Label fx:id="G5Lab" layoutX="385.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="6" GridPane.rowIndex="4" />
+      <Label fx:id="F5Lab" layoutX="385.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+      <Label fx:id="E4Lab" layoutX="310.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+      <Label fx:id="E3Lab" layoutX="310.0" layoutY="278.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+      <Label fx:id="E1Lab" layoutX="310.0" layoutY="345.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="4" GridPane.rowIndex="8" />
+      <Label fx:id="D1Lab" layoutX="310.0" layoutY="278.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+      <Label fx:id="C1Lab" layoutX="385.0" layoutY="345.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+      <Label fx:id="C3Lab" layoutX="385.0" layoutY="345.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+      <Label fx:id="D3Lab" layoutX="385.0" layoutY="345.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+      <Label fx:id="D2Lab" layoutX="385.0" layoutY="278.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+      <Label fx:id="C4Lab" layoutX="385.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+      <Label fx:id="D5Lab" layoutX="310.0" layoutY="278.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+      <Label fx:id="C5Lab" layoutX="460.0" layoutY="278.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+      <Label fx:id="D4Lab" layoutX="310.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+      <Label fx:id="E2Lab" layoutX="310.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="4" GridPane.rowIndex="7" />
+      <Label fx:id="C2Lab" layoutX="310.0" layoutY="278.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+      <Label fx:id="B2Lab" layoutX="235.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+      <Label fx:id="A8Lab1" alignment="CENTER" layoutX="10.0" layoutY="77.0" prefHeight="101.0" prefWidth="123.0" text="A" />
+      <Label fx:id="A8Lab11" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="101.0" prefWidth="123.0" text="B" GridPane.columnIndex="1" />
+      <Label fx:id="A8Lab111" alignment="CENTER" layoutX="86.0" layoutY="10.0" prefHeight="101.0" prefWidth="123.0" text="C" GridPane.columnIndex="2" />
+      <Label fx:id="A8Lab1111" alignment="CENTER" layoutX="160.0" layoutY="10.0" prefHeight="101.0" prefWidth="123.0" text="D" GridPane.columnIndex="3" />
+      <Label fx:id="A8Lab11111" alignment="CENTER" layoutX="235.0" layoutY="10.0" prefHeight="101.0" prefWidth="123.0" text="E" GridPane.columnIndex="4" />
+      <Label fx:id="A8Lab111111" alignment="CENTER" layoutX="310.0" layoutY="10.0" prefHeight="101.0" prefWidth="123.0" text="F" GridPane.columnIndex="5" />
+      <Label fx:id="A8Lab1111111" alignment="CENTER" layoutX="385.0" layoutY="10.0" prefHeight="101.0" prefWidth="123.0" text="G" GridPane.columnIndex="6" />
+      <Label fx:id="A8Lab112" alignment="CENTER" layoutX="86.0" layoutY="10.0" prefHeight="101.0" prefWidth="123.0" text="H" GridPane.columnIndex="7" />
+      <Label fx:id="A8Lab12" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="101.0" prefWidth="123.0" text="1" GridPane.columnIndex="8" GridPane.rowIndex="8" />
+      <Label fx:id="A8Lab121" alignment="CENTER" layoutX="543.0" layoutY="77.0" prefHeight="101.0" prefWidth="123.0" text="2" GridPane.columnIndex="8" GridPane.rowIndex="7" />
+      <Label fx:id="A8Lab1211" alignment="CENTER" layoutX="543.0" layoutY="144.0" prefHeight="101.0" prefWidth="123.0" text="3" GridPane.columnIndex="8" GridPane.rowIndex="6" />
+      <Label fx:id="A8Lab12111" alignment="CENTER" layoutX="543.0" layoutY="211.0" prefHeight="101.0" prefWidth="123.0" text="4" GridPane.columnIndex="8" GridPane.rowIndex="5" />
+      <Label fx:id="A8Lab121111" alignment="CENTER" layoutX="543.0" layoutY="278.0" prefHeight="101.0" prefWidth="123.0" text="5" GridPane.columnIndex="8" GridPane.rowIndex="4" />
+      <Label fx:id="A8Lab1211111" alignment="CENTER" layoutX="543.0" layoutY="278.0" prefHeight="101.0" prefWidth="123.0" text="6" GridPane.columnIndex="8" GridPane.rowIndex="3" />
+      <Label fx:id="A8Lab12111111" alignment="CENTER" layoutX="543.0" layoutY="211.0" prefHeight="101.0" prefWidth="123.0" text="7" GridPane.columnIndex="8" GridPane.rowIndex="2" />
+      <Label fx:id="A8Lab121111111" alignment="CENTER" layoutX="543.0" layoutY="144.0" prefHeight="101.0" prefWidth="123.0" text="8" GridPane.columnIndex="8" GridPane.rowIndex="1" />
+   </children>
+</GridPane>
