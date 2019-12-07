@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.event.ActionEvent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Cell;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -28,6 +29,8 @@ public class Board{
     public Label F1Lab,F2Lab,F3Lab,F4Lab,F5Lab,F6Lab,F7Lab,F8Lab;
     public Label G1Lab,G2Lab,G3Lab,G4Lab,G5Lab,G6Lab,G7Lab,G8Lab;
     public Label H1Lab,H2Lab,H3Lab,H4Lab,H5Lab,H6Lab,H7Lab,H8Lab;
+    public Label TextLab;
+
 
     //endregion
 
@@ -243,7 +246,7 @@ public class Board{
     void move(String oldPosition, String newPosition) {
 
 
-        if(oldPosition==newPosition)throw new IllegalChessMoveException("Ista pozicija");
+       /* if(oldPosition==newPosition)throw new IllegalChessMoveException("Ista pozicija");
 
         ChessPiece.Color boja=naLokaciji(oldPosition).getColor();
 
@@ -276,7 +279,29 @@ public class Board{
 
 
         if (jede == 1) novaLokacijaFigura.postaviNa("X");
-        jede = 0;
+        jede = 0;*/
+
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+       try{
+           ChessPiece c1=naLokaciji(newPosition);
+           ChessPiece c2=naLokaciji(oldPosition);
+
+           testMove(oldPosition,newPosition);
+
+           if(c1!=null)
+               c1.postaviNa("X");
+
+
+
+       }catch (Exception e){
+
+       }
+
+        refresh();
+
+
     }
 
     boolean isCheck(ChessPiece.Color boja) {
@@ -384,14 +409,36 @@ public class Board{
         String pozicija=label.getId().substring(0,2);
 
         ChessPiece naLok=naLokaciji(pozicija);
-
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
             if(naLok!=null){
+
+
             if(selectedPozicija.equals(pozicija)){
 
                 selectedPozicija="";
                 refresh();
             }
+            else if(!selectedPozicija.isEmpty()){
+
+                try{
+
+
+
+
+                    move(selectedPozicija,pozicija);
+
+
+                }catch(Exception ex){
+
+                }
+
+                selectedPozicija="";
+                //refresh();
+
+
+            }
+
            else {
 
                refresh();
@@ -425,7 +472,6 @@ public class Board{
     }
 
 
-
     void testMove(String oldPosition, String newPosition) {
 
 
@@ -456,13 +502,16 @@ public class Board{
 
 
         staraLokacijaFigura.move(newPosition);
+        if(novaLokacijaFigura!=null)novaLokacijaFigura.postaviNa("X");
         int jedeTemp=jede;
         if(isCheck(boja) ){
             staraLokacijaFigura.postaviNa(oldPosition);
+            if(novaLokacijaFigura!=null)novaLokacijaFigura.postaviNa(newPosition);
             jede=0;
             throw new IllegalChessMoveException("U sahu je ");
         }
-        jede=jedeTemp;
+
+        if(novaLokacijaFigura!=null)novaLokacijaFigura.postaviNa(newPosition);
         jede = 0;
     }
 
@@ -507,8 +556,11 @@ public class Board{
                 try{
                     jede=0;
                     testMove(position,newPosition);
-                    UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: lightblue;-fx-text-fill: gray;");
                     naLok.postaviNa(position);
+                    ChessPiece cp=naLokaciji(newPosition);
+                    if(cp!=null)UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: pink;-fx-text-fill: gray;");
+                   else UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: lightblue;-fx-text-fill: gray;");
+
                 }catch (Exception e){
 
                 }

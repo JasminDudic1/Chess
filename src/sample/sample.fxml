@@ -29,8 +29,8 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Label fx:id="F8Lab" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-      <Label fx:id="A8Lab" prefHeight="101.0" prefWidth="123.0" GridPane.rowIndex="1" />
+      <Label fx:id="F8Lab" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+      <Label fx:id="A8Lab" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.rowIndex="1" />
       <Label fx:id="B8Lab" layoutX="10.0" layoutY="85.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       <Label fx:id="C8Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
       <Label fx:id="D8Lab" layoutX="10.0" layoutY="10.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
@@ -109,5 +109,6 @@
       <Label fx:id="A8Lab1211111" alignment="CENTER" layoutX="543.0" layoutY="278.0" prefHeight="101.0" prefWidth="123.0" text="6" GridPane.columnIndex="8" GridPane.rowIndex="3" />
       <Label fx:id="A8Lab12111111" alignment="CENTER" layoutX="543.0" layoutY="211.0" prefHeight="101.0" prefWidth="123.0" text="7" GridPane.columnIndex="8" GridPane.rowIndex="2" />
       <Label fx:id="A8Lab121111111" alignment="CENTER" layoutX="543.0" layoutY="144.0" prefHeight="101.0" prefWidth="123.0" text="8" GridPane.columnIndex="8" GridPane.rowIndex="1" />
+      <Label fx:id="TextLab" text="Label" GridPane.columnIndex="8" />
    </children>
 </GridPane>
