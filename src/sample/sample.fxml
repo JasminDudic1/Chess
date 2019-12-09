@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Board">
+<GridPane gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Board">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="305.0" minWidth="10.0" prefWidth="301.0" />
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="299.0" />
@@ -109,6 +109,6 @@
       <Label fx:id="A8Lab1211111" alignment="CENTER" layoutX="543.0" layoutY="278.0" prefHeight="101.0" prefWidth="123.0" text="6" GridPane.columnIndex="8" GridPane.rowIndex="3" />
       <Label fx:id="A8Lab12111111" alignment="CENTER" layoutX="543.0" layoutY="211.0" prefHeight="101.0" prefWidth="123.0" text="7" GridPane.columnIndex="8" GridPane.rowIndex="2" />
       <Label fx:id="A8Lab121111111" alignment="CENTER" layoutX="543.0" layoutY="144.0" prefHeight="101.0" prefWidth="123.0" text="8" GridPane.columnIndex="8" GridPane.rowIndex="1" />
-      <Label fx:id="TextLab" text="Label" GridPane.columnIndex="8" />
+      <Label fx:id="TextLab" onMouseClicked="#Undo" text="Label" GridPane.columnIndex="8" />
    </children>
 </GridPane>

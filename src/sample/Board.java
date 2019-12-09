@@ -20,6 +20,7 @@ import java.sql.Ref;
 public class Board{
 
     public static int jede = 0;
+    private ChessPiece.Color igrac= ChessPiece.Color.WHITE;
     //region Labels
     public Label A1Lab,A2Lab,A3Lab,A4Lab,A5Lab,A6Lab,A7Lab,A8Lab;
     public Label B1Lab,B2Lab,B3Lab,B4Lab,B5Lab,B6Lab,B7Lab,B8Lab;
@@ -170,30 +171,12 @@ public class Board{
         UIboard[7][6]=H7Lab;
         UIboard[7][7]=H8Lab;
 
+
+
         //endregion
 
-        for(int i=0;i<8;i++){
+        refresh();
 
-            for(int j=0;j<8;j++){
-                char pom='A';
-                pom+=i;
-                String pozicija=""+pom+(j+1);
-
-                ChessPiece naLok=naLokaciji(pozicija);
-                if(naLok!=null) {
-                    char boja='w';
-                    if(naLok.getColor()== ChessPiece.Color.BLACK)boja='b';
-                    UIboard[i][j].setText(""+naLok.getZnak()+boja);
-                }
-
-                if((i+j)%2==0) {
-                    UIboard[i][j].setStyle("-fx-background-color: black;-fx-text-fill: gray;");
-                }else  UIboard[i][j].setStyle("-fx-background-color: white;-fx-text-fill: gray;");
-
-
-            }
-
-        }
 
     }
 
@@ -260,7 +243,7 @@ public class Board{
 
 
        }catch (Exception e){
-
+    throw new IllegalChessMoveException("Ne moze");
        }
 
         refresh();
@@ -365,6 +348,20 @@ public class Board{
 
     }
 
+    public void changePlayer(){
+
+        if(igrac== ChessPiece.Color.WHITE){
+            igrac= ChessPiece.Color.BLACK;
+            TextLab.setText("BLACK");
+        }
+        else{
+            igrac= ChessPiece.Color.WHITE;
+            TextLab.setText("WHITE");
+        }
+
+    }
+
+
     public void Clicked(MouseEvent mouseEvent) {
 
 
@@ -375,7 +372,16 @@ public class Board{
         ChessPiece naLok=naLokaciji(pozicija);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
-            if(naLok!=null){
+
+        if(selectedPozicija=="")
+
+            if(naLok!=null)
+                if(naLok.getColor()!=igrac)return;
+
+
+
+
+            if(naLok!=null){//ako nije klikni na nesto
 
 
             if(selectedPozicija.equals(pozicija)){
@@ -383,22 +389,20 @@ public class Board{
                 selectedPozicija="";
                 refresh();
             }
+
             else if(!selectedPozicija.isEmpty()){
 
                 try{
 
-
-
-
                     move(selectedPozicija,pozicija);
-
+                    changePlayer();
 
                 }catch(Exception ex){
 
                 }
 
                 selectedPozicija="";
-                //refresh();
+                refresh();
 
 
             }
@@ -418,10 +422,10 @@ public class Board{
         }else if(selectedPozicija.length()>0){
 
                 try {
-                    testMove(selectedPozicija, pozicija);
-                }catch (Exception ex){
-                    UIboard[0][0].setText(ex.toString());
-                }
+                    move(selectedPozicija, pozicija);
+                    changePlayer();
+                }catch (Exception ex){ }
+
                 selectedPozicija="";
                 refresh();
 
@@ -480,6 +484,12 @@ public class Board{
     }
 
     public void refresh(){
+
+
+
+        if(igrac== ChessPiece.Color.WHITE)
+            TextLab.setText("WHITE");
+        else TextLab.setText("BLACK");
 
         for(int i=0;i<8;i++){
 
@@ -550,5 +560,9 @@ public class Board{
         jede=0;
     }
 
+
+    public void Undo(MouseEvent mouseEvent) {
+        changePlayer();
+    }
 
 }
