@@ -4,7 +4,9 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Cell;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.image.Image;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -14,12 +16,20 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.sql.Ref;
 
 public class Board{
 
     public static int jede = 0;
+    public ImageView A8Lab1;
+    public Label A8Lab11;
+
+
     private ChessPiece.Color igrac= ChessPiece.Color.WHITE;
     //region Labels
     public Label A1Lab,A2Lab,A3Lab,A4Lab,A5Lab,A6Lab,A7Lab,A8Lab;
@@ -176,6 +186,19 @@ public class Board{
         //endregion
 
         refresh();
+
+        Image img1 =new Image("King.png");
+        ImageView imgv=new ImageView(img1);
+        imgv.fitHeightProperty().bind(A8Lab.heightProperty());
+        imgv.fitWidthProperty().bind(A8Lab.widthProperty());
+
+        A8Lab11.setGraphic(imgv);
+
+
+        /*A8Lab1.setStyle("-fx-background-image: url('King.png'); " +
+                "-fx-background-position: center center; " +
+                "-fx-background-repeat: stretch;");*/
+
 
 
     }

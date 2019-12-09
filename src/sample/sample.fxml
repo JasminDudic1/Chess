@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -93,7 +94,6 @@
       <Label fx:id="E2Lab" layoutX="310.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="4" GridPane.rowIndex="7" />
       <Label fx:id="C2Lab" layoutX="310.0" layoutY="278.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="2" GridPane.rowIndex="7" />
       <Label fx:id="B2Lab" layoutX="235.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="101.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-      <Label fx:id="A8Lab1" alignment="CENTER" layoutX="10.0" layoutY="77.0" prefHeight="101.0" prefWidth="123.0" text="A" />
       <Label fx:id="A8Lab11" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="101.0" prefWidth="123.0" text="B" GridPane.columnIndex="1" />
       <Label fx:id="A8Lab111" alignment="CENTER" layoutX="86.0" layoutY="10.0" prefHeight="101.0" prefWidth="123.0" text="C" GridPane.columnIndex="2" />
       <Label fx:id="A8Lab1111" alignment="CENTER" layoutX="160.0" layoutY="10.0" prefHeight="101.0" prefWidth="123.0" text="D" GridPane.columnIndex="3" />
@@ -110,5 +110,6 @@
       <Label fx:id="A8Lab12111111" alignment="CENTER" layoutX="543.0" layoutY="211.0" prefHeight="101.0" prefWidth="123.0" text="7" GridPane.columnIndex="8" GridPane.rowIndex="2" />
       <Label fx:id="A8Lab121111111" alignment="CENTER" layoutX="543.0" layoutY="144.0" prefHeight="101.0" prefWidth="123.0" text="8" GridPane.columnIndex="8" GridPane.rowIndex="1" />
       <Label fx:id="TextLab" onMouseClicked="#Undo" text="Label" GridPane.columnIndex="8" />
+      <ImageView fx:id="A8Lab1" fitHeight="71.0" fitWidth="68.0" pickOnBounds="true" />
    </children>
 </GridPane>
