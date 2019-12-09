@@ -246,42 +246,6 @@ public class Board{
     void move(String oldPosition, String newPosition) {
 
 
-       /* if(oldPosition==newPosition)throw new IllegalChessMoveException("Ista pozicija");
-
-        ChessPiece.Color boja=naLokaciji(oldPosition).getColor();
-
-        oldPosition = oldPosition.toLowerCase();
-        newPosition = newPosition.toLowerCase();
-        ChessPiece staraLokacijaFigura = naLokaciji(oldPosition);
-        ChessPiece novaLokacijaFigura = naLokaciji(newPosition);
-        if (staraLokacijaFigura == null) throw new IllegalArgumentException("Nema sta pomjeriti");
-
-        if (novaLokacijaFigura != null) {
-            if(naLokaciji(newPosition).getClass()==King.class)  throw new IllegalChessMoveException("Kralj se ne moze pojest");
-            if (novaLokacijaFigura.getColor() != staraLokacijaFigura.getColor()) jede = 1;
-        }
-
-        if (staraLokacijaFigura.getClass() != Knight.class) {
-
-            if (!praznaPutanja(oldPosition, newPosition))
-                throw new IllegalChessMoveException("Nije moguce napraviti taj potez");
-        }
-
-
-        staraLokacijaFigura.move(newPosition);
-        int jedeTemp=jede;
-        if(isCheck(boja) ){
-            staraLokacijaFigura.postaviNa(oldPosition);
-            jede=0;
-            throw new IllegalChessMoveException("U sahu je ");
-        }
-        jede=jedeTemp;
-
-
-        if (jede == 1) novaLokacijaFigura.postaviNa("X");
-        jede = 0;*/
-
-
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
        try{
@@ -547,6 +511,9 @@ public class Board{
     public void check(String position){
 
         ChessPiece naLok=naLokaciji(position);
+        ChessPiece.Color boja= ChessPiece.Color.WHITE;
+
+        if(naLok.getColor()== ChessPiece.Color.WHITE)boja= ChessPiece.Color.BLACK;
 
         for(char c='a';c<='h';c++){
 
@@ -556,10 +523,21 @@ public class Board{
                 try{
                     jede=0;
                     testMove(position,newPosition);
+                    if(isCheck(boja)){
+                        UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: red;-fx-text-fill: gray;");
+                        naLok.postaviNa(position);
+                        continue;
+                    }
+
                     naLok.postaviNa(position);
                     ChessPiece cp=naLokaciji(newPosition);
+
+
                     if(cp!=null)UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: pink;-fx-text-fill: gray;");
                    else UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: lightblue;-fx-text-fill: gray;");
+
+
+
 
                 }catch (Exception e){
 
