@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import sample.ChessPiece;
 import sample.IllegalChessMoveException;
 
@@ -8,6 +10,9 @@ public class King extends ChessPiece {
     String pozicija="";
     Color boja;
     char znak='K';
+
+    Image iconImgW=new Image("Icons/WhiteKing.png");
+    Image iconImgB=new Image("Icons/BlackKing.png");
 
     King(String pozicija,Color boja){
 
@@ -56,5 +61,14 @@ public class King extends ChessPiece {
     @Override
     void postaviNa(String pozicija) {
         this.pozicija=pozicija.toLowerCase();
+    }
+
+    public ImageView getIcon(){
+
+        if(boja==Color.WHITE)
+            return new ImageView(iconImgW);
+
+        return new ImageView(iconImgB);
+
     }
 }

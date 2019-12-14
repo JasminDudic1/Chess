@@ -1,10 +1,16 @@
 package sample;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 public class Bishop extends ChessPiece {
 
     String pozicija;
     Color boja;
     char znak='B';
+
+    Image iconImgW=new Image("Icons/WhiteBishop.png");
+    Image iconImgB=new Image("Icons/BlackBishop.png");
 
     Bishop(String pozicija,Color boja){
         if(pozicija.length()!=2)throw new IllegalArgumentException("Van ploce");
@@ -51,6 +57,15 @@ public class Bishop extends ChessPiece {
     @Override
     void postaviNa(String pozicija) {
         this.pozicija=pozicija.toLowerCase();
+    }
+
+    public ImageView getIcon(){
+
+        if(boja==Color.WHITE)
+            return new ImageView(iconImgW);
+
+        return new ImageView(iconImgB);
+
     }
 
 

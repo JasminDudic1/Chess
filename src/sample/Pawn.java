@@ -1,8 +1,12 @@
 package sample;
 
+import javafx.scene.image.Image;
 import sample.Board;
 import sample.ChessPiece;
 import sample.IllegalChessMoveException;
+
+import javafx.scene.image.ImageView;
+
 
 public class Pawn extends ChessPiece {
 
@@ -10,6 +14,8 @@ public class Pawn extends ChessPiece {
     Color boja;
     int mogucPomak=2;
     char znak='P';
+    Image iconImgW=new Image("Icons/WhitePawn.png");
+    Image iconImgB=new Image("Icons/BlackPawn.png");
 
     Pawn(String pozicija,Color boja)
     {
@@ -71,5 +77,14 @@ public class Pawn extends ChessPiece {
     @Override
     void postaviNa(String pozicija) {
         this.pozicija=pozicija.toLowerCase();
+    }
+
+    public ImageView getIcon(){
+
+    if(boja==Color.WHITE)
+        return new ImageView(iconImgW);
+
+        return new ImageView(iconImgB);
+
     }
 }

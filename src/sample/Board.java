@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.event.ActionEvent;
+import javafx.geometry.HPos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Cell;
 import javafx.scene.control.Label;
@@ -11,6 +12,7 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -22,12 +24,15 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.sql.Ref;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Board{
 
     public static int jede = 0;
     public ImageView A8Lab1;
     public Label A8Lab11;
+    public GridPane Grid;
 
 
     private ChessPiece.Color igrac= ChessPiece.Color.WHITE;
@@ -41,6 +46,8 @@ public class Board{
     public Label G1Lab,G2Lab,G3Lab,G4Lab,G5Lab,G6Lab,G7Lab,G8Lab;
     public Label H1Lab,H2Lab,H3Lab,H4Lab,H5Lab,H6Lab,H7Lab,H8Lab;
     public Label TextLab;
+
+
 
 
     //endregion
@@ -106,7 +113,8 @@ public class Board{
     public void initialize(){
 
         for(int i=0;i<8;i++)
-            UIboard[i]=new Label[8];
+            UIboard[i] = new Label[8];
+
 
         //region UIBoard
         UIboard[0][0]=A1Lab;
@@ -185,24 +193,24 @@ public class Board{
 
         //endregion
 
-        refresh();
+        for(int i=0;i<8;i++)
+            for(int j=0;j<8;j++)
+            UIboard[i][j].setMaxWidth(Double.MAX_VALUE);
 
-        Image img1 =new Image("King.png");
+            refresh();
+
+       /* Image img1 =new Image("Transparent.png");
         ImageView imgv=new ImageView(img1);
-        imgv.fitHeightProperty().bind(A8Lab.heightProperty());
-        imgv.fitWidthProperty().bind(A8Lab.widthProperty());
+        imgv.fitHeightProperty().bind(TextLab.heightProperty());
+        imgv.fitWidthProperty().bind(TextLab.widthProperty());
 
+        A8Lab11.setText("");
         A8Lab11.setGraphic(imgv);
+        A8Lab11.setStyle("-fx-background-color: darkorange;-fx-text-fill: gray;");
 
-
-        /*A8Lab1.setStyle("-fx-background-image: url('King.png'); " +
-                "-fx-background-position: center center; " +
-                "-fx-background-repeat: stretch;");*/
-
-
+        A8Lab11.setMaxWidth(Double.MAX_VALUE);*/
 
     }
-
 
     void move(Class type, ChessPiece.Color color, String position) {
 
@@ -517,21 +525,31 @@ public class Board{
         for(int i=0;i<8;i++){
 
             for(int j=0;j<8;j++){
+
                 char pom='a';
                 pom+=i;
                 String pozicija=""+pom+(j+1);
 
                 ChessPiece naLok=naLokaciji(pozicija);
 
+                UIboard[i][j].setGraphic(null);
+
                 if(naLok!=null) {
                     char boja='w';
                     if(naLok.getColor()== ChessPiece.Color.BLACK)boja='b';
-                    UIboard[i][j].setText(""+naLok.getZnak()+boja);
+                    UIboard[i][j].setGraphic(null);
+                    ImageView pomView=naLok.getIcon();
+                    pomView.fitHeightProperty().bind(TextLab.heightProperty());
+                    pomView.fitWidthProperty().bind(TextLab.widthProperty());
+
+                    UIboard[i][j].setGraphic(pomView);
+                  //  UIboard[i][j].setText(""+naLok.getZnak()+boja);
                 }else UIboard[i][j].setText("");
 
                 if((i+j)%2==0) {
-                    UIboard[i][j].setStyle("-fx-background-color: black;-fx-text-fill: gray;");
-                }else  UIboard[i][j].setStyle("-fx-background-color: white;-fx-text-fill: gray;");
+                    UIboard[i][j].setStyle("-fx-background-color: DARKGOLDENROD;-fx-text-fill: gray;");
+                }else  UIboard[i][j].setStyle("-fx-background-color: LIGHTGOLDENRODYELLOW;-fx-text-fill: gray;");
+
 
 
 
@@ -582,7 +600,6 @@ public class Board{
         }
         jede=0;
     }
-
 
     public void Undo(MouseEvent mouseEvent) {
         changePlayer();

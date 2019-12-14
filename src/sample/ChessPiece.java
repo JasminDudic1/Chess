@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.scene.image.ImageView;
+
 public abstract class ChessPiece {
 
 
@@ -16,6 +18,7 @@ public abstract class ChessPiece {
 
     public abstract char getZnak();
 
+    public abstract  ImageView getIcon();
 
     abstract void postaviNa(String pozicija);
 
