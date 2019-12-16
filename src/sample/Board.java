@@ -33,6 +33,9 @@ public class Board{
     public ImageView A8Lab1;
     public Label A8Lab11;
     public GridPane Grid;
+    public Label ErrorLab;
+    String castle1="";
+
 
 
     private ChessPiece.Color igrac= ChessPiece.Color.WHITE;
@@ -260,13 +263,35 @@ public class Board{
     void move(String oldPosition, String newPosition) {
 
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-
        try{
            ChessPiece c1=naLokaciji(newPosition);
            ChessPiece c2=naLokaciji(oldPosition);
 
            testMove(oldPosition,newPosition);
+           if(!castle1.equals("")){
+
+castle1=castle1.toLowerCase();
+String rookStr="xx";
+
+               c2.postaviNa(castle1);
+
+               if(castle1.charAt(0)=='c'){
+                   int pom=castle1.charAt(1);
+                   rookStr="a"+pom;
+                   naLokaciji(rookStr).postaviNa("d"+pom);
+               }else if(castle1.charAt(0)=='g'){
+                   int pom=castle1.charAt(1);
+                   rookStr="h"+pom;
+                   naLokaciji(rookStr).postaviNa("f"+pom);
+               }
+                castle1="";
+
+               ErrorLab.setText(rookStr);
+
+           }
+
+           c2.moved();
+
 
            if(c1!=null)
                c1.postaviNa("X");
@@ -404,13 +429,9 @@ public class Board{
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
 
-        if(selectedPozicija=="")
-
+       /* if(selectedPozicija=="")
             if(naLok!=null)
-                if(naLok.getColor()!=igrac)return;
-
-
-
+                if(naLok.getColor()!=igrac)return;*/
 
             if(naLok!=null){//ako nije klikni na nesto
 
@@ -498,6 +519,60 @@ public class Board{
             if (!praznaPutanja(oldPosition, newPosition))
                 throw new IllegalChessMoveException("Nije moguce napraviti taj potez");
         }
+
+    int usao=0;
+
+        //region Castle
+
+        if(staraLokacijaFigura.getMoves()==0 && staraLokacijaFigura.getClass()==King.class && isCheck(staraLokacijaFigura.getColor())==false)  {//svi sem kinga vracaju uvijek -1, samo king moze 0 ako nije pomjeren
+
+
+            int pom=1;
+            if(staraLokacijaFigura.getColor()== ChessPiece.Color.BLACK)pom=8;
+
+            ChessPiece r1=naLokaciji("a"+pom);
+            ChessPiece r2=naLokaciji("h"+pom);
+
+            if(newPosition.equals("g"+pom) && r2!=null && r2.getMoves()==0){//ako ide king side
+
+
+               if(praznaPutanja(oldPosition,r2.getPosition())) {//ako su prazni do topa
+
+                   staraLokacijaFigura.postaviNa(newPosition);
+
+                   if (isCheck(staraLokacijaFigura.getColor())){
+                       staraLokacijaFigura.postaviNa(oldPosition);
+                       throw new IllegalChessMoveException("Error potez");
+                   }
+                   staraLokacijaFigura.postaviNa(oldPosition);
+                   castle1="g"+pom;
+                   return;
+
+               }else ErrorLab.setText("NotNull err");
+
+                }else if(newPosition.equals("c"+pom) && r1!=null && r1.getMoves()==0){//ako ide queen side
+
+
+                if(praznaPutanja(oldPosition,r1.getPosition())) {//ako su prazni do topa
+
+                    staraLokacijaFigura.postaviNa(newPosition);
+
+                    if (isCheck(staraLokacijaFigura.getColor())){
+                        staraLokacijaFigura.postaviNa(oldPosition);
+                        throw new IllegalChessMoveException("Error potez");
+                    }
+                    staraLokacijaFigura.postaviNa(oldPosition);
+                    castle1="c"+pom;
+
+            }else ErrorLab.setText("NotNull err");
+
+
+        }else if(usao==1)ErrorLab.setText(""+r2.getMoves());
+
+        }else ErrorLab.setText(""+staraLokacijaFigura.getMoves());
+
+        //endregion
+
 
 
         staraLokacijaFigura.move(newPosition);

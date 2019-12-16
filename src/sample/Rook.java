@@ -10,6 +10,7 @@ public class Rook extends ChessPiece {
     String pozicija;
     Color boja;
     char znak='R';
+    int moves=0;
 
     Image iconImgW=new Image("Icons/WhiteRook.png");
     Image iconImgB=new Image("Icons/BlackRook.png");
@@ -58,6 +59,16 @@ public class Rook extends ChessPiece {
     @Override
     void postaviNa(String pozicija) {
         this.pozicija=pozicija.toLowerCase();
+    }
+
+    @Override
+    int getMoves() {
+        return moves;
+    }
+
+    @Override
+    void moved() {
+    moves++;
     }
 
     public ImageView getIcon(){

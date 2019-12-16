@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<GridPane fx:id="Grid" gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="950.0" prefWidth="901.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Board">
+<GridPane fx:id="Grid" gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="950.0" prefWidth="901.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Board">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="305.0" minWidth="10.0" prefWidth="301.0" />
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="299.0" />
@@ -110,6 +107,6 @@
       <Label fx:id="A8Lab12111111" alignment="CENTER" layoutX="543.0" layoutY="211.0" prefHeight="70.0" prefWidth="70.0" text="7" GridPane.columnIndex="8" GridPane.rowIndex="2" />
       <Label fx:id="A8Lab121111111" alignment="CENTER" layoutX="543.0" layoutY="144.0" prefHeight="70.0" prefWidth="70.0" text="8" GridPane.columnIndex="8" GridPane.rowIndex="1" />
       <Label fx:id="TextLab" onMouseClicked="#Undo" prefHeight="53.0" prefWidth="55.0" text="Label" GridPane.columnIndex="8" />
-      <ImageView fx:id="A8Lab1" fitHeight="71.0" fitWidth="68.0" pickOnBounds="true" />
+      <Label fx:id="ErrorLab" alignment="CENTER" layoutX="111.0" layoutY="28.0" prefHeight="70.0" prefWidth="70.0" text="A" />
    </children>
 </GridPane>

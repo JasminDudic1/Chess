@@ -79,6 +79,16 @@ public class Pawn extends ChessPiece {
         this.pozicija=pozicija.toLowerCase();
     }
 
+    @Override
+    int getMoves() {
+        return -1;
+    }
+
+    @Override
+    void moved() {
+
+    }
+
     public ImageView getIcon(){
 
     if(boja==Color.WHITE)

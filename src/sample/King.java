@@ -10,6 +10,7 @@ public class King extends ChessPiece {
     String pozicija="";
     Color boja;
     char znak='K';
+    int moves=0;
 
     Image iconImgW=new Image("Icons/WhiteKing.png");
     Image iconImgB=new Image("Icons/BlackKing.png");
@@ -24,6 +25,8 @@ public class King extends ChessPiece {
         this.pozicija=pozicija.toLowerCase();
         this.boja=boja;
     }
+
+
 
     @Override
     public String getPosition() {
@@ -62,6 +65,17 @@ public class King extends ChessPiece {
     void postaviNa(String pozicija) {
         this.pozicija=pozicija.toLowerCase();
     }
+
+    @Override
+    int getMoves() {
+        return moves;
+    }
+
+    @Override
+    void moved() {
+moves++;
+    }
+
 
     public ImageView getIcon(){
 

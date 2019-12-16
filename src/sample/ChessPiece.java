@@ -22,6 +22,10 @@ public abstract class ChessPiece {
 
     abstract void postaviNa(String pozicija);
 
+    abstract int getMoves();
+
+    abstract void moved();
+
 
 
 
