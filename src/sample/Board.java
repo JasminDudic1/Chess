@@ -277,6 +277,9 @@ public class Board{
 String rookStr="xx";
                ErrorLab.setText(rookStr);
 
+
+
+
                c2.postaviNa(castle1);
 
                if(castle1.charAt(0)=='c'){
@@ -543,7 +546,18 @@ String rookStr="xx";
 
                if(praznaPutanja(oldPosition,r2.getPosition())) {//ako su prazni do topa
 
-                   staraLokacijaFigura.postaviNa(newPosition);
+                   staraLokacijaFigura.postaviNa("f"+pom);
+                   if(isCheck(staraLokacijaFigura.getColor())){
+                       staraLokacijaFigura.postaviNa(oldPosition);
+                       throw new IllegalChessMoveException("Ne moze kroz sah");
+                   }
+                   staraLokacijaFigura.postaviNa("g"+pom);
+                   if(isCheck(staraLokacijaFigura.getColor())){
+                       staraLokacijaFigura.postaviNa(oldPosition);
+                       throw new IllegalChessMoveException("Ne moze kroz sah");
+                   }
+
+
 
                    if (isCheck(staraLokacijaFigura.getColor())){
                        staraLokacijaFigura.postaviNa(oldPosition);
@@ -560,7 +574,16 @@ String rookStr="xx";
 
                 if(praznaPutanja(oldPosition,r1.getPosition())) {//ako su prazni do topa
 
-                    staraLokacijaFigura.postaviNa(newPosition);
+                    staraLokacijaFigura.postaviNa("d"+pom);
+                    if(isCheck(staraLokacijaFigura.getColor())){
+                        staraLokacijaFigura.postaviNa(oldPosition);
+                        throw new IllegalChessMoveException("Ne moze kroz sah");
+                    }
+                    staraLokacijaFigura.postaviNa("c"+pom);
+                    if(isCheck(staraLokacijaFigura.getColor())){
+                        staraLokacijaFigura.postaviNa(oldPosition);
+                        throw new IllegalChessMoveException("Ne moze kroz sah");
+                    }
 
                     if (isCheck(staraLokacijaFigura.getColor())){
                         staraLokacijaFigura.postaviNa(oldPosition);
