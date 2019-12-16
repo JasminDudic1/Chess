@@ -268,25 +268,30 @@ public class Board{
            ChessPiece c2=naLokaciji(oldPosition);
 
            testMove(oldPosition,newPosition);
-           if(!castle1.equals("")){
+           newPosition=newPosition.toLowerCase();
+           castle1=castle1.toLowerCase();
 
-castle1=castle1.toLowerCase();
+           if(newPosition.equals(castle1)){
+
+
 String rookStr="xx";
+               ErrorLab.setText(rookStr);
 
                c2.postaviNa(castle1);
 
                if(castle1.charAt(0)=='c'){
-                   int pom=castle1.charAt(1);
+                   int pom=castle1.charAt(1)-'0';
                    rookStr="a"+pom;
                    naLokaciji(rookStr).postaviNa("d"+pom);
                }else if(castle1.charAt(0)=='g'){
-                   int pom=castle1.charAt(1);
+                   int pom=castle1.charAt(1)-'0';
                    rookStr="h"+pom;
                    naLokaciji(rookStr).postaviNa("f"+pom);
                }
                 castle1="";
 
                ErrorLab.setText(rookStr);
+
 
            }
 
@@ -563,6 +568,7 @@ String rookStr="xx";
                     }
                     staraLokacijaFigura.postaviNa(oldPosition);
                     castle1="c"+pom;
+                    return;
 
             }else ErrorLab.setText("NotNull err");
 
