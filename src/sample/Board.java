@@ -35,6 +35,8 @@ public class Board{
     public GridPane Grid;
     public Label ErrorLab;
     String castle1="";
+    String passant1="";
+    boolean picking=false;
 
 
 
@@ -56,6 +58,7 @@ public class Board{
     //endregion
 
     String selectedPozicija="";
+    ChessPiece lastMoved=null;
 
     private ChessPiece[][] board = new ChessPiece[2][];
     private Label[][]UIboard=new Label[8][];
@@ -111,7 +114,6 @@ public class Board{
         //endregion
         //UIboard[0][0].setText("Heroo");
     }
-
 
     public void initialize(){
 
@@ -268,17 +270,13 @@ public class Board{
            ChessPiece c2=naLokaciji(oldPosition);
 
            testMove(oldPosition,newPosition);
+           //region Castling
            newPosition=newPosition.toLowerCase();
            castle1=castle1.toLowerCase();
 
            if(newPosition.equals(castle1)){
 
-
-String rookStr="xx";
-               ErrorLab.setText(rookStr);
-
-
-
+             String rookStr="xx";
 
                c2.postaviNa(castle1);
 
@@ -297,21 +295,48 @@ String rookStr="xx";
 
 
            }
+           //endregion
+
+           //region EnPassant
+           if(newPosition.equals(passant1)){
+
+               if(c2.getColor()== ChessPiece.Color.WHITE){
+                   String passant=""+newPosition.charAt(0);
+                   char pom=(char)(newPosition.charAt(1)-1);
+                   passant+=pom;
+                   c1=naLokaciji(passant);
+                   c1.postaviNa("x");
+                   c2.postaviNa(passant1);
+               }
+               if(c2.getColor()== ChessPiece.Color.BLACK){
+                   String passant=""+newPosition.charAt(0);
+                   char pom=(char)(newPosition.charAt(1)+1);
+                   passant+=pom;
+                   c1=naLokaciji(passant);
+                   c1.postaviNa("x");
+                   c2.postaviNa(passant1);
+               }
+               passant1="";
+
+           }
+           //endregion
 
            c2.moved();
-
+           lastMoved=c2;
 
            if(c1!=null)
                c1.postaviNa("X");
 
-
+           if(c2.getClass()==Pawn.class && (newPosition.charAt(1)=='8' || newPosition.charAt(1)=='1')){
+               picking=true;
+               ErrorLab.setText("picking");
+           }
 
        }catch (Exception e){
-    throw new IllegalChessMoveException("Ne moze");
+    throw new IllegalChessMoveException(e.toString());
        }
 
         refresh();
-
 
     }
 
@@ -425,7 +450,6 @@ String rookStr="xx";
 
     }
 
-
     public void Clicked(MouseEvent mouseEvent) {
 
 
@@ -437,9 +461,60 @@ String rookStr="xx";
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
 
+        //region Picked
+        if(picking==true){
+            ErrorLab.setText("Picking");
+            int i=0,j=0;
+
+            for(i=0;i<2;i++){
+
+                for(j=0;j<16;j++){
+                    if(board[i][j]==lastMoved){
+                        //region Change
+                        if(pozicija.equals("D4")){
+                            board[i][j]=new Queen(lastMoved.getPosition(),lastMoved.getColor());
+                            picking=false;
+                            refresh();
+                            return;
+                        }
+                        else if(pozicija.equals("E4")){
+                            board[i][j]=new Bishop(lastMoved.getPosition(),lastMoved.getColor());
+                            picking=false;
+                            refresh();
+                            return;
+                        }
+                        else if(pozicija.equals("D5")){
+                            board[i][j]=new Knight(lastMoved.getPosition(),lastMoved.getColor());
+                            picking=false;
+                            refresh();
+                            return;
+                        }
+                        else if(pozicija.equals("E5")){
+                            board[i][j]=new Rook(lastMoved.getPosition(),lastMoved.getColor());
+                            picking=false;
+                            refresh();
+                            return;
+                        }
+                        else ErrorLab.setText("WTF");
+                        //endregion
+
+
+                    }
+                }
+
+            }
+
+
+
+        }
+
+        //endregion
+
        /* if(selectedPozicija=="")
             if(naLok!=null)
                 if(naLok.getColor()!=igrac)return;*/
+
+       //region Clicked
 
             if(naLok!=null){//ako nije klikni na nesto
 
@@ -458,7 +533,7 @@ String rookStr="xx";
                     changePlayer();
 
                 }catch(Exception ex){
-
+                    ErrorLab.setText(ex.toString());
                 }
 
                 selectedPozicija="";
@@ -484,7 +559,9 @@ String rookStr="xx";
                 try {
                     move(selectedPozicija, pozicija);
                     changePlayer();
-                }catch (Exception ex){ }
+                }catch (Exception ex){
+                    //ErrorLab.setText(ex.toString());
+                }
 
                 selectedPozicija="";
                 refresh();
@@ -494,11 +571,10 @@ String rookStr="xx";
                 selectedPozicija="";
             refresh();}
 
-
+        //endregion
 
 
     }
-
 
     void testMove(String oldPosition, String newPosition) {
 
@@ -511,6 +587,8 @@ String rookStr="xx";
         newPosition = newPosition.toLowerCase();
         ChessPiece staraLokacijaFigura = naLokaciji(oldPosition);
         ChessPiece novaLokacijaFigura = naLokaciji(newPosition);
+
+        //region path and eat
         if(novaLokacijaFigura!=null)
         if(staraLokacijaFigura.getColor()==novaLokacijaFigura.getColor())throw new IllegalArgumentException("Ista boja");
 
@@ -527,8 +605,7 @@ String rookStr="xx";
             if (!praznaPutanja(oldPosition, newPosition))
                 throw new IllegalChessMoveException("Nije moguce napraviti taj potez");
         }
-
-    int usao=0;
+        //endregion
 
         //region Castle
 
@@ -567,7 +644,7 @@ String rookStr="xx";
                    castle1="g"+pom;
                    return;
 
-               }else ErrorLab.setText("NotNull err");
+               }
 
                 }else if(newPosition.equals("c"+pom) && r1!=null && r1.getMoves()==0){//ako ide queen side
 
@@ -593,12 +670,82 @@ String rookStr="xx";
                     castle1="c"+pom;
                     return;
 
-            }else ErrorLab.setText("NotNull err");
+            }
 
 
-        }else if(usao==1)ErrorLab.setText(""+r2.getMoves());
+        }
 
-        }else ErrorLab.setText(""+staraLokacijaFigura.getMoves());
+        }
+
+        //endregion
+
+        //region EnPassant
+
+        if(staraLokacijaFigura.getClass()==Pawn.class){
+
+            if(staraLokacijaFigura.getColor()== ChessPiece.Color.WHITE && oldPosition.charAt(1)=='5'){
+
+                String passant=""+newPosition.charAt(0);
+                char pom=(char)(newPosition.charAt(1)-1);
+                passant+=pom;
+
+
+                ChessPiece c=naLokaciji(passant);
+
+
+                if(c==lastMoved && c!=staraLokacijaFigura){
+                    ErrorLab.setText(passant);
+                    jede=1;
+                    try{
+                        staraLokacijaFigura.move(newPosition);
+                        if(isCheck(staraLokacijaFigura.getColor())){
+                            staraLokacijaFigura.postaviNa(oldPosition);
+                            throw new IllegalChessMoveException("Stvara sah");
+                        }
+                    }catch(Exception e){
+                        jede=0;
+                        throw new IllegalChessMoveException(e.toString());
+                    }
+
+                   jede=0;
+                   passant1=newPosition;
+                   return;
+                }
+
+            }
+
+            else if(staraLokacijaFigura.getColor()== ChessPiece.Color.BLACK && oldPosition.charAt(1)=='4'){
+
+                String passant=""+newPosition.charAt(0);
+                char pom=(char)(newPosition.charAt(1)+1);
+                passant+=pom;
+
+
+                ChessPiece c=naLokaciji(passant);
+                if(c==lastMoved && c!=staraLokacijaFigura){
+                    jede=1;
+                    try{
+                        staraLokacijaFigura.move(newPosition);
+                        if(isCheck(staraLokacijaFigura.getColor())){
+                            staraLokacijaFigura.postaviNa(oldPosition);
+                            throw new IllegalChessMoveException("Stvara sah");
+                        }
+                    }catch(Exception e){
+                        jede=0;
+                        throw new IllegalChessMoveException("Passant error");
+                    }
+
+                    jede=0;
+                    passant1=newPosition;
+                    return;
+                }
+
+
+
+            }
+
+        }
+
 
         //endregion
 
@@ -620,8 +767,53 @@ String rookStr="xx";
 
     public void refresh(){
 
+        //region ResetLabels
+        for(int i=0;i<8;i++){
+
+            for(int j=0;j<8;j++){
+                UIboard[i][j].setGraphic(null);
+                if((i+j)%2==0) {
+                    UIboard[i][j].setStyle("-fx-background-color: DARKGOLDENROD;-fx-text-fill: gray;");
+                }else  UIboard[i][j].setStyle("-fx-background-color: LIGHTGOLDENRODYELLOW;-fx-text-fill: gray;");
+            }
+
+        }
+        //endregion
+
+        //region WhenPicking
+        if(picking==true){
+
+            ImageView pomView=new Queen("D4", lastMoved.getColor()).getIcon();
+            pomView.fitHeightProperty().bind(TextLab.heightProperty());
+            pomView.fitWidthProperty().bind(TextLab.widthProperty());
+            UIboard[3][3].setStyle("-fx-background-color: yellow;-fx-text-fill: gray;");
+            UIboard[3][3].setGraphic(pomView);
+
+            pomView=new Knight("E4", lastMoved.getColor()).getIcon();
+            pomView.fitHeightProperty().bind(TextLab.heightProperty());
+            pomView.fitWidthProperty().bind(TextLab.widthProperty());
+            UIboard[3][4].setStyle("-fx-background-color: yellow;-fx-text-fill: gray;");
+            UIboard[3][4].setGraphic(pomView);
+
+            pomView=new Bishop("D5", lastMoved.getColor()).getIcon();
+            pomView.fitHeightProperty().bind(TextLab.heightProperty());
+            pomView.fitWidthProperty().bind(TextLab.widthProperty());
+            UIboard[4][3].setStyle("-fx-background-color: yellow;-fx-text-fill: gray;");
+            UIboard[4][3].setGraphic(pomView);
+
+            pomView=new Rook("E5", lastMoved.getColor()).getIcon();
+            pomView.fitHeightProperty().bind(TextLab.heightProperty());
+            pomView.fitWidthProperty().bind(TextLab.widthProperty());
+            UIboard[4][4].setStyle("-fx-background-color: yellow;-fx-text-fill: gray;");
+            UIboard[4][4].setGraphic(pomView);
 
 
+
+            return;
+        }
+        //endregion
+
+        //region Icons
         if(igrac== ChessPiece.Color.WHITE)
             TextLab.setText("WHITE");
         else TextLab.setText("BLACK");
@@ -647,7 +839,6 @@ String rookStr="xx";
                     pomView.fitWidthProperty().bind(TextLab.widthProperty());
 
                     UIboard[i][j].setGraphic(pomView);
-                  //  UIboard[i][j].setText(""+naLok.getZnak()+boja);
                 }else UIboard[i][j].setText("");
 
                 if((i+j)%2==0) {
@@ -660,6 +851,8 @@ String rookStr="xx";
             }
 
         }
+
+        //endregion
 
     }
 

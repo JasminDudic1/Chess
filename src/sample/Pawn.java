@@ -16,6 +16,7 @@ public class Pawn extends ChessPiece {
     char znak='P';
     Image iconImgW=new Image("Icons/WhitePawn.png");
     Image iconImgB=new Image("Icons/BlackPawn.png");
+    int moves=0;
 
     Pawn(String pozicija,Color boja)
     {
@@ -61,7 +62,7 @@ public class Pawn extends ChessPiece {
 
 
         if((Board.jede==1 && (pomakI!=1 || pomakJ!=1)) ||(Board.jede==0 && (pomakI!=0 || pomakJ>this.mogucPomak) ) || pomakJ<0) {
-            throw new IllegalChessMoveException("Potez nije ispravan");//ako je vise od moguceg (prvi put 2) il ako je vise od 1 mjesto u stranu
+            throw new IllegalChessMoveException(pomakI+"|"+pomakJ);//ako je vise od moguceg (prvi put 2) il ako je vise od 1 mjesto u stranu
         }
 
 
@@ -81,12 +82,12 @@ public class Pawn extends ChessPiece {
 
     @Override
     int getMoves() {
-        return -1;
+        return moves;
     }
 
     @Override
     void moved() {
-
+    moves++;
     }
 
     public ImageView getIcon(){
