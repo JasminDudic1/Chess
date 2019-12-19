@@ -1,10 +1,9 @@
 package sample;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Cell;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.image.Image;
@@ -23,11 +22,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Ref;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
-public class Board{
+public class Board implements Initializable {
 
     public static int jede = 0;
     public ImageView A8Lab1;
@@ -52,6 +53,7 @@ public class Board{
     public Label H1Lab,H2Lab,H3Lab,H4Lab,H5Lab,H6Lab,H7Lab,H8Lab;
     public Label TextLab;
 
+    private TabPane tabpane;
 
 
 
@@ -115,7 +117,11 @@ public class Board{
         //UIboard[0][0].setText("Heroo");
     }
 
-    public void initialize(){
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+
 
         for(int i=0;i<8;i++)
             UIboard[i] = new Label[8];
@@ -901,5 +907,6 @@ public class Board{
     public void Undo(MouseEvent mouseEvent) {
         changePlayer();
     }
+
 
 }
