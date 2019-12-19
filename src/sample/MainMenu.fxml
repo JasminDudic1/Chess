@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="350.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainMenu">
+<AnchorPane prefHeight="437.0" prefWidth="572.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainMenu">
    <children>
-      <Button fx:id="startBtn" alignment="CENTER" layoutX="125.0" layoutY="81.0" mnemonicParsing="false" onAction="#startClicked" prefHeight="49.0" prefWidth="100.0" text="Start" />
-      <Button layoutX="6.0" layoutY="305.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="77.0" text="Credits" />
-      <Button layoutX="125.0" layoutY="256.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="100.0" text="LogOut" />
-      <Button fx:id="ExitBtn" layoutX="125.0" layoutY="175.0" mnemonicParsing="false" onAction="#exitClicked" prefHeight="49.0" prefWidth="100.0" text="Exit" />
+      <Button layoutX="484.0" layoutY="416.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="88.0" text="LogOut" />
+      <Button fx:id="ExitBtn" layoutY="398.0" mnemonicParsing="false" onAction="#exitClicked" prefHeight="49.0" prefWidth="100.0" text="Exit" />
+      <ListView prefHeight="200.0" prefWidth="200.0" />
    </children>
 </AnchorPane>

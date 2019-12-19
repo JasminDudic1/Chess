@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 
 public class MainMenu {
 
+    public static String username="";
 
     public void exitClicked(ActionEvent actionEvent) {
         System.exit(0);
