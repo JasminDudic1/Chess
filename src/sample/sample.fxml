@@ -94,7 +94,7 @@
       <Label fx:id="C2Lab" layoutX="310.0" layoutY="278.0" onMouseClicked="#Clicked" prefHeight="70.0" prefWidth="70.0" GridPane.columnIndex="2" GridPane.rowIndex="7" />
       <Label fx:id="B2Lab" layoutX="235.0" layoutY="211.0" onMouseClicked="#Clicked" prefHeight="70.0" prefWidth="70.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
       <Label fx:id="A8Lab11" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="70.0" prefWidth="70.0" text="B" GridPane.columnIndex="1" />
-      <Label fx:id="A8Lab111" alignment="CENTER" layoutX="86.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="70.0" prefWidth="70.0" text="C" GridPane.columnIndex="2" />
+      <Label fx:id="A8Lab111" alignment="CENTER" layoutX="86.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="38.0" text="C" GridPane.columnIndex="2" />
       <Label fx:id="A8Lab1111" alignment="CENTER" layoutX="160.0" layoutY="10.0" prefHeight="70.0" prefWidth="70.0" text="D" GridPane.columnIndex="3" />
       <Label fx:id="A8Lab11111" alignment="CENTER" layoutX="235.0" layoutY="10.0" prefHeight="70.0" prefWidth="70.0" text="E" GridPane.columnIndex="4" />
       <Label fx:id="A8Lab111111" alignment="CENTER" layoutX="310.0" layoutY="10.0" prefHeight="70.0" prefWidth="70.0" text="F" GridPane.columnIndex="5" />

@@ -3,6 +3,7 @@ package sample;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -65,8 +66,14 @@ public class Board implements Initializable {
     private ChessPiece[][] board = new ChessPiece[2][];
     private Label[][]UIboard=new Label[8][];
 
+    private void labSetup(Label l1){
+        l1.setAlignment(Pos.CENTER);
+        l1.setStyle("-fx-background-color: gray;-fx-text-fill: black;");
+        l1.setPrefHeight(70);
+        l1.setPrefWidth(70);
+    }
 
-    public Board() {
+    public Board(GridPane boardGridPane) {
 
         board[0] = new ChessPiece[16];
         board[1] = new ChessPiece[16];
@@ -112,18 +119,40 @@ public class Board implements Initializable {
         }
         //endregion
 
-        //Region Labels
-        //endregion
-        //UIboard[0][0].setText("Heroo");
+        for(int j=0;j<8;j++){
+            Label l1=new Label();
+            char c=(char)('A'+j);
+            l1.setText(""+c);
+            labSetup(l1);
+            boardGridPane.add(l1,j,0);
+            Label l2=new Label();
+            l2.setText(""+(8-j));
+            labSetup(l2);
+            boardGridPane.add(l2,8,j+1);
+        }
+
+        for(int i=0;i<8;i++){
+                UIboard[i] = new Label[8];
+            for(int j=0;j<8;j++){
+                UIboard[i][j]=new Label();
+                UIboard[i][j].onMouseClickedProperty().setValue(this::Clicked);
+                UIboard[i][j].setPrefHeight(70);
+                UIboard[i][j].setPrefWidth(70);
+                UIboard[i][j].setAlignment(Pos.CENTER);
+                String pos=""+(char)('A'+i)+(j+1);
+                UIboard[i][j].setId(pos);
+                boardGridPane.add(UIboard[i][j],i,8-j);
+            }
+        }
+
+refresh();
     }
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-
-
-        for(int i=0;i<8;i++)
+      /*  for(int i=0;i<8;i++)
             UIboard[i] = new Label[8];
 
 
@@ -210,17 +239,17 @@ public class Board implements Initializable {
 
             refresh();
 
-       /* Image img1 =new Image("Transparent.png");
-        ImageView imgv=new ImageView(img1);
-        imgv.fitHeightProperty().bind(TextLab.heightProperty());
-        imgv.fitWidthProperty().bind(TextLab.widthProperty());
-
-        A8Lab11.setText("");
-        A8Lab11.setGraphic(imgv);
-        A8Lab11.setStyle("-fx-background-color: darkorange;-fx-text-fill: gray;");
-
-        A8Lab11.setMaxWidth(Double.MAX_VALUE);*/
-
+//        Image img1 =new Image("Transparent.png");
+//        ImageView imgv=new ImageView(img1);
+//        imgv.fitHeightProperty().bind(TextLab.heightProperty());
+//        imgv.fitWidthProperty().bind(TextLab.widthProperty());
+//
+//        A8Lab11.setText("");
+//        A8Lab11.setGraphic(imgv);
+//        A8Lab11.setStyle("-fx-background-color: darkorange;-fx-text-fill: gray;");
+//
+//        A8Lab11.setMaxWidth(Double.MAX_VALUE);
+*/
     }
 
     void move(Class type, ChessPiece.Color color, String position) {
@@ -469,7 +498,7 @@ public class Board implements Initializable {
 
         //region Picked
         if(picking==true){
-            ErrorLab.setText("Picking");
+//            ErrorLab.setText("Picking");
             int i=0,j=0;
 
             for(i=0;i<2;i++){
@@ -539,7 +568,7 @@ public class Board implements Initializable {
                     changePlayer();
 
                 }catch(Exception ex){
-                    ErrorLab.setText(ex.toString());
+                   // ErrorLab.setText(ex.toString());
                 }
 
                 selectedPozicija="";
@@ -790,26 +819,26 @@ public class Board implements Initializable {
         if(picking==true){
 
             ImageView pomView=new Queen("D4", lastMoved.getColor()).getIcon();
-            pomView.fitHeightProperty().bind(TextLab.heightProperty());
-            pomView.fitWidthProperty().bind(TextLab.widthProperty());
+            pomView.setFitHeight(30);
+            pomView.setFitWidth(30);
             UIboard[3][3].setStyle("-fx-background-color: yellow;-fx-text-fill: gray;");
             UIboard[3][3].setGraphic(pomView);
 
             pomView=new Knight("E4", lastMoved.getColor()).getIcon();
-            pomView.fitHeightProperty().bind(TextLab.heightProperty());
-            pomView.fitWidthProperty().bind(TextLab.widthProperty());
+            pomView.setFitHeight(30);
+            pomView.setFitWidth(30);
             UIboard[3][4].setStyle("-fx-background-color: yellow;-fx-text-fill: gray;");
             UIboard[3][4].setGraphic(pomView);
 
             pomView=new Bishop("D5", lastMoved.getColor()).getIcon();
-            pomView.fitHeightProperty().bind(TextLab.heightProperty());
-            pomView.fitWidthProperty().bind(TextLab.widthProperty());
+            pomView.setFitHeight(30);
+            pomView.setFitWidth(30);
             UIboard[4][3].setStyle("-fx-background-color: yellow;-fx-text-fill: gray;");
             UIboard[4][3].setGraphic(pomView);
 
             pomView=new Rook("E5", lastMoved.getColor()).getIcon();
-            pomView.fitHeightProperty().bind(TextLab.heightProperty());
-            pomView.fitWidthProperty().bind(TextLab.widthProperty());
+            pomView.setFitHeight(30);
+            pomView.setFitWidth(30);
             UIboard[4][4].setStyle("-fx-background-color: yellow;-fx-text-fill: gray;");
             UIboard[4][4].setGraphic(pomView);
 
@@ -820,9 +849,9 @@ public class Board implements Initializable {
         //endregion
 
         //region Icons
-        if(igrac== ChessPiece.Color.WHITE)
+        /*if(igrac== ChessPiece.Color.WHITE)
             TextLab.setText("WHITE");
-        else TextLab.setText("BLACK");
+        else TextLab.setText("BLACK");*/
 
         for(int i=0;i<8;i++){
 
@@ -841,8 +870,8 @@ public class Board implements Initializable {
                     if(naLok.getColor()== ChessPiece.Color.BLACK)boja='b';
                     UIboard[i][j].setGraphic(null);
                     ImageView pomView=naLok.getIcon();
-                    pomView.fitHeightProperty().bind(TextLab.heightProperty());
-                    pomView.fitWidthProperty().bind(TextLab.widthProperty());
+                    pomView.setFitHeight(30);
+                    pomView.setFitWidth(30);
 
                     UIboard[i][j].setGraphic(pomView);
                 }else UIboard[i][j].setText("");
