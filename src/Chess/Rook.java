@@ -1,18 +1,19 @@
-package sample;
+package Chess;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class Bishop extends ChessPiece {
+public class Rook extends ChessPiece {
 
     String pozicija;
     Color boja;
-    char znak='B';
+    char znak='R';
+    int moves=0;
 
-    Image iconImgW=new Image("Icons/WhiteBishop.png");
-    Image iconImgB=new Image("Icons/BlackBishop.png");
+    Image iconImgW=new Image("Icons/WhiteRook.png");
+    Image iconImgB=new Image("Icons/BlackRook.png");
 
-    Bishop(String pozicija,Color boja){
+    Rook(String pozicija,Color boja){
         if(pozicija.length()!=2)throw new IllegalArgumentException("Van ploce");
         char slovo=pozicija.charAt(0);
         slovo=Character.toLowerCase(slovo);
@@ -20,8 +21,8 @@ public class Bishop extends ChessPiece {
         if(slovo<'a' || slovo>'h' || broj<1 || broj>8 || pozicija.length()>2) throw new IllegalArgumentException("Van ploce");
         this.pozicija=pozicija.toLowerCase();
         this.boja=boja;
-
     }
+
 
     @Override
     public String getPosition() {
@@ -43,8 +44,7 @@ public class Bishop extends ChessPiece {
 
         int pomakI=Math.abs(this.pozicija.charAt(0)-slovo);
         int pomakJ=Math.abs(this.pozicija.charAt(1)-broj-48);
-        if(pomakI!=pomakJ) throw new IllegalChessMoveException("Potez nije ispravan");//ne moze ako nije ukoso
-
+        if(pomakJ*pomakI!=0) throw new IllegalChessMoveException("Potez nije ispravan");//jedan pomak mora bit 0
 
         this.pozicija=position;
     }
@@ -61,12 +61,12 @@ public class Bishop extends ChessPiece {
 
     @Override
     int getMoves() {
-        return -1;
+        return moves;
     }
 
     @Override
     void moved() {
-
+    moves++;
     }
 
     public ImageView getIcon(){
@@ -77,6 +77,4 @@ public class Bishop extends ChessPiece {
         return new ImageView(iconImgB);
 
     }
-
-
 }

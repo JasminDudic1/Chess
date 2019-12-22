@@ -1,32 +1,15 @@
-package sample;
+package Chess;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.image.Image;
-import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.net.URL;
-import java.sql.Ref;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class Board implements Initializable {
@@ -719,17 +702,13 @@ refresh();
         if(staraLokacijaFigura.getClass()==Pawn.class){
 
             if(staraLokacijaFigura.getColor()== ChessPiece.Color.WHITE && oldPosition.charAt(1)=='5'){
-
                 String passant=""+newPosition.charAt(0);
                 char pom=(char)(newPosition.charAt(1)-1);
                 passant+=pom;
 
-
                 ChessPiece c=naLokaciji(passant);
 
-
                 if(c==lastMoved && c!=staraLokacijaFigura){
-                    ErrorLab.setText(passant);
                     jede=1;
                     try{
                         staraLokacijaFigura.move(newPosition);
@@ -750,11 +729,9 @@ refresh();
             }
 
             else if(staraLokacijaFigura.getColor()== ChessPiece.Color.BLACK && oldPosition.charAt(1)=='4'){
-
                 String passant=""+newPosition.charAt(0);
                 char pom=(char)(newPosition.charAt(1)+1);
                 passant+=pom;
-
 
                 ChessPiece c=naLokaciji(passant);
                 if(c==lastMoved && c!=staraLokacijaFigura){

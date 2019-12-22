@@ -1,4 +1,4 @@
-package sample;
+package Chess;
 
 public class IllegalChessMoveException extends IllegalArgumentException {
     String message="";

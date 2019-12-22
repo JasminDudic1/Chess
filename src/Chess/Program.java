@@ -1,6 +1,4 @@
-package sample;
-
-import java.util.Scanner;
+package Chess;
 
 
 public class Program {

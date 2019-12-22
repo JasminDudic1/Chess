@@ -1,4 +1,4 @@
-package sample;
+package Chess;
 
 import javafx.scene.image.ImageView;
 
