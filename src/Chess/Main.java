@@ -6,10 +6,18 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.sql.Connection;
+
 public class Main extends Application {
     static Stage stg;
     @Override
     public void start(Stage primaryStage) throws Exception{
+
+
+        Connection con=ConnectionDAO.getInstance().getconn();
+        ConnectionDAO.getInstance().makeBase();
+
         this.stg=primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource("LoginScreen.fxml"));
 

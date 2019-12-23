@@ -40,24 +40,30 @@ public class LoginScreen implements Initializable {
 
     public void registerClicked(ActionEvent actionEvent) {
 
-        Properties properties=new Properties();
+     /*   Properties properties=new Properties();
         properties.setProperty("user","Jasa");
         properties.setProperty("password","1234");
         properties.setProperty("useSSL","false");
         properties.setProperty("serverTimezone","UTC");
-        String url = "jdbc:mysql://77.78.232.142:3306/chess";
+        String url = "jdbc:mysql://77.78.232.142:3306/chess";*/
         String username=usernameTBox.getText();
         String password=passwordPBox.getText();
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(url,properties);
+
+            //Class.forName("com.mysql.cj.jdbc.Driver");
+            //Connection conn = DriverManager.getConnection(url,properties);
+
+            Class.forName("org.sqlite.JDBC");
+           Connection conn = DriverManager.getConnection("jdbc:sqlite:baza.db");
+
             Statement stmt = conn.createStatement();
             PreparedStatement upit=conn.prepareStatement("Select * From Player Where username=?");
             upit.setString(1,username);
             ResultSet result = upit.executeQuery();
             if(result.next()==false && !username.isEmpty() && !password.isEmpty()){
-                upit=conn.prepareStatement("Insert into Player values(null,?,?,default,default,default,default,default,default)");
+                ///upit=conn.prepareStatement("Insert into Player values(null,?,?,default,default,default,default,default,default)");
+                upit=conn.prepareStatement("Insert into Player values(null,?,?,0,0,0,1000,0,0)");
                 upit.setString(1,username);
                 upit.setString(2,hash(password));
                 upit.executeUpdate();
@@ -66,8 +72,6 @@ public class LoginScreen implements Initializable {
                 a.setTitle("Success");
                 a.setHeaderText("");
                 a.show();
-                passwordPBox.clear();
-                usernameTBox.clear();
             }else {
                 Alert a=new Alert(Alert.AlertType.ERROR);
                 a.setContentText("Already Registered");
@@ -78,9 +82,7 @@ public class LoginScreen implements Initializable {
                 usernameTBox.clear();
             }
         conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -89,18 +91,17 @@ public class LoginScreen implements Initializable {
 
     public void logInClicked(ActionEvent actionEvent) {
 
-        Properties properties=new Properties();
-        properties.setProperty("user","Jasa");
-        properties.setProperty("password","1234");
-        properties.setProperty("useSSL","false");
-        properties.setProperty("serverTimezone","UTC");
-        String url = "jdbc:mysql://77.78.232.142:3306/chess";
         String username=usernameTBox.getText();
         String password=passwordPBox.getText();
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(url,properties);
+            System.out.printf("USAO");
+            //Class.forName("com.mysql.cj.jdbc.Driver");
+           // Connection conn = DriverManager.getConnection(url,properties);
+
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:baza.db");
+
             Statement stmt = conn.createStatement();
             PreparedStatement upit=conn.prepareStatement("Select online,id From Player Where username=? and password=?");
             upit.setString(1,username);
@@ -113,7 +114,7 @@ public class LoginScreen implements Initializable {
                 a.setHeaderText("");
                 a.show();
                 passwordPBox.clear();
-            }if(result.getInt(1)==1){
+            }else if(result.getInt(1)==1){
                 Alert a=new Alert(Alert.AlertType.ERROR);
                 a.setContentText("Already Logged in");
                 a.setTitle("ERROR");
@@ -145,19 +146,17 @@ public class LoginScreen implements Initializable {
 
 
                 try {
-
+                    conn.close();
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
                     Parent root = (Parent) fxmlLoader.load();
 
-                    System.out.println("Changed");
                     MainMenu controller = fxmlLoader.getController();
                     controller.setUsername(usernameTBox.getText());
                     controller.setId(id);
 
-
                     Stage stage = new Stage();
                     stage.setScene(new Scene(root));
-                    stage.setOnCloseRequest(e->controller.stop());
+                    stage.setOnHiding(e->controller.stop());
                     stage.show();
 
 
@@ -173,11 +172,11 @@ public class LoginScreen implements Initializable {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
+        }  catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -186,7 +185,8 @@ public class LoginScreen implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-            File file = new File("login.txt");
+
+        File file = new File("login.txt");
             if(file.exists()) {
 
                 String str = usernameTBox.getText()+"\n"+passwordPBox.getText();

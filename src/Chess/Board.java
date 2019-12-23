@@ -56,7 +56,7 @@ public class Board implements Initializable {
         l1.setPrefWidth(70);
     }
 
-    public Board(GridPane boardGridPane) {
+    public Board(GridPane boardGridPane,ChessPiece.Color bojaIgraca)  {
 
         board[0] = new ChessPiece[16];
         board[1] = new ChessPiece[16];
@@ -124,13 +124,16 @@ public class Board implements Initializable {
                 UIboard[i][j].setAlignment(Pos.CENTER);
                 String pos=""+(char)('A'+i)+(j+1);
                 UIboard[i][j].setId(pos);
+                if(bojaIgraca== ChessPiece.Color.WHITE)
                 boardGridPane.add(UIboard[i][j],i,8-j);
+                else {
+                    boardGridPane.add(UIboard[i][j],i,j+1);
+                }
             }
         }
 
 refresh();
     }
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
