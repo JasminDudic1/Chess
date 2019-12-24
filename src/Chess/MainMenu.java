@@ -1,5 +1,6 @@
 package Chess;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -7,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,8 +22,19 @@ public class MainMenu implements Initializable {
 
     public String username="";
     public ChoiceBox roomsCBox;
+    public PasswordField passwordPBox;
     private int id=0;
     private ArrayList<Integer> rooms=new ArrayList<Integer>();
+
+
+    private String hash(String s){
+
+        int hash = 7;
+        for (int i = 0; i < s.length(); i++) {
+            hash = hash*31 + s.charAt(i);
+        }
+        return Integer.toString(hash);
+    }
 
     public void setId(int id) {
 
@@ -62,7 +75,21 @@ public class MainMenu implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-    refresh();
+        new Thread(()->{
+            while (true) {
+
+
+                try {
+                   Platform.runLater(()->refresh());
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }).start();
+
+    //refresh();
 
 
     }
@@ -84,7 +111,7 @@ public class MainMenu implements Initializable {
             Connection conn = DriverManager.getConnection(url,properties);*/
 
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:baza.db");
+            Connection conn=ConnectionDAO.getConn();
             Statement stmt = conn.createStatement();
             PreparedStatement upit=conn.prepareStatement("update player set online=0 where username=?");
             upit.setString(1,username);
@@ -94,7 +121,6 @@ public class MainMenu implements Initializable {
                 upit.setInt(1,i);
                 upit.executeUpdate();
             }
-            conn.close();
         } catch (ClassNotFoundException | SQLException e) {
 
             e.printStackTrace();
@@ -103,6 +129,7 @@ public class MainMenu implements Initializable {
     }
 
     public void refresh(){
+
         roomsCBox.getItems().clear();
 
 
@@ -117,33 +144,30 @@ public class MainMenu implements Initializable {
             Connection conn = DriverManager.getConnection(dburl,properties);*/
 
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:baza.db");
+            Connection conn=ConnectionDAO.getConn();
             Statement stmt = conn.createStatement();
-            PreparedStatement upit=conn.prepareStatement("Select id,white,black From room");
+            PreparedStatement upit=conn.prepareStatement("Select id,roomName From room where white!=? and black!=?");
+            upit.setInt(1,id);
+            upit.setInt(2,id);
             ResultSet result = upit.executeQuery();
             // if(result.next()==false) System.out.println("Nema");
             while(result.next()){
 
-                String s=result.getInt(2)+" : ";
-                System.out.println("Uzeo je "+result.getInt(1));
-                upit=conn.prepareStatement("Select username From player where id=?");
-                upit.setInt(1,result.getInt(2));
-                ResultSet result2 = upit.executeQuery();
-                if(result2.next())
-                    s+="White="+result2.getString(1);
-                else s+="White=/";
+                String s=result.getInt(1)+" : "+result.getString(2);
+                upit=conn.prepareStatement("Select white,black,password From room where id=?");
+                upit.setInt(1,Integer.parseInt(s.substring(0,s.indexOf(":")-1)));
 
-                upit=conn.prepareStatement("Select username From player  where id=?");
-                upit.setInt(1,result.getInt(3));
-                result2 = upit.executeQuery();
-                if(result2.next())
-                    s+="Black="+result2.getString(1);
-                else s+="Black=/";
+                ResultSet result2=upit.executeQuery();
+                result2.next();
+                if(result2.getInt(1)==1)s+=":Black Empty";
+                else s+=":White Empty";
+                if(!result2.getString(3).isEmpty()) s+=":password";
+
                 roomsCBox.getItems().add(s);
 
                 result2.close();
             }
-            conn.close();
+
 
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
@@ -163,16 +187,29 @@ public class MainMenu implements Initializable {
         String s=roomsCBox.getSelectionModel().getSelectedItem().toString();
         int pom=Integer.parseInt(s.substring(0,s.indexOf(':')-1));
 
+        Connection conn=ConnectionDAO.getConn();
+        PreparedStatement upit= null;
+        try {
+            upit = conn.prepareStatement("Select white,black,password from room where id=? ");
+            upit.setInt(1,pom);
+            ResultSet result=upit.executeQuery();
+            result.next();
+            String pass="";
+            if(!passwordPBox.getText().isEmpty())pass=hash(passwordPBox.getText());
+            if(!pass.equals(result.getString(3))){
+                passwordPBox.clear();
+                System.out.println("Password wrong,real pass is "+result.getString(3)+" but got "+pass);
+                return;
+            }
 
-        if(rooms.contains(pom)){
-            bojaIgraca= ChessPiece.Color.WHITE;
-        }else bojaIgraca= ChessPiece.Color.BLACK;
+            if(result.getInt(2)==0)bojaIgraca= ChessPiece.Color.BLACK;
 
-
-
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         try {
-            //conn.close();
+
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ChessRoom.fxml"));
             Parent root = (Parent) fxmlLoader.load();
 
@@ -183,9 +220,6 @@ public class MainMenu implements Initializable {
             stage.setScene(new Scene(root));
             stage.setOnHiding(e->controller.stop());
             stage.show();
-
-
-
             // ((Stage)usernameTBox.getScene().getWindow()).close();
         } catch(Exception e) {
             e.printStackTrace();
@@ -201,7 +235,28 @@ public class MainMenu implements Initializable {
     public void createClicked(ActionEvent actionEvent) {
 
 
+
         try {
+
+
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("CreateRoom.fxml"));
+            Parent root = (Parent) fxmlLoader.load();
+
+            CreateRoom controller = fxmlLoader.getController();
+            controller.setId(id);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            //stage.setOnHiding(e->controller.stop());
+            stage.show();
+
+
+            // ((Stage)usernameTBox.getScene().getWindow()).close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        //try {
             /*Properties properties=new Properties();
             properties.setProperty("user","Jasa");
             properties.setProperty("password","1234");
@@ -211,7 +266,7 @@ public class MainMenu implements Initializable {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conn = DriverManager.getConnection(dburl,properties);*/
 
-            Class.forName("org.sqlite.JDBC");
+           /* Class.forName("org.sqlite.JDBC");
             Connection conn = DriverManager.getConnection("jdbc:sqlite:baza.db");
             Statement stmt = conn.createStatement();
             PreparedStatement upit;
@@ -243,8 +298,13 @@ public class MainMenu implements Initializable {
         }
         refresh();
         enterClicked(actionEvent);
+*/
+
 
 
 
     }
+
+
+
 }

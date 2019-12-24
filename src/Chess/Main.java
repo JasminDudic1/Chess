@@ -15,8 +15,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
 
 
-        Connection con=ConnectionDAO.getInstance().getconn();
-        ConnectionDAO.getInstance().makeBase();
+        ConnectionDAO.createConn();
+        ConnectionDAO.makeBase();
 
         this.stg=primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource("LoginScreen.fxml"));

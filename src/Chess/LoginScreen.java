@@ -55,7 +55,8 @@ public class LoginScreen implements Initializable {
             //Connection conn = DriverManager.getConnection(url,properties);
 
             Class.forName("org.sqlite.JDBC");
-           Connection conn = DriverManager.getConnection("jdbc:sqlite:baza.db");
+          // Connection conn = DriverManager.getConnection("jdbc:sqlite:baza.db");
+            Connection conn=ConnectionDAO.getConn();
 
             Statement stmt = conn.createStatement();
             PreparedStatement upit=conn.prepareStatement("Select * From Player Where username=?");
@@ -81,7 +82,6 @@ public class LoginScreen implements Initializable {
                 passwordPBox.clear();
                 usernameTBox.clear();
             }
-        conn.close();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -100,7 +100,7 @@ public class LoginScreen implements Initializable {
            // Connection conn = DriverManager.getConnection(url,properties);
 
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:baza.db");
+            Connection conn=ConnectionDAO.getConn();
 
             Statement stmt = conn.createStatement();
             PreparedStatement upit=conn.prepareStatement("Select online,id From Player Where username=? and password=?");
@@ -146,7 +146,6 @@ public class LoginScreen implements Initializable {
 
 
                 try {
-                    conn.close();
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
                     Parent root = (Parent) fxmlLoader.load();
 

@@ -7,9 +7,9 @@ import java.util.Properties;
 public  class ConnectionDAO {
 
     private static ConnectionDAO instance = null;
-    private Connection conn=null;
+    private static Connection conn=null;
 
-    private ConnectionDAO() {
+    public static void createConn(){
 
         int pom=1;
 
@@ -44,24 +44,29 @@ public  class ConnectionDAO {
 
     }
 
-    public static ConnectionDAO getInstance(){
-        if(instance==null)instance=new ConnectionDAO();
-        return instance;
-
-    }
-
-    public Connection getconn(){
-        if(conn==null)getInstance();
+    public static Connection getConn(){
         return conn;
     }
 
-    public void makeBase(){
+
+    public static void makeBase(){
 
         File dbfile=new File("baza.db");
-        dbfile.delete();
         try {
-            conn = DriverManager.getConnection("jdbc:sqlite:baza.db");
-            String setup="CREATE TABLE \"player\" (\n" +
+            dbfile.delete();
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        try {
+            String setup="DROP TABLE player";
+            Statement stm= conn.createStatement();
+            stm.executeUpdate(setup);
+
+             setup="DROP TABLE room";
+             stm= conn.createStatement();
+            stm.executeUpdate(setup);
+
+             setup="CREATE TABLE \"player\" (\n" +
                     "\t\"id\"\tINTEGER PRIMARY KEY,\n" +
                     "\t\"username\"\tTEXT NOT NULL,\n" +
                     "\t\"password\"\tTEXT NOT NULL,\n" +
@@ -73,20 +78,21 @@ public  class ConnectionDAO {
                     "\t\"challenges\"\tINTEGER DEFAULT 0\n" +
                   //  "\tPRIMARY KEY(\"id\")\n" +
                     ");";
-            Statement stm= conn.createStatement();
+             stm= conn.createStatement();
             stm.execute(setup);
              setup="CREATE TABLE \"room\" (\n" +
-                    "\t\"id\"\tINTEGER PRIMARY KEY,\n" +
-                    "\t\"chat\"\tTEXT NOT NULL,\n" +
-                    "\t\"moves\"\tTEXT NOT NULL,\n" +
-                    "\t\"white\"\tINTEGER DEFAULT 0,\n" +
-                    "\t\"black\"\tINTEGER DEFAULT 0\n" +
-                    //"\tPRIMARY KEY(\"id\")\n" +
-                    ");";
+                     "\t\"id\"\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n" +
+                     "\t\"chat\"\tTEXT NOT NULL,\n" +
+                     "\t\"moves\"\tTEXT NOT NULL,\n" +
+                     "\t\"white\"\tINTEGER NOT NULL,\n" +
+                     "\t\"black\"\tINTEGER NOT NULL,\n" +
+                     "\t\"roomName\"\tTEXT NOT NULL,\n" +
+                     "\t\"password\"\tTEXT NOT NULL\n" +
+                     ");";
+
             stm= conn.createStatement();
             stm.execute(setup);
             System.out.printf("Napravio");
-            conn.close();
 
         } catch (SQLException e) {
             e.printStackTrace();

@@ -26,6 +26,7 @@ public class Board implements Initializable {
 
 
     private ChessPiece.Color igrac= ChessPiece.Color.WHITE;
+
     //region Labels
     public Label A1Lab,A2Lab,A3Lab,A4Lab,A5Lab,A6Lab,A7Lab,A8Lab;
     public Label B1Lab,B2Lab,B3Lab,B4Lab,B5Lab,B6Lab,B7Lab,B8Lab;
