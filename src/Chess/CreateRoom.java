@@ -17,7 +17,12 @@ public class CreateRoom {
     public TextField nameText;
     public TextField passText;
     private int id;
+    private Tab currentTab;
     private int roomID=0;
+
+    public void setCurrentTab(Tab t){
+        currentTab=t;
+    }
 
     private String hash(String s){
 
@@ -93,14 +98,17 @@ public class CreateRoom {
                 Parent root = (Parent) fxmlLoader.load();
 
                 ChessRoom controller = fxmlLoader.getController();
+                controller.setRoomId(roomID);
                 controller.draw(bojaIgraca);
+                currentTab.setText(roomID+":"+nameText.getText());
+                currentTab.setContent(root);
 
-                Stage stage = new Stage();
+                /*Stage stage = new Stage();
                 stage.setScene(new Scene(root));
                 stage.setOnHiding(e->controller.stop());
                 stage.show();
 
-                ((Stage) backBtn.getScene().getWindow()).close();
+                ((Stage) backBtn.getScene().getWindow()).close();*/
 
 
                 // ((Stage)usernameTBox.getScene().getWindow()).close();

@@ -6,9 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -23,8 +21,8 @@ public class MainMenu implements Initializable {
     public String username="";
     public ChoiceBox roomsCBox;
     public PasswordField passwordPBox;
+    private TabPane tabsTabPane;
     private int id=0;
-    private ArrayList<Integer> rooms=new ArrayList<Integer>();
 
 
     private String hash(String s){
@@ -44,6 +42,10 @@ public class MainMenu implements Initializable {
 
     public Label usernameLab;
 
+    public void setTabsTabPane(TabPane tabsTabPane) {
+        this.tabsTabPane = tabsTabPane;
+    }
+
     public void setUsername(String username)
     {
         System.out.println("Called");
@@ -54,27 +56,13 @@ public class MainMenu implements Initializable {
 
     public void exitClicked(ActionEvent actionEvent)
     {
-        stop();
         System.exit(0);
-    }
-
-    public void startClicked(ActionEvent actionEvent) {
-
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("sample.fxml"));
-            Parent root = (Parent) fxmlLoader.load();
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.show();
-            //Main.stg.close();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+
         new Thread(()->{
             while (true) {
 
@@ -94,41 +82,13 @@ public class MainMenu implements Initializable {
 
     }
 
-    public void stop(){
-
-        System.out.printf("Logging out");
-        for(int i:rooms)
-            System.out.println(i);
-
-        try {
-            /* Properties properties=new Properties();
-        properties.setProperty("user","Jasa");
-        properties.setProperty("password","1234");
-        properties.setProperty("useSSL","false");
-        properties.setProperty("serverTimezone","UTC");
-        String url = "jdbc:mysql://77.78.232.142:3306/chess";
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(url,properties);*/
-
-            Class.forName("org.sqlite.JDBC");
-            Connection conn=ConnectionDAO.getConn();
-            Statement stmt = conn.createStatement();
-            PreparedStatement upit=conn.prepareStatement("update player set online=0 where username=?");
-            upit.setString(1,username);
-            upit.executeUpdate();
-            for(int i:rooms){
-                upit=conn.prepareStatement("delete from room where id=? and (white!=0 or black!=0)");
-                upit.setInt(1,i);
-                upit.executeUpdate();
-            }
-        } catch (ClassNotFoundException | SQLException e) {
-
-            e.printStackTrace();
-        }
-
-    }
 
     public void refresh(){
+
+        boolean isShowing=roomsCBox.isShowing();
+        Object selected=null;
+        if(roomsCBox.getSelectionModel().getSelectedItem()!=null)
+            selected=roomsCBox.getSelectionModel().getSelectedItem();
 
         roomsCBox.getItems().clear();
 
@@ -146,7 +106,7 @@ public class MainMenu implements Initializable {
             Class.forName("org.sqlite.JDBC");
             Connection conn=ConnectionDAO.getConn();
             Statement stmt = conn.createStatement();
-            PreparedStatement upit=conn.prepareStatement("Select id,roomName From room where white!=? and black!=?");
+            PreparedStatement upit=conn.prepareStatement("Select id,roomName From room where white!=? and black!=? and length(moves)=0");
             upit.setInt(1,id);
             upit.setInt(2,id);
             ResultSet result = upit.executeQuery();
@@ -163,18 +123,25 @@ public class MainMenu implements Initializable {
                 else s+=":White Empty";
                 if(!result2.getString(3).isEmpty()) s+=":password";
 
+
+
                 roomsCBox.getItems().add(s);
+
 
                 result2.close();
             }
+
 
 
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
 
-        if(roomsCBox.getItems().size()!=0)
-            roomsCBox.getSelectionModel().selectLast();
+        if(selected!=null && roomsCBox.getItems().contains(selected))
+            roomsCBox.getSelectionModel().select(selected);
+
+            //roomsCBox.getSelectionModel().selectLast();
+           if(isShowing) roomsCBox.show();
 
     }
 
@@ -185,15 +152,18 @@ public class MainMenu implements Initializable {
 
         ChessPiece.Color bojaIgraca= ChessPiece.Color.WHITE;
         String s=roomsCBox.getSelectionModel().getSelectedItem().toString();
+        roomsCBox.getSelectionModel().select(null);
         int pom=Integer.parseInt(s.substring(0,s.indexOf(':')-1));
+        String roomName="";
 
         Connection conn=ConnectionDAO.getConn();
         PreparedStatement upit= null;
         try {
-            upit = conn.prepareStatement("Select white,black,password from room where id=? ");
+            upit = conn.prepareStatement("Select white,black,password,roomname from room where id=? ");
             upit.setInt(1,pom);
             ResultSet result=upit.executeQuery();
             result.next();
+            roomName=result.getString(4);
             String pass="";
             if(!passwordPBox.getText().isEmpty())pass=hash(passwordPBox.getText());
             if(!pass.equals(result.getString(3))){
@@ -210,16 +180,26 @@ public class MainMenu implements Initializable {
 
         try {
 
+            upit.close();
+            if(bojaIgraca== ChessPiece.Color.BLACK)
+            upit=conn.prepareStatement("Update room set black=? where id=?");
+            else upit=conn.prepareStatement("Update room set white=? where id=?");
+
+            upit.setInt(1,id);
+            upit.setInt(2,pom);
+            upit.executeUpdate();
+
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ChessRoom.fxml"));
             Parent root = (Parent) fxmlLoader.load();
 
             ChessRoom controller = fxmlLoader.getController();
+            controller.setRoomId(pom);
             controller.draw(bojaIgraca);
 
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setOnHiding(e->controller.stop());
-            stage.show();
+            Tab tab=new Tab(pom+":"+roomName,root);
+            tab.setOnClosed(e->controller.closeRoom());
+            tabsTabPane.getTabs().add(tab);
+
             // ((Stage)usernameTBox.getScene().getWindow()).close();
         } catch(Exception e) {
             e.printStackTrace();
@@ -235,70 +215,35 @@ public class MainMenu implements Initializable {
     public void createClicked(ActionEvent actionEvent) {
 
 
-
         try {
 
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("CreateRoom.fxml"));
-            Parent root = (Parent) fxmlLoader.load();
+            Parent root =  fxmlLoader.load();
 
             CreateRoom controller = fxmlLoader.getController();
             controller.setId(id);
 
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
+            //Stage stage = new Stage();
+            //stage.setScene(new Scene(root));
+            Tab tab=new Tab("Creating room",root);
+            controller.setCurrentTab(tab);
+            tabsTabPane.getTabs().add(tab);
+
+           // ((Stage)tabsTabPane.getScene().getWindow()).setScene(null);
+
             //stage.setOnHiding(e->controller.stop());
-            stage.show();
+
+           // stage.show();
 
 
-            // ((Stage)usernameTBox.getScene().getWindow()).close();
+
+
         } catch(Exception e) {
             e.printStackTrace();
         }
 
-        //try {
-            /*Properties properties=new Properties();
-            properties.setProperty("user","Jasa");
-            properties.setProperty("password","1234");
-            properties.setProperty("useSSL","false");
-            properties.setProperty("serverTimezone","UTC");
-            String dburl = "jdbc:mysql://77.78.232.142:3306/chess";
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(dburl,properties);*/
 
-           /* Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:baza.db");
-            Statement stmt = conn.createStatement();
-            PreparedStatement upit;
-            upit=conn.prepareStatement("Select id,white,black From room where (white=? and black=0) or (white=0 and black=?)");
-
-            upit.setInt(1,id);
-            upit.setInt(2,id);
-            ResultSet result = upit.executeQuery();
-            if(result.next()){
-                System.out.printf("Vec postoji");
-                conn.close();
-                return;
-            }
-
-             //upit=conn.prepareStatement("INSERT into room values(null,'','',?,default)");
-            upit=conn.prepareStatement("INSERT into room values(null,'','',?,0)");
-            upit.setInt(1,id);
-            upit.executeUpdate();
-
-            upit=conn.prepareStatement("Select Max(id) from room");
-            ResultSet rs=upit.executeQuery();
-            int maxRoom=0;
-            if(rs.next()) maxRoom=rs.getInt(1);
-            rooms.add(maxRoom);
-
-            conn.close();
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-        }
-        refresh();
-        enterClicked(actionEvent);
-*/
 
 
 

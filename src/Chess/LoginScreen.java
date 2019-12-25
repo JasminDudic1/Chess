@@ -114,6 +114,7 @@ public class LoginScreen implements Initializable {
                 a.setHeaderText("");
                 a.show();
                 passwordPBox.clear();
+                return;
             }else if(result.getInt(1)==1){
                 Alert a=new Alert(Alert.AlertType.ERROR);
                 a.setContentText("Already Logged in");
@@ -121,6 +122,7 @@ public class LoginScreen implements Initializable {
                 a.setHeaderText("");
                 a.show();
                 passwordPBox.clear();
+                return;
             }
             else{
                 Alert a=new Alert(Alert.AlertType.INFORMATION);
@@ -143,19 +145,24 @@ public class LoginScreen implements Initializable {
 
                 }
 
-
-
                 try {
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
                     Parent root = (Parent) fxmlLoader.load();
+
 
                     MainMenu controller = fxmlLoader.getController();
                     controller.setUsername(usernameTBox.getText());
                     controller.setId(id);
 
+                    fxmlLoader = new FXMLLoader(getClass().getResource("Tabs.fxml"));
+                    Parent tabsRoot=(Parent)fxmlLoader.load();
+                    Tabs tabsController=fxmlLoader.getController();
+                    tabsController.getTabsPane().getTabs().add(new Tab("Main menu",root));
+                    controller.setTabsTabPane(tabsController.getTabsPane());
+
                     Stage stage = new Stage();
-                    stage.setScene(new Scene(root));
-                    stage.setOnHiding(e->controller.stop());
+                    stage.setScene(new Scene(tabsRoot));
+                    //stage.setOnHiding(e->controller.stop());
                     stage.show();
 
 

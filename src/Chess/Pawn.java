@@ -11,8 +11,8 @@ public class Pawn extends ChessPiece {
     Color boja;
     int mogucPomak=2;
     char znak='P';
-    Image iconImgW=new Image("Icons/WhitePawn.png");
-    Image iconImgB=new Image("Icons/BlackPawn.png");
+    Image iconImgW=new Image("Icons/WhitePawn.png", 100, 150, false, false);
+    Image iconImgB=new Image("Icons/BlackPawn.png", 100, 150, false, false);
     int moves=0;
 
     Pawn(String pozicija,Color boja)

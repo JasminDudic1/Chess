@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="719.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Chess.ChessRoom">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="512.0" prefWidth="827.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Chess.ChessRoom">
    <children>
-      <GridPane fx:id="boardGridPane" layoutX="305.0" layoutY="26.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0">
+      <GridPane fx:id="boardGridPane" layoutX="305.0" layoutY="56.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0" />
@@ -35,5 +37,9 @@
         </rowConstraints>
       </GridPane>
       <TextArea layoutX="14.0" layoutY="15.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="260.0" />
+      <Label fx:id="OpponentLab" layoutX="316.0" layoutY="14.0" text="Opponent:" />
+      <Label fx:id="PlayerLab" layoutX="299.0" layoutY="469.0" text="Player: " />
+      <Label fx:id="colorLab" layoutX="742.0" layoutY="206.0" prefHeight="39.0" prefWidth="71.0" text="'s Turn" />
+      <Button fx:id="exitBtn" layoutX="14.0" layoutY="454.0" mnemonicParsing="false" onAction="#exitClicked" text="Exit" />
    </children>
 </AnchorPane>

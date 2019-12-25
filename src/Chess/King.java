@@ -10,8 +10,8 @@ public class King extends ChessPiece {
     char znak='K';
     int moves=0;
 
-    Image iconImgW=new Image("Icons/WhiteKing.png");
-    Image iconImgB=new Image("Icons/BlackKing.png");
+    Image iconImgW=new Image("Icons/WhiteKing.png", 100, 150, false, false);
+    Image iconImgB=new Image("Icons/BlackKing.png", 100, 150, false, false);
 
     King(String pozicija,Color boja){
 

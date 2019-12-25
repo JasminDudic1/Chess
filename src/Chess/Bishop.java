@@ -9,8 +9,8 @@ public class Bishop extends ChessPiece {
     Color boja;
     char znak='B';
 
-    Image iconImgW=new Image("Icons/WhiteBishop.png");
-    Image iconImgB=new Image("Icons/BlackBishop.png");
+    Image iconImgW=new Image("Icons/WhiteBishop.png" ,100, 150, false, false);
+    Image iconImgB=new Image("Icons/BlackBishop.png", 100, 150, false, false);
 
     Bishop(String pozicija,Color boja){
         if(pozicija.length()!=2)throw new IllegalArgumentException("Van ploce");

@@ -60,11 +60,15 @@ public  class ConnectionDAO {
         try {
             String setup="DROP TABLE player";
             Statement stm= conn.createStatement();
-            stm.executeUpdate(setup);
+            try {
+                stm.executeUpdate(setup);
+            }catch(Exception ex){}
 
-             setup="DROP TABLE room";
-             stm= conn.createStatement();
-            stm.executeUpdate(setup);
+            try {
+                setup = "DROP TABLE room";
+                stm = conn.createStatement();
+                stm.executeUpdate(setup);
+            }catch(Exception e){}
 
              setup="CREATE TABLE \"player\" (\n" +
                     "\t\"id\"\tINTEGER PRIMARY KEY,\n" +

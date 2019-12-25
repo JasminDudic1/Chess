@@ -1,5 +1,6 @@
 package Chess;
 
+import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -10,33 +11,34 @@ import javafx.scene.layout.GridPane;
 
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
-public class Board implements Initializable {
+public class Board {
 
     public static int jede = 0;
     public ImageView A8Lab1;
     public Label A8Lab11;
     public GridPane Grid;
-    public Label ErrorLab;
     String castle1="";
     String passant1="";
     boolean picking=false;
+    private int roomId=0;
+    private String moves="";
+    PreparedStatement getMoves,setMoves,getWhite,getBlack;
+    private boolean gameReady=false;
+    private Label colorLab;
 
 
-
-    private ChessPiece.Color igrac= ChessPiece.Color.WHITE;
+    private ChessPiece.Color turnColor= ChessPiece.Color.WHITE;
+    private ChessPiece.Color currentPlayer= ChessPiece.Color.WHITE;
 
     //region Labels
-    public Label A1Lab,A2Lab,A3Lab,A4Lab,A5Lab,A6Lab,A7Lab,A8Lab;
-    public Label B1Lab,B2Lab,B3Lab,B4Lab,B5Lab,B6Lab,B7Lab,B8Lab;
-    public Label C1Lab,C2Lab,C3Lab,C4Lab,C5Lab,C6Lab,C7Lab,C8Lab;
-    public Label D1Lab,D2Lab,D3Lab,D4Lab,D5Lab,D6Lab,D7Lab,D8Lab;
-    public Label E1Lab,E2Lab,E3Lab,E4Lab,E5Lab,E6Lab,E7Lab,E8Lab;
-    public Label F1Lab,F2Lab,F3Lab,F4Lab,F5Lab,F6Lab,F7Lab,F8Lab;
-    public Label G1Lab,G2Lab,G3Lab,G4Lab,G5Lab,G6Lab,G7Lab,G8Lab;
-    public Label H1Lab,H2Lab,H3Lab,H4Lab,H5Lab,H6Lab,H7Lab,H8Lab;
-    public Label TextLab;
 
     private TabPane tabpane;
 
@@ -50,6 +52,63 @@ public class Board implements Initializable {
     private ChessPiece[][] board = new ChessPiece[2][];
     private Label[][]UIboard=new Label[8][];
 
+    public ChessPiece.Color getCurrentPlayer(){
+        return currentPlayer;
+    }
+
+    public void setColorLab(Label lab){
+        this.colorLab=lab;
+        colorLab.setStyle("-fx-background-color: Gray;-fx-border-color: Gray");
+    }
+
+    public void setGameReady(){
+
+        gameReady=true;
+        colorLab.setStyle("-fx-background-color: WHITE;-fx-border-color: BLACK;-fx-text-fill: BLACK;");
+        setupGettingMovesFromDB();
+
+    }
+
+    private void checkBaseForNewMoves(){
+
+        if(turnColor==currentPlayer){
+            return;
+        }
+
+        Connection conn=ConnectionDAO.getConn();
+        try {
+
+            ResultSet res=getMoves.executeQuery();
+            ArrayList<String> temp;
+            if(res.next()){
+                String baseMoves=res.getString(1);
+                if(baseMoves.isEmpty())return;
+                 temp = new ArrayList<String>(Arrays.asList(baseMoves.split(",")));
+
+                 if(!baseMoves.equals(moves)){
+
+                     String move=temp.get(temp.size()-1);
+                     String oldPosition=move.substring(move.indexOf("(")+1,move.indexOf("-"));
+                     String newPosition=move.substring(move.indexOf("-")+1,move.indexOf(")"));
+                     moves=baseMoves;
+                     //System.out.println("Moving to"+);
+                     move(oldPosition,newPosition);
+                     refresh();
+                     changePlayer();
+                 }
+            }else System.out.println("Nema rezultata?");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void setRoomId(int id){
+        this.roomId=id;
+    }
+
     private void labSetup(Label l1){
         l1.setAlignment(Pos.CENTER);
         l1.setStyle("-fx-background-color: gray;-fx-text-fill: black;");
@@ -58,6 +117,8 @@ public class Board implements Initializable {
     }
 
     public Board(GridPane boardGridPane,ChessPiece.Color bojaIgraca)  {
+
+        currentPlayer=bojaIgraca;
 
         board[0] = new ChessPiece[16];
         board[1] = new ChessPiece[16];
@@ -112,7 +173,9 @@ public class Board implements Initializable {
             Label l2=new Label();
             l2.setText(""+(8-j));
             labSetup(l2);
+            if(bojaIgraca== ChessPiece.Color.WHITE)
             boardGridPane.add(l2,8,j+1);
+            else boardGridPane.add(l2,8,8-j);
         }
 
         for(int i=0;i<8;i++){
@@ -136,167 +199,59 @@ public class Board implements Initializable {
 refresh();
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-      /*  for(int i=0;i<8;i++)
-            UIboard[i] = new Label[8];
+    private void setupGettingMovesFromDB() {
 
 
-        //region UIBoard
-        UIboard[0][0]=A1Lab;
-        UIboard[0][1]=A2Lab;
-        UIboard[0][2]=A3Lab;
-        UIboard[0][3]=A4Lab;
-        UIboard[0][4]=A5Lab;
-        UIboard[0][5]=A6Lab;
-        UIboard[0][6]=A7Lab;
-        UIboard[0][7]=A8Lab;
+        try {
+            getMoves=ConnectionDAO.getConn().prepareStatement("Select moves from room where id=?");
+            getMoves.setInt(1,roomId);
+            setMoves=ConnectionDAO.getConn().prepareStatement("Update room set moves=? where id=?");
+            setMoves.setInt(2,roomId);
 
-        UIboard[1][0]=B1Lab;
-        UIboard[1][1]=B2Lab;
-        UIboard[1][2]=B3Lab;
-        UIboard[1][3]=B4Lab;
-        UIboard[1][4]=B5Lab;
-        UIboard[1][5]=B6Lab;
-        UIboard[1][6]=B7Lab;
-        UIboard[1][7]=B8Lab;
-
-        UIboard[2][0]=C1Lab;
-        UIboard[2][1]=C2Lab;
-        UIboard[2][2]=C3Lab;
-        UIboard[2][3]=C4Lab;
-        UIboard[2][4]=C5Lab;
-        UIboard[2][5]=C6Lab;
-        UIboard[2][6]=C7Lab;
-        UIboard[2][7]=C8Lab;
-
-        UIboard[3][0]=D1Lab;
-        UIboard[3][1]=D2Lab;
-        UIboard[3][2]=D3Lab;
-        UIboard[3][3]=D4Lab;
-        UIboard[3][4]=D5Lab;
-        UIboard[3][5]=D6Lab;
-        UIboard[3][6]=D7Lab;
-        UIboard[3][7]=D8Lab;
-
-        UIboard[4][0]=E1Lab;
-        UIboard[4][1]=E2Lab;
-        UIboard[4][2]=E3Lab;
-        UIboard[4][3]=E4Lab;
-        UIboard[4][4]=E5Lab;
-        UIboard[4][5]=E6Lab;
-        UIboard[4][6]=E7Lab;
-        UIboard[4][7]=E8Lab;
-
-        UIboard[5][0]=F1Lab;
-        UIboard[5][1]=F2Lab;
-        UIboard[5][2]=F3Lab;
-        UIboard[5][3]=F4Lab;
-        UIboard[5][4]=F5Lab;
-        UIboard[5][5]=F6Lab;
-        UIboard[5][6]=F7Lab;
-        UIboard[5][7]=F8Lab;
-
-        UIboard[6][0]=G1Lab;
-        UIboard[6][1]=G2Lab;
-        UIboard[6][2]=G3Lab;
-        UIboard[6][3]=G4Lab;
-        UIboard[6][4]=G5Lab;
-        UIboard[6][5]=G6Lab;
-        UIboard[6][6]=G7Lab;
-        UIboard[6][7]=G8Lab;
-
-        UIboard[7][0]=H1Lab;
-        UIboard[7][1]=H2Lab;
-        UIboard[7][2]=H3Lab;
-        UIboard[7][3]=H4Lab;
-        UIboard[7][4]=H5Lab;
-        UIboard[7][5]=H6Lab;
-        UIboard[7][6]=H7Lab;
-        UIboard[7][7]=H8Lab;
-
-
-
-        //endregion
-
-        for(int i=0;i<8;i++)
-            for(int j=0;j<8;j++)
-            UIboard[i][j].setMaxWidth(Double.MAX_VALUE);
-
-            refresh();
-
-//        Image img1 =new Image("Transparent.png");
-//        ImageView imgv=new ImageView(img1);
-//        imgv.fitHeightProperty().bind(TextLab.heightProperty());
-//        imgv.fitWidthProperty().bind(TextLab.widthProperty());
-//
-//        A8Lab11.setText("");
-//        A8Lab11.setGraphic(imgv);
-//        A8Lab11.setStyle("-fx-background-color: darkorange;-fx-text-fill: gray;");
-//
-//        A8Lab11.setMaxWidth(Double.MAX_VALUE);
-*/
-    }
-
-    void move(Class type, ChessPiece.Color color, String position) {
-
-        position = position.toLowerCase();
-        ChessPiece naLokaciji = naLokaciji(position);
-
-        boolean uSahu=false;
-
-        if (naLokaciji != null) {
-            if(naLokaciji.getClass()==King.class) throw new IllegalChessMoveException("Kralj se ne moze pojest");
-            if (naLokaciji.getColor() == color) throw new IllegalChessMoveException("Ima ista boja na poziciji");
-            if (naLokaciji.getColor() != color) jede = 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        int boja = 0;
-        if (color == ChessPiece.Color.BLACK) boja = 1;
+        new Thread(()->{
+            while (true) {
 
-        figuraLoop:
-        for (ChessPiece c : board[boja]) {
-
-            if(c.getClass()!=type)continue;
-            if(!praznaPutanja(c.getPosition(), position) && c.getClass()!=Knight.class) continue;
-            try{
-                String staraPozicija=c.getPosition();
-
-                c.move(position);//pomjeri
-                if(jede==1)naLokaciji.postaviNa("X");
-
-                uSahu = isCheck(color);
-                if(uSahu==true){
-                    c.postaviNa(staraPozicija);
-                    naLokaciji.postaviNa(position);
-                    continue figuraLoop;
+                try {
+                    Platform.runLater(()->checkBaseForNewMoves());
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-
-                jede=0;
-                return;
-            }catch (Exception e){
-                continue figuraLoop;
             }
-        }
-        jede=0;
-        throw new IllegalChessMoveException("Nije moguce napraviti taj potez");
+
+        }).start();
+
 
     }
 
     void move(String oldPosition, String newPosition) {
 
 
+        char newPiece=' ';
        try{
+
+           if(newPosition.length()==3){
+               newPiece=newPosition.charAt(2);
+               newPosition=newPosition.substring(0,2);
+           }
+
            ChessPiece c1=naLokaciji(newPosition);
            ChessPiece c2=naLokaciji(oldPosition);
 
            testMove(oldPosition,newPosition);
+
            //region Castling
            newPosition=newPosition.toLowerCase();
            castle1=castle1.toLowerCase();
 
            if(newPosition.equals(castle1)){
+
+            if(currentPlayer!=turnColor) System.out.println("Castled");
+            else System.out.println("I castled");
 
              String rookStr="xx";
 
@@ -313,7 +268,6 @@ refresh();
                }
                 castle1="";
 
-               ErrorLab.setText(rookStr);
 
 
            }
@@ -346,15 +300,35 @@ refresh();
            c2.moved();
            lastMoved=c2;
 
+
            if(c1!=null)
                c1.postaviNa("X");
 
-           if(c2.getClass()==Pawn.class && (newPosition.charAt(1)=='8' || newPosition.charAt(1)=='1')){
+           if(newPiece!=' '){
+               System.out.println("Changing");
+               if(newPiece=='D')c2=new Queen(newPosition,c2.getColor());
+               else if(newPiece=='N')c2=new Knight(newPosition,c2.getColor());
+               else if(newPiece=='B')c2=new Bishop(newPosition,c2.getColor());
+               else if(newPiece=='R')c2=new Rook(newPosition,c2.getColor());
+                return;
+           }
+
+
+           if(c2.getClass()==Pawn.class && (newPosition.charAt(1)=='8' || newPosition.charAt(1)=='1') && newPiece==' '){
+               moves += " (" + oldPosition.toLowerCase() + "-" + newPosition.toLowerCase();
                picking=true;
-               ErrorLab.setText("picking");
+           }else if(currentPlayer==turnColor) {
+               moves += " (" + oldPosition.toLowerCase() + "-" + newPosition.toLowerCase() + ") ,";
+               setMoves.setString(1, moves);
+               setMoves.executeUpdate();
+               changePlayer();
            }
 
        }catch (Exception e){
+           if(currentPlayer== ChessPiece.Color.WHITE)
+           System.out.println("Error kod white "+e.toString()+" sa "+oldPosition+" na "+newPosition);
+           else System.out.println("Error kod black "+e.toString()+" sa "+oldPosition+" na "+newPosition);
+           e.printStackTrace();
     throw new IllegalChessMoveException(e.toString());
        }
 
@@ -385,41 +359,6 @@ refresh();
         }
         jede = 0;
         return false;
-    }
-
-    public void ispisi() {
-
-        //region GornjiRedSlova
-        System.out.print(" |");
-        for (char i = 'a'; i <= 'h'; i++)
-            System.out.print(i + " |");
-        System.out.println();
-        //endregion
-
-        //region BrojeviIFigure
-        for (int i = 1; i <= 8; i++) {
-            System.out.print(9 - i + "|");//lijevi brojevi
-            for (char j = 'a'; j <= 'h'; j++) {
-                ChessPiece c = naLokaciji("" + j + (9 - i));
-                if (c == null) System.out.print("  |");
-                else {
-                    String boja = "w";
-                    if (c.getColor() == ChessPiece.Color.BLACK) boja = "b";
-                    System.out.print(c.getZnak() + boja + "|");
-                }
-            }
-
-            System.out.println(9 - i + "");//desni brojevi
-        }
-        //endregion
-
-        //region DonjiRedSlova
-        System.out.print(" |");
-        for (char i = 'a'; i <= 'h'; i++)
-            System.out.print(i + " |");
-        System.out.println();
-        //endregion
-
     }
 
     private ChessPiece naLokaciji(String lokacija) {
@@ -461,19 +400,22 @@ refresh();
 
     public void changePlayer(){
 
-        if(igrac== ChessPiece.Color.WHITE){
-            igrac= ChessPiece.Color.BLACK;
-            TextLab.setText("BLACK");
+        if(turnColor== ChessPiece.Color.WHITE){
+            turnColor= ChessPiece.Color.BLACK;
+            colorLab.setStyle("-fx-background-color: BLACK;-fx-border-color: WHITE;-fx-text-fill: WHITE;");
+
         }
         else{
-            igrac= ChessPiece.Color.WHITE;
-            TextLab.setText("WHITE");
+            colorLab.setStyle("-fx-background-color: WHITE;-fx-border-color: BLACK;-fx-text-fill: BLACK;");
+            turnColor= ChessPiece.Color.WHITE;
         }
 
     }
 
     public void Clicked(MouseEvent mouseEvent) {
 
+
+        if(turnColor!=currentPlayer || gameReady==false)return;
 
         Label label = (Label) mouseEvent.getSource();
 
@@ -485,56 +427,62 @@ refresh();
 
         //region Picked
         if(picking==true){
-//            ErrorLab.setText("Picking");
+        char c=' ';
             int i=0,j=0;
-
-            for(i=0;i<2;i++){
-
-                for(j=0;j<16;j++){
+            for(i=0;i<2;i++)
+                for(j=0;j<16;j++)
                     if(board[i][j]==lastMoved){
                         //region Change
                         if(pozicija.equals("D4")){
                             board[i][j]=new Queen(lastMoved.getPosition(),lastMoved.getColor());
                             picking=false;
                             refresh();
-                            return;
+                            c='D';
                         }
                         else if(pozicija.equals("E4")){
                             board[i][j]=new Bishop(lastMoved.getPosition(),lastMoved.getColor());
                             picking=false;
                             refresh();
-                            return;
+                            c='B';
+
                         }
                         else if(pozicija.equals("D5")){
                             board[i][j]=new Knight(lastMoved.getPosition(),lastMoved.getColor());
                             picking=false;
                             refresh();
-                            return;
+                            c='N';
                         }
                         else if(pozicija.equals("E5")){
                             board[i][j]=new Rook(lastMoved.getPosition(),lastMoved.getColor());
                             picking=false;
                             refresh();
-                            return;
+                            c='R';
                         }
-                        else ErrorLab.setText("WTF");
+                        if(c!=' '){
+
+                            if(currentPlayer==turnColor) {
+                                moves += c+ ") ,";
+                                try {
+                                    setMoves.setString(1, moves);
+                                    setMoves.executeUpdate();
+                                    return;
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        }
                         //endregion
-
-
                     }
-                }
-
-            }
-
-
 
         }
 
         //endregion
 
-       /* if(selectedPozicija=="")
+        if(selectedPozicija=="")
             if(naLok!=null)
-                if(naLok.getColor()!=igrac)return;*/
+                if(naLok.getColor()!=currentPlayer)return;
 
        //region Clicked
 
@@ -552,10 +500,9 @@ refresh();
                 try{
 
                     move(selectedPozicija,pozicija);
-                    changePlayer();
+                   // if(picking==false)changePlayer();
 
                 }catch(Exception ex){
-                   // ErrorLab.setText(ex.toString());
                 }
 
                 selectedPozicija="";
@@ -580,9 +527,8 @@ refresh();
 
                 try {
                     move(selectedPozicija, pozicija);
-                    changePlayer();
+                   // changePlayer();
                 }catch (Exception ex){
-                    //ErrorLab.setText(ex.toString());
                 }
 
                 selectedPozicija="";
