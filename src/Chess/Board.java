@@ -91,7 +91,6 @@ public class Board {
                      String oldPosition=move.substring(move.indexOf("(")+1,move.indexOf("-"));
                      String newPosition=move.substring(move.indexOf("-")+1,move.indexOf(")"));
                      moves=baseMoves;
-                     //System.out.println("Moving to"+);
                      move(oldPosition,newPosition);
                      refresh();
                      changePlayer();
@@ -306,10 +305,24 @@ refresh();
 
            if(newPiece!=' '){
                System.out.println("Changing");
-               if(newPiece=='D')c2=new Queen(newPosition,c2.getColor());
+
+                   for(int i=0;i<2;i++)
+                       for(int j=0;j<16;j++)
+                           if(board[i][j]==lastMoved){
+                               //region Change
+                               if(newPiece=='D')board[i][j]=new Queen(newPosition,c2.getColor());
+                               else if(newPiece=='N')board[i][j]=new Knight(newPosition,c2.getColor());
+                               else if(newPiece=='B')board[i][j]=new Bishop(newPosition,c2.getColor());
+                               else if(newPiece=='R')board[i][j]=new Rook(newPosition,c2.getColor());
+                               //endregion
+                           }
+
+
+             /*  if(newPiece=='D')c2=new Queen(newPosition,c2.getColor());
                else if(newPiece=='N')c2=new Knight(newPosition,c2.getColor());
                else if(newPiece=='B')c2=new Bishop(newPosition,c2.getColor());
-               else if(newPiece=='R')c2=new Rook(newPosition,c2.getColor());
+               else if(newPiece=='R')c2=new Rook(newPosition,c2.getColor());*/
+            // changePlayer();
                 return;
            }
 
@@ -465,7 +478,6 @@ refresh();
                                 try {
                                     setMoves.setString(1, moves);
                                     setMoves.executeUpdate();
-                                    return;
                                 } catch (SQLException e) {
                                     e.printStackTrace();
                                 }
@@ -475,7 +487,8 @@ refresh();
                         }
                         //endregion
                     }
-
+                changePlayer();
+                    return;
         }
 
         //endregion
