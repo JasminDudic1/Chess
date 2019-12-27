@@ -19,7 +19,8 @@ import java.util.ResourceBundle;
 public class MainMenu implements Initializable {
 
     public String username="";
-    public ChoiceBox roomsCBox;
+    //public ChoiceBox roomsCBox;
+    public ListView roomsCBox;
     public PasswordField passwordPBox;
     private TabPane tabsTabPane;
     private int id=0;
@@ -84,7 +85,7 @@ public class MainMenu implements Initializable {
 
     public void refresh(){
 
-        boolean isShowing=roomsCBox.isShowing();
+        //boolean isShowing=roomsCBox.isShowing();
         Object selected=null;
         if(roomsCBox.getSelectionModel().getSelectedItem()!=null)
             selected=roomsCBox.getSelectionModel().getSelectedItem();
@@ -102,10 +103,9 @@ public class MainMenu implements Initializable {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conn = DriverManager.getConnection(dburl,properties);*/
 
-            Class.forName("org.sqlite.JDBC");
             Connection conn=ConnectionDAO.getConn();
             Statement stmt = conn.createStatement();
-            PreparedStatement upit=conn.prepareStatement("Select id,roomName From room where white!=? and black!=? and length(moves)=0");
+            PreparedStatement upit=conn.prepareStatement("Select id,roomName,length(moves) From room where white!=? and black!=?");
             upit.setInt(1,id);
             upit.setInt(2,id);
             ResultSet result = upit.executeQuery();
@@ -113,34 +113,32 @@ public class MainMenu implements Initializable {
             while(result.next()){
 
                 String s=result.getInt(1)+" : "+result.getString(2);
-                upit=conn.prepareStatement("Select white,black,password From room where id=?");
+                upit=conn.prepareStatement("Select white,black,password From room where id=? limit 1");
                 upit.setInt(1,Integer.parseInt(s.substring(0,s.indexOf(":")-1)));
 
                 ResultSet result2=upit.executeQuery();
                 result2.next();
-                if(result2.getInt(1)==1)s+=":Black Empty";
-                else s+=":White Empty";
+
+                if(result2.getInt(1)==0)s+=":White Empty";
+                else if(result2.getInt(2)==0)s+=":Black Empty";
+                else s+=":Spectate";
+
                 if(!result2.getString(3).isEmpty()) s+=":password";
 
-
-
                 roomsCBox.getItems().add(s);
-
 
                 result2.close();
             }
 
 
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch ( SQLException e) {
             e.printStackTrace();
         }
 
         if(selected!=null && roomsCBox.getItems().contains(selected))
             roomsCBox.getSelectionModel().select(selected);
 
-            //roomsCBox.getSelectionModel().selectLast();
-           if(isShowing) roomsCBox.show();
 
     }
 
@@ -212,10 +210,6 @@ public class MainMenu implements Initializable {
 
     }
 
-    public void refreshClick(ActionEvent actionEvent) {
-        refresh();
-    }
-
     public void createClicked(ActionEvent actionEvent) {
 
 
@@ -255,5 +249,28 @@ public class MainMenu implements Initializable {
     }
 
 
+    public void profilesClicked(ActionEvent actionEvent) {
 
+        try {
+
+
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ProfilePage.fxml"));
+            Parent root = (Parent) fxmlLoader.load();
+
+            ProfilePage controller = fxmlLoader.getController();
+            controller.setPlayer(id,id);
+
+
+            Tab tab=new Tab("Profiles",root);
+            controller.setCurrentTab(tab);
+
+            tabsTabPane.getTabs().add(tab);
+            tabsTabPane.getSelectionModel().select(tab);
+
+            // ((Stage)usernameTBox.getScene().getWindow()).close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }

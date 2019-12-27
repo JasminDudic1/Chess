@@ -162,6 +162,7 @@ public class LoginScreen implements Initializable {
 
                     Stage stage = new Stage();
                     stage.setScene(new Scene(tabsRoot));
+                    stage.setTitle(username);
                     //stage.setOnHiding(e->controller.stop());
                     stage.show();
 

@@ -134,13 +134,20 @@ public class Board {
 
     public void setPlayersIds(int p1, int p2) {
 
-        if (currentPlayer == ChessPiece.Color.WHITE) {
-            playerID = p1;
-            opponenetID = p2;
-        } else {
-            playerID = p2;
-            opponenetID = p1;
+        playerID=p1;
+        opponenetID=p2;
+        if(currentPlayer== ChessPiece.Color.BLACK)return;
+        Connection conn=ConnectionDAO.getConn();
+        try {
+            PreparedStatement ps=conn.prepareStatement("Update room set white=?,black=? where id=?");
+            ps.setInt(1,p1);
+            ps.setInt(2,p2);
+            ps.setInt(3,roomId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
 
     }
 

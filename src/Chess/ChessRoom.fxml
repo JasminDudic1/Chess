@@ -37,8 +37,8 @@
         </rowConstraints>
       </GridPane>
       <TextArea fx:id="errorText" layoutX="14.0" layoutY="15.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="260.0" />
-      <Label fx:id="OpponentLab" layoutX="316.0" layoutY="14.0" text="Opponent:" />
-      <Label fx:id="PlayerLab" layoutX="299.0" layoutY="469.0" text="Player: " />
+      <Label fx:id="opponentLab" layoutX="316.0" layoutY="14.0" text="Opponent:" />
+      <Label fx:id="playerLab" layoutX="299.0" layoutY="469.0" text="Player: " />
       <Label fx:id="colorLab" layoutX="742.0" layoutY="206.0" prefHeight="39.0" prefWidth="71.0" text="'s Turn" />
       <Button fx:id="exitBtn" layoutX="14.0" layoutY="454.0" mnemonicParsing="false" onAction="#exitClicked" text="Exit" />
    </children>

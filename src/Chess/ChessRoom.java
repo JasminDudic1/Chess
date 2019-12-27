@@ -17,8 +17,8 @@ import java.util.ResourceBundle;
 public class ChessRoom {
 
     public GridPane boardGridPane;
-    public Label OpponentLab;
-    public Label PlayerLab;
+    public Label opponentLab;
+    public Label playerLab;
     public Label colorLab;
     public TextArea errorText;
     private Board b;
@@ -27,6 +27,7 @@ public class ChessRoom {
     boolean running=true;
     private ChessPiece.Color bojaIgraca= ChessPiece.Color.WHITE;
     private Tab currentTab;
+    boolean rematch=false;
 
     public void setCurrentTab(Tab t){
         currentTab=t;
@@ -52,11 +53,11 @@ public class ChessRoom {
             rblack.next();
 
             if(b.getCurrentPlayer()== ChessPiece.Color.WHITE){
-                PlayerLab.setText(rwhite.getString(1));
-                OpponentLab.setText(rblack.getString(1));
+                playerLab.setText(rwhite.getString(1));
+                opponentLab.setText(rblack.getString(1));
             }else{
-                OpponentLab.setText(rwhite.getString(1));
-                PlayerLab.setText(rblack.getString(1));
+                opponentLab.setText(rwhite.getString(1));
+                playerLab.setText(rblack.getString(1));
             }
 
 
@@ -80,14 +81,19 @@ public class ChessRoom {
 
             if(rs.getInt(1)!=0 && rs.getInt(2)!=0){
 
-
                 System.out.println("Ubacujem u sobu:"+roomId);
                 b.setGameReady();
-                b.setPlayersIds(rs.getInt(1),rs.getInt(2));
+                if(rematch==false) {
+                    b.setPlayersIds(rs.getInt(1),rs.getInt(2));
+                    setPlayerLabels(rs.getInt(1),rs.getInt(2));
+                }
+                else {
+                    b.setPlayersIds(rs.getInt(2),rs.getInt(1));
+                    setPlayerLabels(rs.getInt(2),rs.getInt(1));
+                }
                 b.setController(this);
                 running=false;
 
-                setPlayerLabels(rs.getInt(1),rs.getInt(2));
 
             }
             rs.close();
@@ -129,6 +135,7 @@ public class ChessRoom {
 
     public void closeRoom() {
 
+
         running=false;
         Connection conn=ConnectionDAO.getConn();
 
@@ -169,6 +176,7 @@ public class ChessRoom {
 
     public void rematch(){
 
+        rematch=true;
         Connection conn=ConnectionDAO.getConn();
         clearRoom();
         running=true;
@@ -204,7 +212,7 @@ public class ChessRoom {
             upit.setInt(1,roomId);
             ResultSet rs=upit.executeQuery();
             rs.next();
-            if(rs.getInt(1)==0 || rs.getInt(2)==0){
+            if(rs.getInt(1)<=0 || rs.getInt(2)<=0){
                 System.out.println("Room id je "+roomId);
                 upit=conn.prepareStatement("delete from room where id=?");
                 upit.setInt(1,roomId);
