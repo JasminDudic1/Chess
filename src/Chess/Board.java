@@ -40,6 +40,7 @@ public class Board {
     private ChessPiece[][] board = new ChessPiece[2][];
     private Label[][] UIboard = new Label[8][];
     ChessRoom controller=null;
+    boolean rematch=false;
 
     public void setController(ChessRoom controller) {
         this.controller = controller;
@@ -49,6 +50,7 @@ public class Board {
 
         currentPlayer = bojaIgraca;
         playing=true;
+        rematch=false;
 
         board[0] = new ChessPiece[16];
         board[1] = new ChessPiece[16];
@@ -191,7 +193,6 @@ public class Board {
             e.printStackTrace();
         }
 
-
     }
 
     public void setRoomId(int id) {
@@ -209,9 +210,9 @@ public class Board {
 
 
         try {
-            getMoves = ConnectionDAO.getConn().prepareStatement("Select moves from room where id=?");
+            getMoves = ConnectionDAO.getConn().prepareStatement("Select moves from room where id=? and white>0 and black>0");
             getMoves.setInt(1, roomId);
-            setMoves = ConnectionDAO.getConn().prepareStatement("Update room set moves=? where id=?");
+            setMoves = ConnectionDAO.getConn().prepareStatement("Update room set moves=? where id=? and white>0 and black>0");
             setMoves.setInt(2, roomId);
 
         } catch (SQLException e) {
@@ -340,8 +341,8 @@ public class Board {
 
         } catch (Exception e) {
             if (currentPlayer == ChessPiece.Color.WHITE)
-                System.out.println("Error kod white " + e.toString() + " sa " + oldPosition + " na " + newPosition);
-            else System.out.println("Error kod black " + e.toString() + " sa " + oldPosition + " na " + newPosition);
+               controller.errorText.setText("Error kod white " + e.toString() + " sa " + oldPosition + " na " + newPosition);
+            else controller.errorText.setText("Error kod black " + e.toString() + " sa " + oldPosition + " na " + newPosition);
             e.printStackTrace();
             throw new IllegalChessMoveException(e.toString());
         }
@@ -567,7 +568,6 @@ public class Board {
 
             try {
                 move(selectedPozicija, pozicija);
-                // changePlayer();
             } catch (Exception ex) {
             }
 
@@ -845,8 +845,10 @@ public class Board {
 
         }
 
-        if (isCheckMate(ChessPiece.Color.WHITE)) {
 
+        //region CheckMate
+
+        if (isCheckMate(ChessPiece.Color.WHITE)) {
             int status = 0;
 
             Alert a = new Alert(Alert.AlertType.INFORMATION,"",ButtonType.YES,ButtonType.NO);
@@ -872,7 +874,6 @@ public class Board {
         }
 
         if (isCheckMate(ChessPiece.Color.BLACK)) {
-
             int status = 0;
 
             Alert a = new Alert(Alert.AlertType.INFORMATION,"",ButtonType.YES,ButtonType.NO);
@@ -884,7 +885,8 @@ public class Board {
                     a.setContentText("You lost with checkmate\nDo you want to save the game?");
                     status = -1;
                 }
-            } else {
+            }
+            else {
                 status = 0;
                 a.setContentText("There are no more possible moves,stalemate\nDo you want to save the game?");
             }
@@ -892,7 +894,8 @@ public class Board {
             Optional<ButtonType> result = a.showAndWait();
             if (result.get() == ButtonType.YES) {
                 gameEnd(status, true);
-            } else gameEnd(status, false);
+            }
+            else gameEnd(status, false);
 
 
         }
@@ -953,7 +956,7 @@ public class Board {
 
         if (playing == false) return;
 
-
+        playing = false;
         Connection conn = ConnectionDAO.getConn();
 
         if (save == true) {
@@ -964,22 +967,25 @@ public class Board {
                 ResultSet rs = upit.executeQuery();
                 if (!rs.next()) {
 
-                    upit = conn.prepareStatement("Insert into pastgames values(?,?,?,?,?,?)");
+                    upit = conn.prepareStatement("Insert into pastgames values(?,?,?,?,?,?,?)");
+
+                    upit.setInt(1,ConnectionDAO.maxPastGamesId()+1);
+
                     if (currentPlayer == ChessPiece.Color.WHITE) {
-                        upit.setInt(1, playerID);
-                        upit.setInt(2, opponenetID);
-                    } else {
                         upit.setInt(2, playerID);
-                        upit.setInt(1, opponenetID);
+                        upit.setInt(3, opponenetID);
+                    } else {
+                        upit.setInt(3, playerID);
+                        upit.setInt(2, opponenetID);
                     }
 
-                    if (status == 1) upit.setInt(3, playerID);
-                    else if (status == -1) upit.setInt(3, opponenetID);
-                    else upit.setInt(3, 0);
+                    if (status == 1) upit.setInt(4, playerID);
+                    else if (status == -1) upit.setInt(4, opponenetID);
+                    else upit.setInt(4, 0);
 
-                    upit.setString(4, moves);
-                    upit.setString(5, "OK");
-                    upit.setInt(6, roomId);
+                    upit.setString(5, moves);
+                    upit.setString(6, "OK");
+                    upit.setInt(7, roomId);
 
                     upit.executeUpdate();
                 }
@@ -1020,7 +1026,6 @@ public class Board {
             e.printStackTrace();
         }
 
-        playing = false;
 
         Alert a=new Alert(Alert.AlertType.CONFIRMATION,"",ButtonType.YES,ButtonType.NO);
         a.setContentText("Do you want to rematch?");

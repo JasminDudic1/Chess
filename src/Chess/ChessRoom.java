@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 
 import java.net.URL;
@@ -19,6 +20,7 @@ public class ChessRoom {
     public Label OpponentLab;
     public Label PlayerLab;
     public Label colorLab;
+    public TextArea errorText;
     private Board b;
     private int roomId;
     private PreparedStatement getOpponent,getWhite,getBlack;
@@ -73,11 +75,10 @@ public class ChessRoom {
             if(rs.getInt(1)==-1 || rs.getInt(1)==-1){
                 running=false;
                 closeRoom();
+                return;
             }
 
             if(rs.getInt(1)!=0 && rs.getInt(2)!=0){
-
-
 
 
                 System.out.println("Ubacujem u sobu:"+roomId);
@@ -168,10 +169,29 @@ public class ChessRoom {
 
     public void rematch(){
 
+        Connection conn=ConnectionDAO.getConn();
+        clearRoom();
         running=true;
         if(bojaIgraca== ChessPiece.Color.WHITE)draw(ChessPiece.Color.BLACK);
         else draw(ChessPiece.Color.WHITE);
 
+    }
+
+    private void clearRoom(){
+
+        if(roomId!=0) {
+
+            Connection conn=ConnectionDAO.getConn();
+            try {
+                PreparedStatement upit = conn.prepareStatement("Update room set moves=? where id=?");
+                upit.setString(1, "");
+                upit.setInt(2, roomId);
+                upit.executeUpdate();
+                System.out.println("Clearing room "+roomId);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void leaveRoom(){

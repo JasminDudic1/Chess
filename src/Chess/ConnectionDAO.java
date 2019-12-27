@@ -8,6 +8,7 @@ public  class ConnectionDAO {
 
     private static ConnectionDAO instance = null;
     private static Connection conn=null;
+    private static PreparedStatement maxRoom,maxPast,maxPlayer;
 
     public static void createConn(){
 
@@ -42,6 +43,7 @@ public  class ConnectionDAO {
         }
         //endregion
 
+
     }
 
     public static Connection getConn(){
@@ -50,6 +52,8 @@ public  class ConnectionDAO {
 
 
     public static void makeBase(){
+
+
 
         File dbfile=new File("baza.db");
         try {
@@ -104,12 +108,14 @@ public  class ConnectionDAO {
             stm.execute(setup);
 
             setup="CREATE TABLE \"pastgames\" (\n" +
+                    "\t\"id\"\tINTEGER NOT NULL,\n" +
                     "\t\"white\"\tINTEGER NOT NULL,\n" +
                     "\t\"black\"\tINTEGER NOT NULL,\n" +
-                    "\t\"winner\"\tINTEGER NOT NULL,\n" +
+                    "\t\"winner\"\tTEXT NOT NULL,\n" +
                     "\t\"moves\"\tTEXT NOT NULL,\n" +
                     "\t\"date\"\tTEXT NOT NULL,\n" +
-                    "\t\"roomid\"\tINTEGER NOT NULL\n" +
+                    "\t\"roomid\"\tINTEGER NOT NULL,\n" +
+                    "\tPRIMARY KEY(\"id\")\n" +
                     ");";
 
             stm=conn.createStatement();
@@ -121,8 +127,56 @@ public  class ConnectionDAO {
             e.printStackTrace();
         }
 
+        try {
+            maxPlayer=conn.prepareStatement("select max(id) from player");
+            maxPast=conn.prepareStatement("select max(id) from pastgames");
+            maxRoom=conn.prepareStatement("select max(id) from room");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
 
 
     }
 
+    public static int maxRoomId(){
+
+        int roomid=0;
+        try {
+            ResultSet rs=maxRoom.executeQuery();
+            if(!rs.next())roomid=1;
+            else roomid= rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return roomid;
+    }
+
+    public static int maxPastGamesId(){
+
+        int pastid=0;
+        try {
+            ResultSet rs=maxPast.executeQuery();
+            if(!rs.next())pastid=1;
+            else pastid= rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pastid;
+
+    }
+
+    public static int maxPlayerID(){
+
+        int playerid=0;
+        try {
+            ResultSet rs=maxPlayer.executeQuery();
+            if(!rs.next())playerid=1;
+            else playerid= rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return playerid;
+
+    }
 }
