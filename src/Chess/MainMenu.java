@@ -82,7 +82,6 @@ public class MainMenu implements Initializable {
 
     }
 
-
     public void refresh(){
 
         boolean isShowing=roomsCBox.isShowing();
@@ -203,6 +202,7 @@ public class MainMenu implements Initializable {
             controller.setCurrentTab(tab);
 
             tabsTabPane.getTabs().add(tab);
+            tabsTabPane.getSelectionModel().select(tab);
 
             // ((Stage)usernameTBox.getScene().getWindow()).close();
         } catch(Exception e) {
@@ -221,7 +221,6 @@ public class MainMenu implements Initializable {
 
         try {
 
-
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("CreateRoom.fxml"));
             Parent root =  fxmlLoader.load();
 
@@ -233,6 +232,7 @@ public class MainMenu implements Initializable {
             Tab tab=new Tab("Creating room",root);
             controller.setCurrentTab(tab);
             tabsTabPane.getTabs().add(tab);
+            tabsTabPane.getSelectionModel().select(tab);
 
            // ((Stage)tabsTabPane.getScene().getWindow()).setScene(null);
 

@@ -1,124 +1,60 @@
 package Chess;
 
 import javafx.application.Platform;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.ResourceBundle;
+import java.util.Optional;
 
 public class Board {
 
     public static int jede = 0;
-    public ImageView A8Lab1;
-    public GridPane Grid;
-    String castle1="";
-    String passant1="";
-    boolean picking=false;
-    boolean playing=true;
-    private int roomId=0;
-    private String moves="";
-    PreparedStatement getMoves,setMoves,getWhite,getBlack;
-    private boolean gameReady=false;
-    private Label colorLab;
-
-    private ChessPiece.Color turnColor= ChessPiece.Color.WHITE;
-    private ChessPiece.Color currentPlayer= ChessPiece.Color.WHITE;
-
-    private TabPane tabpane;
-
-
-    String selectedPozicija="";
-    ChessPiece lastMoved=null;
-
+    String castle1 = "";//vv
+    String passant1 = "";//mozda mogu spojit oba u jedan
+    boolean picking = false;//vv
+    boolean playing = true;//myb mogu spojit sve u jedan int sa vise vrijednosti
+    PreparedStatement getMoves, setMoves;//
+    String selectedPozicija = "";//trebam
+    ChessPiece lastMoved = null;//prolly worthless
+    private int roomId = 0;//bez ovoga ne mogu nista uraditi
+    private String moves = "";//trebam
+    private boolean gameReady = false;//myb mogu fixat
+    private Label colorLab;//trebam
+    private int playerID, opponenetID;//mogu naci preko funkcija
+    private ChessPiece.Color turnColor = ChessPiece.Color.WHITE;
+    private ChessPiece.Color currentPlayer = ChessPiece.Color.WHITE;
     private ChessPiece[][] board = new ChessPiece[2][];
-    private Label[][]UIboard=new Label[8][];
+    private Label[][] UIboard = new Label[8][];
+    ChessRoom controller=null;
 
-    public ChessPiece.Color getCurrentPlayer(){
-        return currentPlayer;
+    public void setController(ChessRoom controller) {
+        this.controller = controller;
     }
 
-    public void setColorLab(Label lab){
-        this.colorLab=lab;
-        colorLab.setStyle("-fx-background-color: Gray;-fx-border-color: Gray");
-    }
+    public Board(GridPane boardGridPane, ChessPiece.Color bojaIgraca) {
 
-    public void setGameReady(){
-
-        gameReady=true;
-        colorLab.setStyle("-fx-background-color: WHITE;-fx-border-color: BLACK;-fx-text-fill: BLACK;");
-        setupGettingMovesFromDB();
-
-    }
-
-    private void checkBaseForNewMoves(){
-
-        if(turnColor==currentPlayer){
-            return;
-        }
-
-        Connection conn=ConnectionDAO.getConn();
-        try {
-
-            ResultSet res=getMoves.executeQuery();
-            ArrayList<String> temp;
-            if(res.next()){
-                String baseMoves=res.getString(1);
-                if(baseMoves.isEmpty())return;
-                 temp = new ArrayList<String>(Arrays.asList(baseMoves.split(",")));
-
-                 if(!baseMoves.equals(moves)){
-
-                     String move=temp.get(temp.size()-1);
-                     String oldPosition=move.substring(move.indexOf("(")+1,move.indexOf("-"));
-                     String newPosition=move.substring(move.indexOf("-")+1,move.indexOf(")"));
-                     moves=baseMoves;
-                     move(oldPosition,newPosition);
-                     refresh();
-                     changePlayer();
-                 }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-    public void setRoomId(int id){
-        this.roomId=id;
-    }
-
-    private void labSetup(Label l1){
-        l1.setAlignment(Pos.CENTER);
-        l1.setStyle("-fx-background-color: gray;-fx-text-fill: black;");
-        l1.setPrefHeight(70);
-        l1.setPrefWidth(70);
-    }
-
-    public Board(GridPane boardGridPane,ChessPiece.Color bojaIgraca)  {
-
-        currentPlayer=bojaIgraca;
+        currentPlayer = bojaIgraca;
+        playing=true;
 
         board[0] = new ChessPiece[16];
         board[1] = new ChessPiece[16];
 
-        for(int i=0;i<8;i++)
-        UIboard[i]=new Label[8];
+        for (int i = 0; i < 8; i++)
+            UIboard[i] = new Label[8];
 
         //region Rooks
         board[0][0] = new Rook("a1", ChessPiece.Color.WHITE);
@@ -158,61 +94,135 @@ public class Board {
         }
         //endregion
 
-        for(int j=0;j<8;j++){
-            Label l1=new Label();
-            char c=(char)('A'+j);
-            l1.setText(""+c);
+        for (int j = 0; j < 8; j++) {
+            Label l1 = new Label();
+            char c = (char) ('A' + j);
+            l1.setText("" + c);
             labSetup(l1);
-            boardGridPane.add(l1,j,0);
-            Label l2=new Label();
-            l2.setText(""+(8-j));
+            boardGridPane.add(l1, j, 0);
+            Label l2 = new Label();
+            l2.setText("" + (8 - j));
             labSetup(l2);
-            if(bojaIgraca== ChessPiece.Color.WHITE)
-            boardGridPane.add(l2,8,j+1);
-            else boardGridPane.add(l2,8,8-j);
+            if (bojaIgraca == ChessPiece.Color.WHITE)
+                boardGridPane.add(l2, 8, j + 1);
+            else boardGridPane.add(l2, 8, 8 - j);
         }
 
-        for(int i=0;i<8;i++){
-                UIboard[i] = new Label[8];
-            for(int j=0;j<8;j++){
-                UIboard[i][j]=new Label();
+        for (int i = 0; i < 8; i++) {
+            UIboard[i] = new Label[8];
+            for (int j = 0; j < 8; j++) {
+                UIboard[i][j] = new Label();
                 UIboard[i][j].onMouseClickedProperty().setValue(this::Clicked);
                 UIboard[i][j].setPrefHeight(70);
                 UIboard[i][j].setPrefWidth(70);
                 UIboard[i][j].setAlignment(Pos.CENTER);
-                String pos=""+(char)('A'+i)+(j+1);
+                String pos = "" + (char) ('A' + i) + (j + 1);
                 UIboard[i][j].setId(pos);
-                if(bojaIgraca== ChessPiece.Color.WHITE)
-                boardGridPane.add(UIboard[i][j],i,8-j);
+                if (bojaIgraca == ChessPiece.Color.WHITE)
+                    boardGridPane.add(UIboard[i][j], i, 8 - j);
                 else {
-                    boardGridPane.add(UIboard[i][j],i,j+1);
+                    boardGridPane.add(UIboard[i][j], i, j + 1);
                 }
             }
         }
 
 
+        refresh();
+    }
 
-refresh();
+    public void setPlayersIds(int p1, int p2) {
+
+        if (currentPlayer == ChessPiece.Color.WHITE) {
+            playerID = p1;
+            opponenetID = p2;
+        } else {
+            playerID = p2;
+            opponenetID = p1;
+        }
+
+    }
+
+    public ChessPiece.Color getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setColorLab(Label lab) {
+        this.colorLab = lab;
+        colorLab.setStyle("-fx-background-color: Gray;-fx-border-color: Gray");
+    }
+
+    public void setGameReady() {
+
+        gameReady = true;
+        colorLab.setStyle("-fx-background-color: WHITE;-fx-border-color: BLACK;-fx-text-fill: BLACK;");
+        setupGettingMovesFromDB();
+
+    }
+
+    private void checkBaseForNewMoves() {
+
+        if (turnColor == currentPlayer) {
+            return;
+        }
+
+        Connection conn = ConnectionDAO.getConn();
+        try {
+
+            ResultSet res = getMoves.executeQuery();
+            ArrayList<String> temp;
+            if (res.next()) {
+                String baseMoves = res.getString(1);
+                if (baseMoves.isEmpty()) return;
+                temp = new ArrayList<String>(Arrays.asList(baseMoves.split(",")));
+
+                if (!baseMoves.equals(moves)) {
+
+                    String move = temp.get(temp.size() - 1);
+                    String oldPosition = move.substring(move.indexOf("(") + 1, move.indexOf("-"));
+                    String newPosition = move.substring(move.indexOf("-") + 1, move.indexOf(")"));
+                    moves = baseMoves;
+                    move(oldPosition, newPosition);
+                    refresh();
+                    changePlayer();
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void setRoomId(int id) {
+        this.roomId = id;
+    }
+
+    private void labSetup(Label l1) {
+        l1.setAlignment(Pos.CENTER);
+        l1.setStyle("-fx-background-color: gray;-fx-text-fill: black;");
+        l1.setPrefHeight(70);
+        l1.setPrefWidth(70);
     }
 
     private void setupGettingMovesFromDB() {
 
 
         try {
-            getMoves=ConnectionDAO.getConn().prepareStatement("Select moves from room where id=?");
-            getMoves.setInt(1,roomId);
-            setMoves=ConnectionDAO.getConn().prepareStatement("Update room set moves=? where id=?");
-            setMoves.setInt(2,roomId);
+            getMoves = ConnectionDAO.getConn().prepareStatement("Select moves from room where id=?");
+            getMoves.setInt(1, roomId);
+            setMoves = ConnectionDAO.getConn().prepareStatement("Update room set moves=? where id=?");
+            setMoves.setInt(2, roomId);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        new Thread(()->{
+        new Thread(() -> {
             while (true) {
 
                 try {
-                    Platform.runLater(()->checkBaseForNewMoves());
+                    Platform.runLater(() -> checkBaseForNewMoves());
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -226,116 +236,115 @@ refresh();
 
     void move(String oldPosition, String newPosition) {
 
+        if(playing==false)return;
 
-        char newPiece=' ';
-       try{
+        char newPiece = ' ';
+        try {
 
-           if(newPosition.length()==3){
-               newPiece=newPosition.charAt(2);
-               newPosition=newPosition.substring(0,2);
-           }
+            if (newPosition.length() == 3) {
+                newPiece = newPosition.charAt(2);
+                newPosition = newPosition.substring(0, 2);
+            }
 
-           ChessPiece c1=naLokaciji(newPosition);
-           ChessPiece c2=naLokaciji(oldPosition);
+            ChessPiece c1 = naLokaciji(newPosition);
+            ChessPiece c2 = naLokaciji(oldPosition);
 
-           testMove(oldPosition,newPosition);
+            testMove(oldPosition, newPosition);
 
-           //region Castling
-           newPosition=newPosition.toLowerCase();
-           castle1=castle1.toLowerCase();
+            //region Castling
+            newPosition = newPosition.toLowerCase();
+            castle1 = castle1.toLowerCase();
 
-           if(newPosition.equals(castle1)){
+            if (newPosition.equals(castle1)) {
 
-            if(currentPlayer!=turnColor) System.out.println("Castled");
-            else System.out.println("I castled");
+                if (currentPlayer != turnColor) System.out.println("Castled");
+                else System.out.println("I castled");
 
-             String rookStr="xx";
+                String rookStr = "xx";
 
-               c2.postaviNa(castle1);
+                c2.postaviNa(castle1);
 
-               if(castle1.charAt(0)=='c'){
-                   int pom=castle1.charAt(1)-'0';
-                   rookStr="a"+pom;
-                   naLokaciji(rookStr).postaviNa("d"+pom);
-               }else if(castle1.charAt(0)=='g'){
-                   int pom=castle1.charAt(1)-'0';
-                   rookStr="h"+pom;
-                   naLokaciji(rookStr).postaviNa("f"+pom);
-               }
-                castle1="";
-
-
-
-           }
-           //endregion
-
-           //region EnPassant
-           if(newPosition.equals(passant1)){
-
-               if(c2.getColor()== ChessPiece.Color.WHITE){
-                   String passant=""+newPosition.charAt(0);
-                   char pom=(char)(newPosition.charAt(1)-1);
-                   passant+=pom;
-                   c1=naLokaciji(passant);
-                   c1.postaviNa("x");
-                   c2.postaviNa(passant1);
-               }
-               if(c2.getColor()== ChessPiece.Color.BLACK){
-                   String passant=""+newPosition.charAt(0);
-                   char pom=(char)(newPosition.charAt(1)+1);
-                   passant+=pom;
-                   c1=naLokaciji(passant);
-                   c1.postaviNa("x");
-                   c2.postaviNa(passant1);
-               }
-               passant1="";
-
-           }
-           //endregion
-
-           c2.moved();
-           lastMoved=c2;
+                if (castle1.charAt(0) == 'c') {
+                    int pom = castle1.charAt(1) - '0';
+                    rookStr = "a" + pom;
+                    naLokaciji(rookStr).postaviNa("d" + pom);
+                } else if (castle1.charAt(0) == 'g') {
+                    int pom = castle1.charAt(1) - '0';
+                    rookStr = "h" + pom;
+                    naLokaciji(rookStr).postaviNa("f" + pom);
+                }
+                castle1 = "";
 
 
-           if(c1!=null)
-               c1.postaviNa("X");
+            }
+            //endregion
 
-           if(newPiece!=' '){
-               System.out.println("Changing");
+            //region EnPassant
+            if (newPosition.equals(passant1)) {
 
-                   for(int i=0;i<2;i++)
-                       for(int j=0;j<16;j++)
-                           if(board[i][j]==lastMoved){
-                               //region Change
-                               if(newPiece=='D')board[i][j]=new Queen(newPosition,c2.getColor());
-                               else if(newPiece=='N')board[i][j]=new Knight(newPosition,c2.getColor());
-                               else if(newPiece=='B')board[i][j]=new Bishop(newPosition,c2.getColor());
-                               else if(newPiece=='R')board[i][j]=new Rook(newPosition,c2.getColor());
-                               //endregion
-                           }
+                if (c2.getColor() == ChessPiece.Color.WHITE) {
+                    String passant = "" + newPosition.charAt(0);
+                    char pom = (char) (newPosition.charAt(1) - 1);
+                    passant += pom;
+                    c1 = naLokaciji(passant);
+                    c1.postaviNa("x");
+                    c2.postaviNa(passant1);
+                }
+                if (c2.getColor() == ChessPiece.Color.BLACK) {
+                    String passant = "" + newPosition.charAt(0);
+                    char pom = (char) (newPosition.charAt(1) + 1);
+                    passant += pom;
+                    c1 = naLokaciji(passant);
+                    c1.postaviNa("x");
+                    c2.postaviNa(passant1);
+                }
+                passant1 = "";
+
+            }
+            //endregion
+
+            c2.moved();
+            lastMoved = c2;
+
+
+            if (c1 != null)
+                c1.postaviNa("X");
+
+            if (newPiece != ' ') {
+                System.out.println("Changing");
+
+                for (int i = 0; i < 2; i++)
+                    for (int j = 0; j < 16; j++)
+                        if (board[i][j] == lastMoved) {
+                            //region Change
+                            if (newPiece == 'D') board[i][j] = new Queen(newPosition, c2.getColor());
+                            else if (newPiece == 'N') board[i][j] = new Knight(newPosition, c2.getColor());
+                            else if (newPiece == 'B') board[i][j] = new Bishop(newPosition, c2.getColor());
+                            else if (newPiece == 'R') board[i][j] = new Rook(newPosition, c2.getColor());
+                            //endregion
+                        }
 
                 return;
-           }
+            }
 
 
+            if (c2.getClass() == Pawn.class && (newPosition.charAt(1) == '8' || newPosition.charAt(1) == '1') && newPiece == ' ') {
+                moves += " (" + oldPosition.toLowerCase() + "-" + newPosition.toLowerCase();
+                picking = true;
+            } else if (currentPlayer == turnColor) {
+                moves += " (" + oldPosition.toLowerCase() + "-" + newPosition.toLowerCase() + ") ,";
+                setMoves.setString(1, moves);
+                setMoves.executeUpdate();
+                changePlayer();
+            }
 
-           if(c2.getClass()==Pawn.class && (newPosition.charAt(1)=='8' || newPosition.charAt(1)=='1') && newPiece==' '){
-               moves += " (" + oldPosition.toLowerCase() + "-" + newPosition.toLowerCase();
-               picking=true;
-           }else if(currentPlayer==turnColor) {
-               moves += " (" + oldPosition.toLowerCase() + "-" + newPosition.toLowerCase() + ") ,";
-               setMoves.setString(1, moves);
-               setMoves.executeUpdate();
-               changePlayer();
-           }
-
-       }catch (Exception e){
-           if(currentPlayer== ChessPiece.Color.WHITE)
-           System.out.println("Error kod white "+e.toString()+" sa "+oldPosition+" na "+newPosition);
-           else System.out.println("Error kod black "+e.toString()+" sa "+oldPosition+" na "+newPosition);
-           e.printStackTrace();
-    throw new IllegalChessMoveException(e.toString());
-       }
+        } catch (Exception e) {
+            if (currentPlayer == ChessPiece.Color.WHITE)
+                System.out.println("Error kod white " + e.toString() + " sa " + oldPosition + " na " + newPosition);
+            else System.out.println("Error kod black " + e.toString() + " sa " + oldPosition + " na " + newPosition);
+            e.printStackTrace();
+            throw new IllegalChessMoveException(e.toString());
+        }
 
 
         refresh();
@@ -351,13 +360,14 @@ refresh();
         String pozicija = kralj.getPosition();
 
         for (ChessPiece c : board[1 - bojaInt]) {
-            jede=1;
-            if(!praznaPutanja(c.getPosition(), kralj.getPosition()) && c.getClass()!=Knight.class) continue;//ako nije przna putanja dalje
+            jede = 1;
+            if (!praznaPutanja(c.getPosition(), kralj.getPosition()) && c.getClass() != Knight.class)
+                continue;//ako nije przna putanja dalje
             String staraPozicija = c.getPosition();
             try {
                 c.move(pozicija);//probja pomjerit figuru na poziciju kralja
                 c.postaviNa(staraPozicija);//ako moze vrati nazad
-                jede=0;//resetuj i zavrsio
+                jede = 0;//resetuj i zavrsio
                 return true;
             } catch (Exception e) {
                 continue;
@@ -367,28 +377,28 @@ refresh();
         return false;
     }
 
-    boolean isCheckMate(ChessPiece.Color boja){
+    boolean isCheckMate(ChessPiece.Color boja) {
 
-        int bojaIgraca=0;
-        if(boja== ChessPiece.Color.BLACK)bojaIgraca=1;
-        int possibleMoves=0;
+        int bojaIgraca = 0;
+        if (boja == ChessPiece.Color.BLACK) bojaIgraca = 1;
+        int possibleMoves = 0;
 
-        for(int i=0;i<16;i++){
-            if(board[bojaIgraca][i].getPosition()=="X")continue;
+        for (int i = 0; i < 16; i++) {
+            if (board[bojaIgraca][i].getPosition() == "X") continue;
 
-            for(char c='a';c<='h';c++)
-                for(int j=1;j<=8;j++){
-                    jede=0;
-                    String newPosition=""+c+j;
-                    String oldPosition=board[bojaIgraca][i].getPosition();
+            for (char c = 'a'; c <= 'h'; c++)
+                for (int j = 1; j <= 8; j++) {
+                    jede = 0;
+                    String newPosition = "" + c + j;
+                    String oldPosition = board[bojaIgraca][i].getPosition();
 
-                    try{
-                        testMove(oldPosition,newPosition);
+                    try {
+                        testMove(oldPosition, newPosition);
                         board[bojaIgraca][i].postaviNa(oldPosition);
 
                         return false;
 
-                    }catch(Exception e){
+                    } catch (Exception e) {
 
                     }
 
@@ -402,7 +412,7 @@ refresh();
     }
 
     private ChessPiece naLokaciji(String lokacija) {
-        if(lokacija.length()!=2)return null;
+        if (lokacija.length() != 2) return null;
         lokacija = lokacija.toLowerCase();
         for (int i = 0; i <= 1; i++)
             for (int j = 0; j <= 15; j++) {
@@ -414,7 +424,7 @@ refresh();
     }
 
     private boolean praznaPutanja(String pocetnaPozicija, String krajnjaPozicija) {
-        if(pocetnaPozicija.length()!=2 || krajnjaPozicija.length()!=2)return false;
+        if (pocetnaPozicija.length() != 2 || krajnjaPozicija.length() != 2) return false;
         char iFigure = pocetnaPozicija.charAt(0);
         char jFigure = pocetnaPozicija.charAt(1);
 
@@ -438,16 +448,15 @@ refresh();
 
     }
 
-    public void changePlayer(){
+    public void changePlayer() {
 
-        if(turnColor== ChessPiece.Color.WHITE){
-            turnColor= ChessPiece.Color.BLACK;
+        if (turnColor == ChessPiece.Color.WHITE) {
+            turnColor = ChessPiece.Color.BLACK;
             colorLab.setStyle("-fx-background-color: BLACK;-fx-border-color: WHITE;-fx-text-fill: WHITE;");
 
-        }
-        else{
+        } else {
             colorLab.setStyle("-fx-background-color: WHITE;-fx-border-color: BLACK;-fx-text-fill: BLACK;");
-            turnColor= ChessPiece.Color.WHITE;
+            turnColor = ChessPiece.Color.WHITE;
         }
 
     }
@@ -455,53 +464,50 @@ refresh();
     public void Clicked(MouseEvent mouseEvent) {
 
 
-        if(turnColor!=currentPlayer || gameReady==false)return;
+        if (turnColor != currentPlayer || gameReady == false) return;
 
         Label label = (Label) mouseEvent.getSource();
 
-        String pozicija=label.getId().substring(0,2);
+        String pozicija = label.getId().substring(0, 2);
 
-        ChessPiece naLok=naLokaciji(pozicija);
+        ChessPiece naLok = naLokaciji(pozicija);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
 
         //region Picked
-        if(picking==true){
-        char c=' ';
-            int i=0,j=0;
-            for(i=0;i<2;i++)
-                for(j=0;j<16;j++)
-                    if(board[i][j]==lastMoved){
+        if (picking == true) {
+            char c = ' ';
+            int i = 0, j = 0;
+            for (i = 0; i < 2; i++)
+                for (j = 0; j < 16; j++)
+                    if (board[i][j] == lastMoved) {
                         //region Change
-                        if(pozicija.equals("D4")){
-                            board[i][j]=new Queen(lastMoved.getPosition(),lastMoved.getColor());
-                            picking=false;
+                        if (pozicija.equals("D4")) {
+                            board[i][j] = new Queen(lastMoved.getPosition(), lastMoved.getColor());
+                            picking = false;
                             refresh();
-                            c='D';
-                        }
-                        else if(pozicija.equals("E4")){
-                            board[i][j]=new Bishop(lastMoved.getPosition(),lastMoved.getColor());
-                            picking=false;
+                            c = 'D';
+                        } else if (pozicija.equals("E4")) {
+                            board[i][j] = new Bishop(lastMoved.getPosition(), lastMoved.getColor());
+                            picking = false;
                             refresh();
-                            c='B';
+                            c = 'B';
 
-                        }
-                        else if(pozicija.equals("D5")){
-                            board[i][j]=new Knight(lastMoved.getPosition(),lastMoved.getColor());
-                            picking=false;
+                        } else if (pozicija.equals("D5")) {
+                            board[i][j] = new Knight(lastMoved.getPosition(), lastMoved.getColor());
+                            picking = false;
                             refresh();
-                            c='N';
-                        }
-                        else if(pozicija.equals("E5")){
-                            board[i][j]=new Rook(lastMoved.getPosition(),lastMoved.getColor());
-                            picking=false;
+                            c = 'N';
+                        } else if (pozicija.equals("E5")) {
+                            board[i][j] = new Rook(lastMoved.getPosition(), lastMoved.getColor());
+                            picking = false;
                             refresh();
-                            c='R';
+                            c = 'R';
                         }
-                        if(c!=' '){
+                        if (c != ' ') {
 
-                            if(currentPlayer==turnColor) {
-                                moves += c+ ") ,";
+                            if (currentPlayer == turnColor) {
+                                moves += c + ") ,";
                                 try {
                                     setMoves.setString(1, moves);
                                     setMoves.executeUpdate();
@@ -514,70 +520,64 @@ refresh();
                         }
                         //endregion
                     }
-                changePlayer();
-                    return;
+            changePlayer();
+            return;
         }
 
         //endregion
 
-        if(selectedPozicija=="")
-            if(naLok!=null)
-                if(naLok.getColor()!=currentPlayer)return;
+        if (selectedPozicija == "")
+            if (naLok != null)
+                if (naLok.getColor() != currentPlayer) return;
 
-       //region Clicked
+        //region Clicked
 
-            if(naLok!=null){//ako nije klikni na nesto
+        if (naLok != null) {//ako nije klikni na nesto
 
 
-            if(selectedPozicija.equals(pozicija)){
+            if (selectedPozicija.equals(pozicija)) {
 
-                selectedPozicija="";
+                selectedPozicija = "";
                 refresh();
-            }
+            } else if (!selectedPozicija.isEmpty()) {
 
-            else if(!selectedPozicija.isEmpty()){
+                try {
 
-                try{
+                    move(selectedPozicija, pozicija);
+                    // if(picking==false)changePlayer();
 
-                    move(selectedPozicija,pozicija);
-                   // if(picking==false)changePlayer();
-
-                }catch(Exception ex){
+                } catch (Exception ex) {
                 }
 
-                selectedPozicija="";
+                selectedPozicija = "";
                 refresh();
 
 
-            }
+            } else {
 
-           else {
+                refresh();
+                label.setStyle("-fx-background-color: green;-fx-text-fill: gray;");
 
-               refresh();
-               label.setStyle("-fx-background-color: green;-fx-text-fill: gray;");
-
-               selectedPozicija=pozicija;
+                selectedPozicija = pozicija;
                 check(pozicija);
             }
 
 
+        } else if (selectedPozicija.length() > 0) {
 
-
-        }else if(selectedPozicija.length()>0){
-
-                try {
-                    move(selectedPozicija, pozicija);
-                   // changePlayer();
-                }catch (Exception ex){
-                }
-
-                selectedPozicija="";
-                refresh();
-
+            try {
+                move(selectedPozicija, pozicija);
+                // changePlayer();
+            } catch (Exception ex) {
             }
-            else{
-                selectedPozicija="";
-            refresh();}
+
+            selectedPozicija = "";
+            refresh();
+
+        } else {
+            selectedPozicija = "";
+            refresh();
+        }
 
         //endregion
 
@@ -587,9 +587,9 @@ refresh();
     void testMove(String oldPosition, String newPosition) {
 
 
-        if(oldPosition==newPosition)throw new IllegalChessMoveException("Ista pozicija");
+        if (oldPosition == newPosition) throw new IllegalChessMoveException("Ista pozicija");
 
-        ChessPiece.Color boja=naLokaciji(oldPosition).getColor();
+        ChessPiece.Color boja = naLokaciji(oldPosition).getColor();
 
         oldPosition = oldPosition.toLowerCase();
         newPosition = newPosition.toLowerCase();
@@ -597,15 +597,17 @@ refresh();
         ChessPiece novaLokacijaFigura = naLokaciji(newPosition);
 
         //region path and eat
-        if(novaLokacijaFigura!=null)
-        if(staraLokacijaFigura.getColor()==novaLokacijaFigura.getColor())throw new IllegalArgumentException("Ista boja");
+        if (novaLokacijaFigura != null)
+            if (staraLokacijaFigura.getColor() == novaLokacijaFigura.getColor())
+                throw new IllegalArgumentException("Ista boja");
 
         if (staraLokacijaFigura == null) throw new IllegalArgumentException("Nema sta pomjeriti");
 
         if (novaLokacijaFigura != null) {
-            if(naLokaciji(newPosition).getClass()==King.class)  throw new IllegalChessMoveException("Kralj se ne moze pojest");
+            if (naLokaciji(newPosition).getClass() == King.class)
+                throw new IllegalChessMoveException("Kralj se ne moze pojest");
             if (novaLokacijaFigura.getColor() != staraLokacijaFigura.getColor()) jede = 1;
-            else jede=0;
+            else jede = 0;
         }
 
         if (staraLokacijaFigura.getClass() != Knight.class) {
@@ -617,71 +619,70 @@ refresh();
 
         //region Castle
 
-        if(staraLokacijaFigura.getMoves()==0 && staraLokacijaFigura.getClass()==King.class && isCheck(staraLokacijaFigura.getColor())==false)  {//svi sem kinga vracaju uvijek -1, samo king moze 0 ako nije pomjeren
+        if (staraLokacijaFigura.getMoves() == 0 && staraLokacijaFigura.getClass() == King.class && isCheck(staraLokacijaFigura.getColor()) == false) {//svi sem kinga vracaju uvijek -1, samo king moze 0 ako nije pomjeren
 
 
-            int pom=1;
-            if(staraLokacijaFigura.getColor()== ChessPiece.Color.BLACK)pom=8;
+            int pom = 1;
+            if (staraLokacijaFigura.getColor() == ChessPiece.Color.BLACK) pom = 8;
 
-            ChessPiece r1=naLokaciji("a"+pom);
-            ChessPiece r2=naLokaciji("h"+pom);
+            ChessPiece r1 = naLokaciji("a" + pom);
+            ChessPiece r2 = naLokaciji("h" + pom);
 
-            if(newPosition.equals("g"+pom) && r2!=null && r2.getMoves()==0){//ako ide king side
-
-
-               if(praznaPutanja(oldPosition,r2.getPosition())) {//ako su prazni do topa
-
-                   staraLokacijaFigura.postaviNa("f"+pom);
-                   if(isCheck(staraLokacijaFigura.getColor())){
-                       staraLokacijaFigura.postaviNa(oldPosition);
-                       throw new IllegalChessMoveException("Ne moze kroz sah");
-                   }
-                   staraLokacijaFigura.postaviNa("g"+pom);
-                   if(isCheck(staraLokacijaFigura.getColor())){
-                       staraLokacijaFigura.postaviNa(oldPosition);
-                       throw new IllegalChessMoveException("Ne moze kroz sah");
-                   }
+            if (newPosition.equals("g" + pom) && r2 != null && r2.getMoves() == 0) {//ako ide king side
 
 
+                if (praznaPutanja(oldPosition, r2.getPosition())) {//ako su prazni do topa
 
-                   if (isCheck(staraLokacijaFigura.getColor())){
-                       staraLokacijaFigura.postaviNa(oldPosition);
-                       throw new IllegalChessMoveException("Error potez");
-                   }
-                   staraLokacijaFigura.postaviNa(oldPosition);
-                   castle1="g"+pom;
-                   return;
-
-               }
-
-                }else if(newPosition.equals("c"+pom) && r1!=null && r1.getMoves()==0){//ako ide queen side
-
-
-                if(praznaPutanja(oldPosition,r1.getPosition())) {//ako su prazni do topa
-
-                    staraLokacijaFigura.postaviNa("d"+pom);
-                    if(isCheck(staraLokacijaFigura.getColor())){
+                    staraLokacijaFigura.postaviNa("f" + pom);
+                    if (isCheck(staraLokacijaFigura.getColor())) {
                         staraLokacijaFigura.postaviNa(oldPosition);
                         throw new IllegalChessMoveException("Ne moze kroz sah");
                     }
-                    staraLokacijaFigura.postaviNa("c"+pom);
-                    if(isCheck(staraLokacijaFigura.getColor())){
+                    staraLokacijaFigura.postaviNa("g" + pom);
+                    if (isCheck(staraLokacijaFigura.getColor())) {
                         staraLokacijaFigura.postaviNa(oldPosition);
                         throw new IllegalChessMoveException("Ne moze kroz sah");
                     }
 
-                    if (isCheck(staraLokacijaFigura.getColor())){
+
+                    if (isCheck(staraLokacijaFigura.getColor())) {
                         staraLokacijaFigura.postaviNa(oldPosition);
                         throw new IllegalChessMoveException("Error potez");
                     }
                     staraLokacijaFigura.postaviNa(oldPosition);
-                    castle1="c"+pom;
+                    castle1 = "g" + pom;
                     return;
 
+                }
+
+            } else if (newPosition.equals("c" + pom) && r1 != null && r1.getMoves() == 0) {//ako ide queen side
+
+
+                if (praznaPutanja(oldPosition, r1.getPosition())) {//ako su prazni do topa
+
+                    staraLokacijaFigura.postaviNa("d" + pom);
+                    if (isCheck(staraLokacijaFigura.getColor())) {
+                        staraLokacijaFigura.postaviNa(oldPosition);
+                        throw new IllegalChessMoveException("Ne moze kroz sah");
+                    }
+                    staraLokacijaFigura.postaviNa("c" + pom);
+                    if (isCheck(staraLokacijaFigura.getColor())) {
+                        staraLokacijaFigura.postaviNa(oldPosition);
+                        throw new IllegalChessMoveException("Ne moze kroz sah");
+                    }
+
+                    if (isCheck(staraLokacijaFigura.getColor())) {
+                        staraLokacijaFigura.postaviNa(oldPosition);
+                        throw new IllegalChessMoveException("Error potez");
+                    }
+                    staraLokacijaFigura.postaviNa(oldPosition);
+                    castle1 = "c" + pom;
+                    return;
+
+                }
+
+
             }
-
-
-        }
 
         }
 
@@ -689,59 +690,56 @@ refresh();
 
         //region EnPassant
 
-        if(staraLokacijaFigura.getClass()==Pawn.class){
+        if (staraLokacijaFigura.getClass() == Pawn.class) {
 
-            if(staraLokacijaFigura.getColor()== ChessPiece.Color.WHITE && oldPosition.charAt(1)=='5'){
-                String passant=""+newPosition.charAt(0);
-                char pom=(char)(newPosition.charAt(1)-1);
-                passant+=pom;
+            if (staraLokacijaFigura.getColor() == ChessPiece.Color.WHITE && oldPosition.charAt(1) == '5') {
+                String passant = "" + newPosition.charAt(0);
+                char pom = (char) (newPosition.charAt(1) - 1);
+                passant += pom;
 
-                ChessPiece c=naLokaciji(passant);
+                ChessPiece c = naLokaciji(passant);
 
-                if(c==lastMoved && c!=staraLokacijaFigura){
-                    jede=1;
-                    try{
+                if (c == lastMoved && c != staraLokacijaFigura) {
+                    jede = 1;
+                    try {
                         staraLokacijaFigura.move(newPosition);
-                        if(isCheck(staraLokacijaFigura.getColor())){
+                        if (isCheck(staraLokacijaFigura.getColor())) {
                             staraLokacijaFigura.postaviNa(oldPosition);
                             throw new IllegalChessMoveException("Stvara sah");
                         }
-                    }catch(Exception e){
-                        jede=0;
+                    } catch (Exception e) {
+                        jede = 0;
                         throw new IllegalChessMoveException(e.toString());
                     }
 
-                   jede=0;
-                   passant1=newPosition;
-                   return;
-                }
-
-            }
-
-            else if(staraLokacijaFigura.getColor()== ChessPiece.Color.BLACK && oldPosition.charAt(1)=='4'){
-                String passant=""+newPosition.charAt(0);
-                char pom=(char)(newPosition.charAt(1)+1);
-                passant+=pom;
-
-                ChessPiece c=naLokaciji(passant);
-                if(c==lastMoved && c!=staraLokacijaFigura){
-                    jede=1;
-                    try{
-                        staraLokacijaFigura.move(newPosition);
-                        if(isCheck(staraLokacijaFigura.getColor())){
-                            staraLokacijaFigura.postaviNa(oldPosition);
-                            throw new IllegalChessMoveException("Stvara sah");
-                        }
-                    }catch(Exception e){
-                        jede=0;
-                        throw new IllegalChessMoveException("Passant error");
-                    }
-
-                    jede=0;
-                    passant1=newPosition;
+                    jede = 0;
+                    passant1 = newPosition;
                     return;
                 }
 
+            } else if (staraLokacijaFigura.getColor() == ChessPiece.Color.BLACK && oldPosition.charAt(1) == '4') {
+                String passant = "" + newPosition.charAt(0);
+                char pom = (char) (newPosition.charAt(1) + 1);
+                passant += pom;
+
+                ChessPiece c = naLokaciji(passant);
+                if (c == lastMoved && c != staraLokacijaFigura) {
+                    jede = 1;
+                    try {
+                        staraLokacijaFigura.move(newPosition);
+                        if (isCheck(staraLokacijaFigura.getColor())) {
+                            staraLokacijaFigura.postaviNa(oldPosition);
+                            throw new IllegalChessMoveException("Stvara sah");
+                        }
+                    } catch (Exception e) {
+                        jede = 0;
+                        throw new IllegalChessMoveException("Passant error");
+                    }
+
+                    jede = 0;
+                    passant1 = newPosition;
+                    return;
+                }
 
 
             }
@@ -752,139 +750,151 @@ refresh();
         //endregion
 
 
-
         staraLokacijaFigura.move(newPosition);
-        if(novaLokacijaFigura!=null)novaLokacijaFigura.postaviNa("X");
-        int jedeTemp=jede;
-        if(isCheck(boja) ){
+        if (novaLokacijaFigura != null) novaLokacijaFigura.postaviNa("X");
+        int jedeTemp = jede;
+        if (isCheck(boja)) {
             staraLokacijaFigura.postaviNa(oldPosition);
-            if(novaLokacijaFigura!=null)novaLokacijaFigura.postaviNa(newPosition);
-            jede=0;
+            if (novaLokacijaFigura != null) novaLokacijaFigura.postaviNa(newPosition);
+            jede = 0;
             throw new IllegalChessMoveException("U sahu je ");
         }
 
-        if(novaLokacijaFigura!=null)novaLokacijaFigura.postaviNa(newPosition);
+        if (novaLokacijaFigura != null) novaLokacijaFigura.postaviNa(newPosition);
         jede = 0;
     }
 
-    public void refresh(){
+    public void refresh() {
 
-        if(playing==false)return;
+        if (playing == false) return;
 
         //region ResetLabels
-        for(int i=0;i<8;i++){
+        for (int i = 0; i < 8; i++) {
 
-            for(int j=0;j<8;j++){
+            for (int j = 0; j < 8; j++) {
                 UIboard[i][j].setGraphic(null);
-                if((i+j)%2==0) {
+                if ((i + j) % 2 == 0) {
                     UIboard[i][j].setStyle("-fx-background-color: DARKGOLDENROD;-fx-text-fill: gray;");
-                }else  UIboard[i][j].setStyle("-fx-background-color: LIGHTGOLDENRODYELLOW;-fx-text-fill: gray;");
+                } else UIboard[i][j].setStyle("-fx-background-color: LIGHTGOLDENRODYELLOW;-fx-text-fill: gray;");
             }
 
         }
         //endregion
 
         //region WhenPicking
-        if(picking==true){
+        if (picking == true) {
 
-            ImageView pomView=new Queen("D4", lastMoved.getColor()).getIcon();
+            ImageView pomView = new Queen("D4", lastMoved.getColor()).getIcon();
             pomView.setFitHeight(30);
             pomView.setFitWidth(30);
             UIboard[3][3].setStyle("-fx-background-color: yellow;-fx-text-fill: gray;");
             UIboard[3][3].setGraphic(pomView);
 
-            pomView=new Knight("E4", lastMoved.getColor()).getIcon();
+            pomView = new Knight("E4", lastMoved.getColor()).getIcon();
             pomView.setFitHeight(30);
             pomView.setFitWidth(30);
             UIboard[3][4].setStyle("-fx-background-color: yellow;-fx-text-fill: gray;");
             UIboard[3][4].setGraphic(pomView);
 
-            pomView=new Bishop("D5", lastMoved.getColor()).getIcon();
+            pomView = new Bishop("D5", lastMoved.getColor()).getIcon();
             pomView.setFitHeight(30);
             pomView.setFitWidth(30);
             UIboard[4][3].setStyle("-fx-background-color: yellow;-fx-text-fill: gray;");
             UIboard[4][3].setGraphic(pomView);
 
-            pomView=new Rook("E5", lastMoved.getColor()).getIcon();
+            pomView = new Rook("E5", lastMoved.getColor()).getIcon();
             pomView.setFitHeight(30);
             pomView.setFitWidth(30);
             UIboard[4][4].setStyle("-fx-background-color: yellow;-fx-text-fill: gray;");
             UIboard[4][4].setGraphic(pomView);
 
 
-
             return;
         }
         //endregion
 
-        for(int i=0;i<8;i++){
+        for (int i = 0; i < 8; i++) {
 
-            for(int j=0;j<8;j++){
+            for (int j = 0; j < 8; j++) {
 
-                char pom='a';
-                pom+=i;
-                String pozicija=""+pom+(j+1);
+                char pom = 'a';
+                pom += i;
+                String pozicija = "" + pom + (j + 1);
 
-                ChessPiece naLok=naLokaciji(pozicija);
+                ChessPiece naLok = naLokaciji(pozicija);
 
                 UIboard[i][j].setGraphic(null);
 
-                if(naLok!=null) {
-                    char boja='w';
-                    if(naLok.getColor()== ChessPiece.Color.BLACK)boja='b';
+                if (naLok != null) {
+                    char boja = 'w';
+                    if (naLok.getColor() == ChessPiece.Color.BLACK) boja = 'b';
                     UIboard[i][j].setGraphic(null);
-                    ImageView pomView=naLok.getIcon();
+                    ImageView pomView = naLok.getIcon();
                     pomView.setFitHeight(30);
                     pomView.setFitWidth(30);
 
                     UIboard[i][j].setGraphic(pomView);
-                }else UIboard[i][j].setText("");
+                } else UIboard[i][j].setText("");
 
-                if((i+j)%2==0) {
+                if ((i + j) % 2 == 0) {
                     UIboard[i][j].setStyle("-fx-background-color: DARKGOLDENROD;-fx-text-fill: gray;");
-                }else  UIboard[i][j].setStyle("-fx-background-color: LIGHTGOLDENRODYELLOW;-fx-text-fill: gray;");
-
-
+                } else UIboard[i][j].setStyle("-fx-background-color: LIGHTGOLDENRODYELLOW;-fx-text-fill: gray;");
 
 
             }
 
         }
 
-        if(isCheckMate(ChessPiece.Color.WHITE)){
+        if (isCheckMate(ChessPiece.Color.WHITE)) {
 
-            Alert a=new Alert(Alert.AlertType.ERROR);
-            if(isCheck(ChessPiece.Color.WHITE)) {
+            int status = 0;
+
+            Alert a = new Alert(Alert.AlertType.INFORMATION,"",ButtonType.YES,ButtonType.NO);
+            if (isCheck(ChessPiece.Color.WHITE)) {
                 if (currentPlayer == ChessPiece.Color.BLACK) {
-                    a.setContentText("You won with checkmate");
-                    gameEnd(1);
+                    a.setContentText("You won with checkmate\nDo you want to save the game?");
+                    status = 1;
+                } else {
+                    a.setContentText("You lost with checkmate\nDo you want to save the game?");
+                    status = -1;
                 }
-                else{
-                    a.setContentText("You lost with checkmate");
-                    gameEnd(-1);
-                }
-            }else {
-                gameEnd(0);
-                a.setContentText("There are no more possible moves,stalemate");
+            } else {
+                status = 0;
+                a.setContentText("There are no more possible moves,stalemate\nDo you want to save the game?");
             }
 
-            a.show();
-
+            Optional<ButtonType> result = a.showAndWait();
+            if (result.get() == ButtonType.YES) {
+                gameEnd(status, true);
+            } else gameEnd(status, false);
 
 
         }
 
-        if(isCheckMate(ChessPiece.Color.BLACK)){
+        if (isCheckMate(ChessPiece.Color.BLACK)) {
 
-            Alert a=new Alert(Alert.AlertType.ERROR);
-            if(isCheck(ChessPiece.Color.BLACK )) {
-                if (currentPlayer == ChessPiece.Color.WHITE)
-                    a.setContentText("You won with checkmate");
-                else a.setContentText("You lost with checkmate");
-            }else
-                a.setContentText("There are no more possible moves,stalemate");
+            int status = 0;
 
-            a.show();
+            Alert a = new Alert(Alert.AlertType.INFORMATION,"",ButtonType.YES,ButtonType.NO);
+            if (isCheck(ChessPiece.Color.BLACK)) {
+                if (currentPlayer == ChessPiece.Color.WHITE) {
+                    a.setContentText("You won with checkmate\nDo you want to save the game?");
+                    status = 1;
+                } else {
+                    a.setContentText("You lost with checkmate\nDo you want to save the game?");
+                    status = -1;
+                }
+            } else {
+                status = 0;
+                a.setContentText("There are no more possible moves,stalemate\nDo you want to save the game?");
+            }
+
+            Optional<ButtonType> result = a.showAndWait();
+            if (result.get() == ButtonType.YES) {
+                gameEnd(status, true);
+            } else gameEnd(status, false);
+
+
         }
 
 
@@ -892,95 +902,117 @@ refresh();
 
     }
 
-    public void check(String position){
+    public void check(String position) {
 
-        ChessPiece naLok=naLokaciji(position);
-        ChessPiece.Color boja= ChessPiece.Color.WHITE;
+        ChessPiece naLok = naLokaciji(position);
+        ChessPiece.Color boja = ChessPiece.Color.WHITE;
 
-        if(naLok.getColor()== ChessPiece.Color.WHITE)boja= ChessPiece.Color.BLACK;
+        if (naLok.getColor() == ChessPiece.Color.WHITE) boja = ChessPiece.Color.BLACK;
 
-        for(char c='a';c<='h';c++){
+        for (char c = 'a'; c <= 'h'; c++) {
 
-                for(int j=1;j<=8;j++){
-                String newPosition=""+c+j;
+            for (int j = 1; j <= 8; j++) {
+                String newPosition = "" + c + j;
 
-                try{
-                    jede=0;
-                    testMove(position,newPosition);
-                    if(isCheck(boja)){
+                try {
+                    jede = 0;
+                    testMove(position, newPosition);
+                    if (isCheck(boja)) {
                         UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: red;-fx-text-fill: gray;");
                         naLok.postaviNa(position);
                         continue;
                     }
 
                     naLok.postaviNa(position);
-                    ChessPiece cp=naLokaciji(newPosition);
+                    ChessPiece cp = naLokaciji(newPosition);
 
 
-                    if(cp!=null)UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: pink;-fx-text-fill: gray;");
+                    if (cp != null) UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: pink;-fx-text-fill: gray;");
 
-                   else if((j+c)%2==0) UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: royalblue;-fx-text-fill: gray;");
+                    else if ((j + c) % 2 == 0)
+                        UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: royalblue;-fx-text-fill: gray;");
                     else UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: lightblue;-fx-text-fill: gray;");
 
 
-
-                }catch (Exception e){
-
-                }
-
+                } catch (Exception e) {
 
                 }
+
+
+            }
 
         }
-        jede=0;
+        jede = 0;
     }
 
     public void Undo(MouseEvent mouseEvent) {
         changePlayer();
     }
 
-    private void gameEnd(int status){
+    private void gameEnd(int status, boolean save) {
 
-        if(playing==false)return;
+        if (playing == false) return;
 
 
-        Connection conn=ConnectionDAO.getConn();
-        int playerID=0;
-        try {
-            PreparedStatement upit=conn.prepareStatement("Select white,black from room where id=?");
-            upit.setInt(1,roomId);
-            ResultSet result=upit.executeQuery();
-            result.next();
-            if(currentPlayer== ChessPiece.Color.WHITE)playerID=result.getInt(1);
-            else playerID=result.getInt(2);
-            result.close();
+        Connection conn = ConnectionDAO.getConn();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (save == true) {
+
+            try {
+                PreparedStatement upit = conn.prepareStatement("Select * from pastgames where roomid=? limit 1");
+                upit.setInt(1, roomId);
+                ResultSet rs = upit.executeQuery();
+                if (!rs.next()) {
+
+                    upit = conn.prepareStatement("Insert into pastgames values(?,?,?,?,?,?)");
+                    if (currentPlayer == ChessPiece.Color.WHITE) {
+                        upit.setInt(1, playerID);
+                        upit.setInt(2, opponenetID);
+                    } else {
+                        upit.setInt(2, playerID);
+                        upit.setInt(1, opponenetID);
+                    }
+
+                    if (status == 1) upit.setInt(3, playerID);
+                    else if (status == -1) upit.setInt(3, opponenetID);
+                    else upit.setInt(3, 0);
+
+                    upit.setString(4, moves);
+                    upit.setString(5, "OK");
+                    upit.setInt(6, roomId);
+
+                    upit.executeUpdate();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
         }
 
-        int wins,loss,draw;
+
+        int wins, loss, draw;
         try {
-            PreparedStatement upit=conn.prepareStatement("Select wins,loss,draw from player where id=?");
-            upit.setInt(1,playerID);
-            ResultSet result=upit.executeQuery();
+            PreparedStatement upit = conn.prepareStatement("Select wins,loss,draw from player where id=?");
+            upit.setInt(1, playerID);
+            ResultSet result = upit.executeQuery();
             result.next();
-            wins=result.getInt(1);
-            loss=result.getInt(2);
-            draw=result.getInt(3);
+            wins = result.getInt(1);
+            loss = result.getInt(2);
+            draw = result.getInt(3);
             result.close();
-            if(status==1){
-                upit=conn.prepareStatement("Update player set wins=? where id=?");
-                upit.setInt(1,wins+1);
+            if (status == 1) {
+                upit = conn.prepareStatement("Update player set wins=? where id=?");
+                upit.setInt(1, wins + 1);
+            } else if (status == -1) {
+                upit = conn.prepareStatement("Update player set loss=? where id=?");
+                upit.setInt(1, loss + 1);
+            } else {
+                upit = conn.prepareStatement("Update player set draw=? where id=?");
+                upit.setInt(1, draw + 1);
             }
-            else if(status==-1){
-                upit=conn.prepareStatement("Update player set loss=? where id=?");
-                upit.setInt(1,loss+1);
-            }else{
-                upit=conn.prepareStatement("Update player set draw=? where id=?");
-                upit.setInt(1,draw+1);
-            }
-            upit.setInt(2,playerID);
+
+            upit.setInt(2, playerID);
             upit.executeUpdate();
 
 
@@ -988,7 +1020,15 @@ refresh();
             e.printStackTrace();
         }
 
-        playing=false;
+        playing = false;
+
+        Alert a=new Alert(Alert.AlertType.CONFIRMATION,"",ButtonType.YES,ButtonType.NO);
+        a.setContentText("Do you want to rematch?");
+
+        Optional<ButtonType> result = a.showAndWait();
+        if (result.get() == ButtonType.YES) {
+           controller.rematch();
+        } else controller.leaveRoom();
 
     }
 

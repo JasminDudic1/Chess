@@ -13,7 +13,7 @@ import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 
-public class ChessRoom implements Initializable {
+public class ChessRoom {
 
     public GridPane boardGridPane;
     public Label OpponentLab;
@@ -69,23 +69,30 @@ public class ChessRoom implements Initializable {
         try {
             ResultSet rs=getOpponent.executeQuery();
             if(!rs.next()) System.out.println("Uhm fix here");
+
+            if(rs.getInt(1)==-1 || rs.getInt(1)==-1){
+                running=false;
+                closeRoom();
+            }
+
             if(rs.getInt(1)!=0 && rs.getInt(2)!=0){
+
+
+
+
                 System.out.println("Ubacujem u sobu:"+roomId);
                 b.setGameReady();
+                b.setPlayersIds(rs.getInt(1),rs.getInt(2));
+                b.setController(this);
                 running=false;
+
                 setPlayerLabels(rs.getInt(1),rs.getInt(2));
+
             }
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-
 
     }
 
@@ -157,6 +164,50 @@ public class ChessRoom implements Initializable {
 
     public void exitClicked(ActionEvent actionEvent) {
         closeRoom();
+    }
+
+    public void rematch(){
+
+        running=true;
+        if(bojaIgraca== ChessPiece.Color.WHITE)draw(ChessPiece.Color.BLACK);
+        else draw(ChessPiece.Color.WHITE);
+
+    }
+
+    public void leaveRoom(){
+
+        running=false;
+        Connection conn=ConnectionDAO.getConn();
+
+        try {
+            PreparedStatement upit = conn.prepareStatement("Select white,black from room where id=?");
+            upit.setInt(1,roomId);
+            ResultSet rs=upit.executeQuery();
+            rs.next();
+            if(rs.getInt(1)==0 || rs.getInt(2)==0){
+                System.out.println("Room id je "+roomId);
+                upit=conn.prepareStatement("delete from room where id=?");
+                upit.setInt(1,roomId);
+                upit.executeUpdate();
+                System.out.println("Obrisana soba");
+            }else{
+                if(bojaIgraca== ChessPiece.Color.WHITE){
+                    upit=conn.prepareStatement("Update room set white=-1 where id=?");
+                    upit.setInt(1,roomId);
+                    upit.executeUpdate();
+                }else{
+                    upit=conn.prepareStatement("Update room set black=-1 where id=?");
+                    upit.setInt(1,roomId);
+                    upit.executeUpdate();
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        currentTab.getTabPane().getTabs().remove(currentTab);
+
     }
 
 }

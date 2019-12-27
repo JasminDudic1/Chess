@@ -70,6 +70,12 @@ public  class ConnectionDAO {
                 stm.executeUpdate(setup);
             }catch(Exception e){}
 
+            try {
+                setup = "DROP TABLE pastgames";
+                stm = conn.createStatement();
+                stm.executeUpdate(setup);
+            }catch(Exception e){}
+
              setup="CREATE TABLE \"player\" (\n" +
                     "\t\"id\"\tINTEGER PRIMARY KEY,\n" +
                     "\t\"username\"\tTEXT NOT NULL,\n" +
@@ -96,6 +102,19 @@ public  class ConnectionDAO {
 
             stm= conn.createStatement();
             stm.execute(setup);
+
+            setup="CREATE TABLE \"pastgames\" (\n" +
+                    "\t\"white\"\tINTEGER NOT NULL,\n" +
+                    "\t\"black\"\tINTEGER NOT NULL,\n" +
+                    "\t\"winner\"\tINTEGER NOT NULL,\n" +
+                    "\t\"moves\"\tTEXT NOT NULL,\n" +
+                    "\t\"date\"\tTEXT NOT NULL,\n" +
+                    "\t\"roomid\"\tINTEGER NOT NULL\n" +
+                    ");";
+
+            stm=conn.createStatement();
+            stm.execute(setup);
+
             System.out.printf("Napravio");
 
         } catch (SQLException e) {
