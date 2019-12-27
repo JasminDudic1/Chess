@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 
 import java.net.URL;
@@ -23,28 +24,22 @@ public class Board {
 
     public static int jede = 0;
     public ImageView A8Lab1;
-    public Label A8Lab11;
     public GridPane Grid;
     String castle1="";
     String passant1="";
     boolean picking=false;
+    boolean playing=true;
     private int roomId=0;
     private String moves="";
     PreparedStatement getMoves,setMoves,getWhite,getBlack;
     private boolean gameReady=false;
     private Label colorLab;
 
-
     private ChessPiece.Color turnColor= ChessPiece.Color.WHITE;
     private ChessPiece.Color currentPlayer= ChessPiece.Color.WHITE;
 
-    //region Labels
-
     private TabPane tabpane;
 
-
-
-    //endregion
 
     String selectedPozicija="";
     ChessPiece lastMoved=null;
@@ -95,7 +90,7 @@ public class Board {
                      refresh();
                      changePlayer();
                  }
-            }else System.out.println("Nema rezultata?");
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -195,6 +190,8 @@ public class Board {
             }
         }
 
+
+
 refresh();
     }
 
@@ -216,7 +213,7 @@ refresh();
 
                 try {
                     Platform.runLater(()->checkBaseForNewMoves());
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -317,14 +314,9 @@ refresh();
                                //endregion
                            }
 
-
-             /*  if(newPiece=='D')c2=new Queen(newPosition,c2.getColor());
-               else if(newPiece=='N')c2=new Knight(newPosition,c2.getColor());
-               else if(newPiece=='B')c2=new Bishop(newPosition,c2.getColor());
-               else if(newPiece=='R')c2=new Rook(newPosition,c2.getColor());*/
-            // changePlayer();
                 return;
            }
+
 
 
            if(c2.getClass()==Pawn.class && (newPosition.charAt(1)=='8' || newPosition.charAt(1)=='1') && newPiece==' '){
@@ -344,6 +336,7 @@ refresh();
            e.printStackTrace();
     throw new IllegalChessMoveException(e.toString());
        }
+
 
         refresh();
 
@@ -372,6 +365,40 @@ refresh();
         }
         jede = 0;
         return false;
+    }
+
+    boolean isCheckMate(ChessPiece.Color boja){
+
+        int bojaIgraca=0;
+        if(boja== ChessPiece.Color.BLACK)bojaIgraca=1;
+        int possibleMoves=0;
+
+        for(int i=0;i<16;i++){
+            if(board[bojaIgraca][i].getPosition()=="X")continue;
+
+            for(char c='a';c<='h';c++)
+                for(int j=1;j<=8;j++){
+                    jede=0;
+                    String newPosition=""+c+j;
+                    String oldPosition=board[bojaIgraca][i].getPosition();
+
+                    try{
+                        testMove(oldPosition,newPosition);
+                        board[bojaIgraca][i].postaviNa(oldPosition);
+
+                        return false;
+
+                    }catch(Exception e){
+
+                    }
+
+
+                }
+
+        }
+
+        return true;
+
     }
 
     private ChessPiece naLokaciji(String lokacija) {
@@ -742,6 +769,8 @@ refresh();
 
     public void refresh(){
 
+        if(playing==false)return;
+
         //region ResetLabels
         for(int i=0;i<8;i++){
 
@@ -788,11 +817,6 @@ refresh();
         }
         //endregion
 
-        //region Icons
-        /*if(igrac== ChessPiece.Color.WHITE)
-            TextLab.setText("WHITE");
-        else TextLab.setText("BLACK");*/
-
         for(int i=0;i<8;i++){
 
             for(int j=0;j<8;j++){
@@ -827,6 +851,43 @@ refresh();
 
         }
 
+        if(isCheckMate(ChessPiece.Color.WHITE)){
+
+            Alert a=new Alert(Alert.AlertType.ERROR);
+            if(isCheck(ChessPiece.Color.WHITE)) {
+                if (currentPlayer == ChessPiece.Color.BLACK) {
+                    a.setContentText("You won with checkmate");
+                    gameEnd(1);
+                }
+                else{
+                    a.setContentText("You lost with checkmate");
+                    gameEnd(-1);
+                }
+            }else {
+                gameEnd(0);
+                a.setContentText("There are no more possible moves,stalemate");
+            }
+
+            a.show();
+
+
+
+        }
+
+        if(isCheckMate(ChessPiece.Color.BLACK)){
+
+            Alert a=new Alert(Alert.AlertType.ERROR);
+            if(isCheck(ChessPiece.Color.BLACK )) {
+                if (currentPlayer == ChessPiece.Color.WHITE)
+                    a.setContentText("You won with checkmate");
+                else a.setContentText("You lost with checkmate");
+            }else
+                a.setContentText("There are no more possible moves,stalemate");
+
+            a.show();
+        }
+
+
         //endregion
 
     }
@@ -857,8 +918,9 @@ refresh();
 
 
                     if(cp!=null)UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: pink;-fx-text-fill: gray;");
-                   else UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: lightblue;-fx-text-fill: gray;");
 
+                   else if((j+c)%2==0) UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: royalblue;-fx-text-fill: gray;");
+                    else UIboard[c - 'a'][j - 1].setStyle("-fx-background-color: lightblue;-fx-text-fill: gray;");
 
 
 
@@ -877,5 +939,57 @@ refresh();
         changePlayer();
     }
 
+    private void gameEnd(int status){
+
+        if(playing==false)return;
+
+
+        Connection conn=ConnectionDAO.getConn();
+        int playerID=0;
+        try {
+            PreparedStatement upit=conn.prepareStatement("Select white,black from room where id=?");
+            upit.setInt(1,roomId);
+            ResultSet result=upit.executeQuery();
+            result.next();
+            if(currentPlayer== ChessPiece.Color.WHITE)playerID=result.getInt(1);
+            else playerID=result.getInt(2);
+            result.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        int wins,loss,draw;
+        try {
+            PreparedStatement upit=conn.prepareStatement("Select wins,loss,draw from player where id=?");
+            upit.setInt(1,playerID);
+            ResultSet result=upit.executeQuery();
+            result.next();
+            wins=result.getInt(1);
+            loss=result.getInt(2);
+            draw=result.getInt(3);
+            result.close();
+            if(status==1){
+                upit=conn.prepareStatement("Update player set wins=? where id=?");
+                upit.setInt(1,wins+1);
+            }
+            else if(status==-1){
+                upit=conn.prepareStatement("Update player set loss=? where id=?");
+                upit.setInt(1,loss+1);
+            }else{
+                upit=conn.prepareStatement("Update player set draw=? where id=?");
+                upit.setInt(1,draw+1);
+            }
+            upit.setInt(2,playerID);
+            upit.executeUpdate();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        playing=false;
+
+    }
 
 }

@@ -6,6 +6,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.GridPane;
 
 import java.net.URL;
@@ -23,6 +24,11 @@ public class ChessRoom implements Initializable {
     private PreparedStatement getOpponent,getWhite,getBlack;
     boolean running=true;
     private ChessPiece.Color bojaIgraca= ChessPiece.Color.WHITE;
+    private Tab currentTab;
+
+    public void setCurrentTab(Tab t){
+        currentTab=t;
+    }
 
     public void setRoomId(int roomId) {
         this.roomId = roomId;
@@ -123,8 +129,9 @@ public class ChessRoom implements Initializable {
             upit.setInt(1,roomId);
             ResultSet rs=upit.executeQuery();
             rs.next();
-            if(rs.getInt(1)!=0 || rs.getInt(2)!=0){
-                upit=conn.prepareStatement("Drop from room where id=?");
+            if(rs.getInt(1)==0 || rs.getInt(2)==0){
+                System.out.println("Room id je "+roomId);
+                upit=conn.prepareStatement("delete from room where id=?");
                 upit.setInt(1,roomId);
                 upit.executeUpdate();
                 System.out.println("Obrisana soba");
@@ -144,11 +151,12 @@ public class ChessRoom implements Initializable {
             e.printStackTrace();
         }
 
+        currentTab.getTabPane().getTabs().remove(currentTab);
 
     }
 
     public void exitClicked(ActionEvent actionEvent) {
         closeRoom();
-
     }
+
 }

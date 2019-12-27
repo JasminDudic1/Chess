@@ -100,6 +100,7 @@ public class CreateRoom {
                 ChessRoom controller = fxmlLoader.getController();
                 controller.setRoomId(roomID);
                 controller.draw(bojaIgraca);
+                controller.setCurrentTab(currentTab);
                 currentTab.setText(roomID+":"+nameText.getText());
                 currentTab.setContent(root);
 

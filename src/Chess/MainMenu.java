@@ -196,8 +196,12 @@ public class MainMenu implements Initializable {
             controller.setRoomId(pom);
             controller.draw(bojaIgraca);
 
+
             Tab tab=new Tab(pom+":"+roomName,root);
             tab.setOnClosed(e->controller.closeRoom());
+
+            controller.setCurrentTab(tab);
+
             tabsTabPane.getTabs().add(tab);
 
             // ((Stage)usernameTBox.getScene().getWindow()).close();
