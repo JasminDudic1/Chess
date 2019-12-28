@@ -4,10 +4,11 @@ import javafx.scene.image.ImageView;
 
 public abstract class ChessPiece {
 
+
+
     public static enum Color{WHITE,BLACK};
 
     // public ChessPiece(String pozicija,Color boja){}
-
 
     public abstract String getPosition();
 
@@ -24,6 +25,8 @@ public abstract class ChessPiece {
     abstract int getMoves();
 
     abstract void moved();
+
+
 
 
 }

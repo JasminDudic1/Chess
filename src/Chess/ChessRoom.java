@@ -2,18 +2,16 @@ package Chess;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 
-import java.net.URL;
-import java.sql.*;
-import java.util.ResourceBundle;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class ChessRoom {
 
@@ -54,11 +52,11 @@ public class ChessRoom {
             ResultSet rblack=getBlack.executeQuery();
             rblack.next();
 
-           /* if(isImport){
+            if(isImport){
                 playerLab.setText(rwhite.getString(1));
                 opponentLab.setText(rblack.getString(1));
                 return;
-            }*/
+            }
 
             if(b.getCurrentPlayer()== ChessPiece.Color.WHITE){
                 playerLab.setText(rwhite.getString(1));
@@ -77,7 +75,7 @@ public class ChessRoom {
 
     private void checkForOpponent(){
 
-        //if(isImport)return;
+        if(isImport)return;
 
         try {
             ResultSet rs=getOpponent.executeQuery();
@@ -251,7 +249,7 @@ public class ChessRoom {
 
     public void importGame(String moves,int whiteid,int blackid){
 
-       /* isImport=true;
+        isImport=true;
 
         lastBtn.setDisable(false);
         firstBtn.setDisable(false);
@@ -264,7 +262,7 @@ public class ChessRoom {
         b.setPlayersIds(whiteid,blackid);
         b.setController(this);
 
-        b.importGame(moves);*/
+            b.importGame(moves);
 
 
 
@@ -272,19 +270,19 @@ public class ChessRoom {
 
     public void nextClicked(ActionEvent actionEvent) {
 
-       // b.next();
+        b.next();
 
     }
 
     public void previousClicked(ActionEvent actionEvent) {
-       // b.previous();
+        b.previous();
     }
 
     public void firstClicked(ActionEvent actionEvent) {
-        //b.first();
+        b.first();
     }
 
     public void lastClicked(ActionEvent actionEvent) {
-        //b.last();
+        b.last();
     }
 }

@@ -1,16 +1,13 @@
 package Chess;
 
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,8 +36,9 @@ public class Board {
     private ChessPiece.Color currentPlayer = ChessPiece.Color.WHITE;
     private ChessPiece[][] board = new ChessPiece[2][];
     private Label[][] UIboard = new Label[8][];
-    //private ChessPiece[][][]allBoard;
-    //int currentBoard=0,maxBoard=0;
+    //private ArrayList<ChessPiece[][]>allBoard=new ArrayList<>();
+    private ChessPiece[][][]allBoard;
+    int currentBoard=0;
     private ArrayList<String> importMoves;
     ChessRoom controller=null;
     boolean rematch=false;
@@ -52,10 +50,7 @@ public class Board {
 
     private void addCurrentBoard(){
 
-
-    //allBoard[currentBoard]=new ChessPiece[2][16];
-
-       /* for(int i=0;i<2;i++)
+        for(int i=0;i<2;i++)
             for(int j=0;j<16;j++) {
                 if(board[i][j].getZnak()=='P')allBoard[currentBoard][i][j]=new Pawn(board[i][j]);
                 else if(board[i][j].getZnak()=='Q')allBoard[currentBoard][i][j]=new Queen(board[i][j]);
@@ -63,12 +58,12 @@ public class Board {
                 else if(board[i][j].getZnak()=='R')allBoard[currentBoard][i][j]=new Rook(board[i][j]);
                 else if(board[i][j].getZnak()=='N')allBoard[currentBoard][i][j]=new Knight(board[i][j]);
                 else if(board[i][j].getZnak()=='B')allBoard[currentBoard][i][j]=new Bishop(board[i][j]);
+            }
 
-            }*/
-
-       // currentBoard++;
+            currentBoard++;
 
     }
+
 
     public Board(GridPane boardGridPane, ChessPiece.Color bojaIgraca) {
 
@@ -79,7 +74,7 @@ public class Board {
         for (int i = 0; i < 8; i++)
             UIboard[i] = new Label[8];
 
-        board[0] = new ChessPiece[16];
+               board[0] = new ChessPiece[16];
         board[1] = new ChessPiece[16];
 
         //region Pieces
@@ -148,13 +143,12 @@ public class Board {
                 UIboard[i][j].setAlignment(Pos.CENTER);
                 String pos = "" + (char) ('A' + i) + (j + 1);
                 UIboard[i][j].setId(pos);
-                if (bojaIgraca == ChessPiece.Color.WHITE)
-                    boardGridPane.add(UIboard[i][j], i, 8 - j);
-                else {
-                    boardGridPane.add(UIboard[i][j], i, j + 1);
-                }
+                if (bojaIgraca == ChessPiece.Color.WHITE) boardGridPane.add(UIboard[i][j], i, 8 - j);
+                else boardGridPane.add(UIboard[i][j], i, j + 1);
+
             }
         }
+
 
         refresh();
     }
@@ -174,59 +168,62 @@ public class Board {
             ChessPiece c1 = naLokaciji(newPosition);
             ChessPiece c2 = naLokaciji(oldPosition);
 
-            testMove(oldPosition, newPosition);
+             if(canCastle(oldPosition,newPosition)) {
+                //region Castling
+                newPosition = newPosition.toLowerCase();
+                castle1 = castle1.toLowerCase();
 
-            //region Castling
-            newPosition = newPosition.toLowerCase();
-            castle1 = castle1.toLowerCase();
+                if (newPosition.equals(castle1)) {
 
-            if (newPosition.equals(castle1)) {
+                    if (currentPlayer != turnColor) System.out.println("Castled");
+                    else System.out.println("I castled");
 
-                if (currentPlayer != turnColor) System.out.println("Castled");
-                else System.out.println("I castled");
+                    String rookStr = "xx";
 
-                String rookStr = "xx";
+                    c2.postaviNa(castle1);
 
-                c2.postaviNa(castle1);
+                    if (castle1.charAt(0) == 'c') {
+                        int pom = castle1.charAt(1) - '0';
+                        rookStr = "a" + pom;
+                        naLokaciji(rookStr).postaviNa("d" + pom);
+                    } else if (castle1.charAt(0) == 'g') {
+                        int pom = castle1.charAt(1) - '0';
+                        rookStr = "h" + pom;
+                        naLokaciji(rookStr).postaviNa("f" + pom);
+                    }
+                    castle1 = "";
 
-                if (castle1.charAt(0) == 'c') {
-                    int pom = castle1.charAt(1) - '0';
-                    rookStr = "a" + pom;
-                    naLokaciji(rookStr).postaviNa("d" + pom);
-                } else if (castle1.charAt(0) == 'g') {
-                    int pom = castle1.charAt(1) - '0';
-                    rookStr = "h" + pom;
-                    naLokaciji(rookStr).postaviNa("f" + pom);
+
                 }
-                castle1 = "";
-
-
+                //endregion
             }
-            //endregion
 
-            //region EnPassant
-            if (newPosition.equals(passant1)) {
+            else if(canPassant(oldPosition,newPosition)) {
+                //region EnPassant
+                if (newPosition.equals(passant1)) {
 
-                if (c2.getColor() == ChessPiece.Color.WHITE) {
-                    String passant = "" + newPosition.charAt(0);
-                    char pom = (char) (newPosition.charAt(1) - 1);
-                    passant += pom;
-                    c1 = naLokaciji(passant);
-                    c1.postaviNa("x");
-                    c2.postaviNa(passant1);
+                    if (c2.getColor() == ChessPiece.Color.WHITE) {
+                        String passant = "" + newPosition.charAt(0);
+                        char pom = (char) (newPosition.charAt(1) - 1);
+                        passant += pom;
+                        c1 = naLokaciji(passant);
+                        c1.postaviNa("x");
+                        c2.postaviNa(passant1);
+                    }
+                    if (c2.getColor() == ChessPiece.Color.BLACK) {
+                        String passant = "" + newPosition.charAt(0);
+                        char pom = (char) (newPosition.charAt(1) + 1);
+                        passant += pom;
+                        c1 = naLokaciji(passant);
+                        c1.postaviNa("x");
+                        c2.postaviNa(passant1);
+                    }
+                    passant1 = "";
+
                 }
-                if (c2.getColor() == ChessPiece.Color.BLACK) {
-                    String passant = "" + newPosition.charAt(0);
-                    char pom = (char) (newPosition.charAt(1) + 1);
-                    passant += pom;
-                    c1 = naLokaciji(passant);
-                    c1.postaviNa("x");
-                    c2.postaviNa(passant1);
-                }
-                passant1 = "";
-
+                //endregion
             }
-            //endregion
+            else testMove(oldPosition, newPosition);
 
             c2.moved();
             lastMoved = c2;
@@ -252,11 +249,10 @@ public class Board {
                 return;
             }
 
-           // if(isImport) return;
+            if(isImport) return;
+
 
            // addCurrentBoard();
-
-
 
             if (c2.getClass() == Pawn.class && (newPosition.charAt(1) == '8' || newPosition.charAt(1) == '1') && newPiece == ' ') {
                 moves += " (" + oldPosition.toLowerCase() + "-" + newPosition.toLowerCase();
@@ -268,9 +264,6 @@ public class Board {
                 setMoves.executeUpdate();
                 changePlayer();
             }
-
-            if(turnColor!=currentPlayer && currentPlayer== ChessPiece.Color.BLACK)
-                System.out.println("i actually enter it lol");
 
         } catch (Exception e) {
             if (currentPlayer == ChessPiece.Color.WHITE)
@@ -363,12 +356,13 @@ public class Board {
                 String baseMoves = res.getString(1);
                 if (baseMoves.isEmpty()) return;
                 temp = new ArrayList<String>(Arrays.asList(baseMoves.split(",")));
+
                 if (!baseMoves.equals(moves)) {
+
                     String move = temp.get(temp.size() - 1);
                     String oldPosition = move.substring(move.indexOf("(") + 1, move.indexOf("-"));
                     String newPosition = move.substring(move.indexOf("-") + 1, move.indexOf(")"));
                     moves = baseMoves;
-                    System.out.println("Nasao sa "+oldPosition+" na "+newPosition);
                     move(oldPosition, newPosition);
                     refresh();
                     changePlayer();
@@ -505,7 +499,7 @@ public class Board {
     public void Clicked(MouseEvent mouseEvent) {
 
 
-        if ((turnColor != currentPlayer || gameReady == false) && roomId!=0) return;
+        if ((turnColor != currentPlayer || gameReady == false) /*&& roomId!=0*/) return;
 
         Label label = (Label) mouseEvent.getSource();
 
@@ -624,12 +618,11 @@ public class Board {
 
     }
 
-    private boolean canCastle(String oldPosition, String newPosition){
+   private boolean canCastle(String oldPosition, String newPosition){
 
         oldPosition = oldPosition.toLowerCase();
         newPosition = newPosition.toLowerCase();
         ChessPiece staraLokacijaFigura = naLokaciji(oldPosition);
-        ChessPiece novaLokacijaFigura = naLokaciji(newPosition);
 
         //region Castle
 
@@ -708,7 +701,6 @@ public class Board {
         oldPosition = oldPosition.toLowerCase();
         newPosition = newPosition.toLowerCase();
         ChessPiece staraLokacijaFigura = naLokaciji(oldPosition);
-        ChessPiece novaLokacijaFigura = naLokaciji(newPosition);
 
         //region EnPassant
 
@@ -800,6 +792,7 @@ public class Board {
             else jede = 0;
         }
 
+        //if(!isImport)
         if (staraLokacijaFigura.getClass() != Knight.class) {
 
             if (!praznaPutanja(oldPosition, newPosition))
@@ -807,6 +800,7 @@ public class Board {
         }
         //endregion
 
+        /*
         //region Castle
 
         if (staraLokacijaFigura.getMoves() == 0 && staraLokacijaFigura.getClass() == King.class && isCheck(staraLokacijaFigura.getColor()) == false) {//svi sem kinga vracaju uvijek -1, samo king moze 0 ako nije pomjeren
@@ -877,9 +871,11 @@ public class Board {
         }
 
         //endregion
+*/
 
-       // canCastle(oldPosition,newPosition);
+       if (canCastle(oldPosition,newPosition))return;
 
+        /*
         //region EnPassant
 
         if (staraLokacijaFigura.getClass() == Pawn.class) {
@@ -938,12 +934,14 @@ public class Board {
 
         }
 
+
         //endregion
+*/
 
-        //canPassant(oldPosition,newPosition);
+        if(canPassant(oldPosition,newPosition))return;
 
 
-        if(currentPlayer==turnColor) {
+
 
             staraLokacijaFigura.move(newPosition);
             if (novaLokacijaFigura != null) novaLokacijaFigura.postaviNa("X");
@@ -956,15 +954,15 @@ public class Board {
             }
 
             if (novaLokacijaFigura != null) novaLokacijaFigura.postaviNa(newPosition);
-        }
+
         jede = 0;
     }
 
     public void refresh() {
 
-        /*if(isImport){
+        if(isImport){
             System.out.println(currentBoard+" turn");
-        }*/
+        }
 
         if (playing == false) return;
 
@@ -1242,7 +1240,7 @@ public class Board {
 
     public void importGame(String importedMoves){
 
-       /* isImport=true;
+        isImport=true;
 
         currentBoard=0;
 
@@ -1255,49 +1253,47 @@ public class Board {
                 String newPosition = s.substring(s.indexOf("-") + 1, s.indexOf(")"));
                 System.out.println("Sa "+oldPosition+" na "+newPosition);
                 move(oldPosition, newPosition);
-                refresh();
+                //refresh();
                 // changePlayer();
             }addCurrentBoard();
 
 
-            //currentBoard=0;
-            maxBoard=0;
-           // board=allBoard[currentBoard];
+            currentBoard=0;
+            board=allBoard[currentBoard];
             refresh();
-            */
 
     }
 
 
     public void next(){
 
-       /* if(currentBoard==allBoard.length-1)return;
+        if(currentBoard==allBoard.length-1)return;
         currentBoard++;
         board=allBoard[currentBoard];
-        refresh();*/
+        refresh();
     }
 
     public void previous(){
-        /*if(currentBoard==0)return;
+        if(currentBoard==0)return;
 
         currentBoard--;
         board=allBoard[currentBoard];
-        refresh();*/
+        refresh();
     }
 
     public void first(){
 
-        /*currentBoard=0;
+        currentBoard=0;
         board=allBoard[currentBoard];
-        refresh();*/
+        refresh();
     }
 
     public void last(){
 
-        /*currentBoard=allBoard.length-1;
+        currentBoard=allBoard.length-1;
 
         board=allBoard[currentBoard];
-        refresh();*/
+        refresh();
     }
 
 }

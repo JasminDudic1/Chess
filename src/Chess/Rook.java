@@ -10,8 +10,8 @@ public class Rook extends ChessPiece {
     char znak='R';
     int moves=0;
 
-    Image iconImgW=new Image("Icons/WhiteRook.png", 100, 150, false, false);
-    Image iconImgB=new Image("Icons/BlackRook.png", 100, 150, false, false);
+    static Image iconImgW=new Image("Icons/WhiteRook.png", 100, 150, false, false);
+    static Image iconImgB=new Image("Icons/BlackRook.png", 100, 150, false, false);
 
     Rook(String pozicija,Color boja){
         if(pozicija.length()!=2)throw new IllegalArgumentException("Van ploce");
