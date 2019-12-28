@@ -24,6 +24,11 @@ public class King extends ChessPiece {
         this.boja=boja;
     }
 
+    public King (ChessPiece b){
+        this.pozicija=b.getPosition();
+        this.boja=b.getColor();
+        this.moves=b.getMoves();
+    }
 
 
     @Override

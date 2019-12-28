@@ -26,6 +26,11 @@ public class Pawn extends ChessPiece {
         this.boja=boja;
     }
 
+    public Pawn (ChessPiece b){
+        this.pozicija=b.getPosition();
+        this.boja=b.getColor();
+        this.moves=b.getMoves();
+    }
 
     @Override
     public String getPosition() {

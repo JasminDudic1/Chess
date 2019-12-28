@@ -12,7 +12,7 @@ public class Bishop extends ChessPiece {
     Image iconImgW=new Image("Icons/WhiteBishop.png" ,100, 150, false, false);
     Image iconImgB=new Image("Icons/BlackBishop.png", 100, 150, false, false);
 
-    Bishop(String pozicija,Color boja){
+    public Bishop(String pozicija,Color boja){
         if(pozicija.length()!=2)throw new IllegalArgumentException("Van ploce");
         char slovo=pozicija.charAt(0);
         slovo=Character.toLowerCase(slovo);
@@ -22,6 +22,12 @@ public class Bishop extends ChessPiece {
         this.boja=boja;
 
     }
+
+    public Bishop(ChessPiece b){
+        this.pozicija=b.getPosition();
+        this.boja=b.getColor();
+    }
+
 
     @Override
     public String getPosition() {

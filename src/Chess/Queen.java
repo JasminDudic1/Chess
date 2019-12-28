@@ -22,6 +22,11 @@ public class Queen extends ChessPiece {
         this.boja=boja;
     }
 
+    public Queen (ChessPiece b){
+        this.pozicija=b.getPosition();
+        this.boja=b.getColor();
+    }
+
     @Override
     public String getPosition() {
         return pozicija;

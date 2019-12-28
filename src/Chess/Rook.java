@@ -23,6 +23,12 @@ public class Rook extends ChessPiece {
         this.boja=boja;
     }
 
+    public Rook (ChessPiece b){
+        this.pozicija=b.getPosition();
+        this.boja=b.getColor();
+        this.moves=b.getMoves();
+    }
+
 
     @Override
     public String getPosition() {

@@ -41,5 +41,9 @@
       <Label fx:id="playerLab" layoutX="299.0" layoutY="469.0" text="Player: " />
       <Label fx:id="colorLab" layoutX="742.0" layoutY="206.0" prefHeight="39.0" prefWidth="71.0" text="'s Turn" />
       <Button fx:id="exitBtn" layoutX="14.0" layoutY="454.0" mnemonicParsing="false" onAction="#exitClicked" text="Exit" />
+      <Button fx:id="nextBtn" disable="true" layoutX="198.0" layoutY="441.0" mnemonicParsing="false" onAction="#nextClicked" prefHeight="31.0" prefWidth="76.0" text="Next" />
+      <Button fx:id="previousBtn" disable="true" layoutX="106.0" layoutY="441.0" mnemonicParsing="false" onAction="#previousClicked" prefHeight="31.0" prefWidth="76.0" text="Previous" />
+      <Button fx:id="firstBtn" disable="true" layoutX="106.0" layoutY="475.0" mnemonicParsing="false" onAction="#firstClicked" prefHeight="31.0" prefWidth="76.0" text="First" />
+      <Button fx:id="lastBtn" disable="true" layoutX="198.0" layoutY="475.0" mnemonicParsing="false" onAction="#lastClicked" prefHeight="31.0" prefWidth="76.0" text="Last" />
    </children>
 </AnchorPane>

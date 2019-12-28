@@ -74,11 +74,11 @@ public  class ConnectionDAO {
                 stm.executeUpdate(setup);
             }catch(Exception e){}
 
-            try {
+          /*  try {
                 setup = "DROP TABLE pastgames";
                 stm = conn.createStatement();
                 stm.executeUpdate(setup);
-            }catch(Exception e){}
+            }catch(Exception e){}*/
 
              setup="CREATE TABLE \"player\" (\n" +
                     "\t\"id\"\tINTEGER PRIMARY KEY,\n" +
@@ -107,7 +107,7 @@ public  class ConnectionDAO {
             stm= conn.createStatement();
             stm.execute(setup);
 
-            setup="CREATE TABLE \"pastgames\" (\n" +
+            /*setup="CREATE TABLE \"pastgames\" (\n" +
                     "\t\"id\"\tINTEGER NOT NULL,\n" +
                     "\t\"white\"\tINTEGER NOT NULL,\n" +
                     "\t\"black\"\tINTEGER NOT NULL,\n" +
@@ -119,7 +119,7 @@ public  class ConnectionDAO {
                     ");";
 
             stm=conn.createStatement();
-            stm.execute(setup);
+            stm.execute(setup);*/
 
             System.out.printf("Napravio");
 

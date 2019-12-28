@@ -22,6 +22,10 @@ public class Knight extends ChessPiece {
         this.boja=boja;
     }
 
+    public Knight (ChessPiece b){
+        this.pozicija=b.getPosition();
+        this.boja=b.getColor();
+    }
 
     @Override
     public String getPosition() {

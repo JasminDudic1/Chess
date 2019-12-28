@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
@@ -21,6 +22,7 @@ public class ChessRoom {
     public Label playerLab;
     public Label colorLab;
     public TextArea errorText;
+    public Button previousBtn,nextBtn,lastBtn,firstBtn;
     private Board b;
     private int roomId;
     private PreparedStatement getOpponent,getWhite,getBlack;
@@ -28,6 +30,7 @@ public class ChessRoom {
     private ChessPiece.Color bojaIgraca= ChessPiece.Color.WHITE;
     private Tab currentTab;
     boolean rematch=false;
+    boolean isImport=false;
 
     public void setCurrentTab(Tab t){
         currentTab=t;
@@ -37,8 +40,7 @@ public class ChessRoom {
         this.roomId = roomId;
     }
 
-    private void setPlayerLabels(int playerWhite,int playerBlack){
-
+    public void setPlayerLabels(int playerWhite,int playerBlack){
 
         try {
             getWhite=ConnectionDAO.getConn().prepareStatement("Select username from player where id=?");
@@ -51,6 +53,12 @@ public class ChessRoom {
             rwhite.next();
             ResultSet rblack=getBlack.executeQuery();
             rblack.next();
+
+           /* if(isImport){
+                playerLab.setText(rwhite.getString(1));
+                opponentLab.setText(rblack.getString(1));
+                return;
+            }*/
 
             if(b.getCurrentPlayer()== ChessPiece.Color.WHITE){
                 playerLab.setText(rwhite.getString(1));
@@ -69,6 +77,8 @@ public class ChessRoom {
 
     private void checkForOpponent(){
 
+        //if(isImport)return;
+
         try {
             ResultSet rs=getOpponent.executeQuery();
             if(!rs.next()) System.out.println("Uhm fix here");
@@ -83,6 +93,7 @@ public class ChessRoom {
 
                 System.out.println("Ubacujem u sobu:"+roomId);
                 b.setGameReady();
+
                 if(rematch==false) {
                     b.setPlayersIds(rs.getInt(1),rs.getInt(2));
                     setPlayerLabels(rs.getInt(1),rs.getInt(2));
@@ -109,6 +120,7 @@ public class ChessRoom {
         b=new Board(boardGridPane, bojaIgraca);
         b.setColorLab(colorLab);
         b.setRoomId(roomId);
+
         try {
             getOpponent=ConnectionDAO.getConn().prepareStatement("Select white,black from room where id=?");
             getOpponent.setInt(1,roomId);
@@ -129,7 +141,6 @@ public class ChessRoom {
             }
 
         }).start();
-
 
     }
 
@@ -238,4 +249,42 @@ public class ChessRoom {
 
     }
 
+    public void importGame(String moves,int whiteid,int blackid){
+
+       /* isImport=true;
+
+        lastBtn.setDisable(false);
+        firstBtn.setDisable(false);
+        nextBtn.setDisable(false);
+        previousBtn.setDisable(false);
+
+        b=new Board(boardGridPane, ChessPiece.Color.WHITE);
+        b.setColorLab(colorLab);
+        b.setRoomId(0);
+        b.setPlayersIds(whiteid,blackid);
+        b.setController(this);
+
+        b.importGame(moves);*/
+
+
+
+    }
+
+    public void nextClicked(ActionEvent actionEvent) {
+
+       // b.next();
+
+    }
+
+    public void previousClicked(ActionEvent actionEvent) {
+       // b.previous();
+    }
+
+    public void firstClicked(ActionEvent actionEvent) {
+        //b.first();
+    }
+
+    public void lastClicked(ActionEvent actionEvent) {
+        //b.last();
+    }
 }
