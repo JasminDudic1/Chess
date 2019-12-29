@@ -53,8 +53,6 @@ public  class ConnectionDAO {
 
     public static void makeBase(){
 
-
-
         File dbfile=new File("baza.db");
         try {
             dbfile.delete();

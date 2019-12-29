@@ -64,7 +64,6 @@ public class Board {
 
     }
 
-
     public Board(GridPane boardGridPane, ChessPiece.Color bojaIgraca) {
 
         currentPlayer = bojaIgraca;
@@ -168,7 +167,7 @@ public class Board {
             ChessPiece c1 = naLokaciji(newPosition);
             ChessPiece c2 = naLokaciji(oldPosition);
 
-             if(canCastle(oldPosition,newPosition)) {
+            if(canCastle(oldPosition,newPosition)) {
                 //region Castling
                 newPosition = newPosition.toLowerCase();
                 castle1 = castle1.toLowerCase();
@@ -197,7 +196,6 @@ public class Board {
                 }
                 //endregion
             }
-
             else if(canPassant(oldPosition,newPosition)) {
                 //region EnPassant
                 if (newPosition.equals(passant1)) {
@@ -228,7 +226,6 @@ public class Board {
             c2.moved();
             lastMoved = c2;
 
-
             if (c1 != null)
                 c1.postaviNa("X");
 
@@ -250,7 +247,6 @@ public class Board {
             }
 
             if(isImport) return;
-
 
            // addCurrentBoard();
 
@@ -499,15 +495,13 @@ public class Board {
     public void Clicked(MouseEvent mouseEvent) {
 
 
-        if ((turnColor != currentPlayer || gameReady == false) /*&& roomId!=0*/) return;
+        if (turnColor != currentPlayer || !gameReady ) return;
 
         Label label = (Label) mouseEvent.getSource();
 
         String pozicija = label.getId().substring(0, 2);
 
         ChessPiece naLok = naLokaciji(pozicija);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-
 
         //region Picked
         if (picking == true) {
@@ -563,7 +557,7 @@ public class Board {
 
         if (selectedPozicija == "")
             if (naLok != null)
-                if (naLok.getColor() != currentPlayer /*&& !isImport*/) return;
+                if (naLok.getColor() != currentPlayer) return;
 
         //region Clicked
 
@@ -588,7 +582,8 @@ public class Board {
                 refresh();
 
 
-            } else {
+            }
+            else {
 
                 refresh();
                 label.setStyle("-fx-background-color: green;-fx-text-fill: gray;");
@@ -608,7 +603,8 @@ public class Board {
             selectedPozicija = "";
             refresh();
 
-        } else {
+        }
+        else {
             selectedPozicija = "";
             refresh();
         }
@@ -1155,7 +1151,7 @@ public class Board {
     private void gameEnd(int status, boolean save) {
 
         if (playing == false) return;
-        /*if(isImport) return;*/
+        if(isImport) return;
 
         playing = false;
         Connection conn = ConnectionDAO.getConn();
@@ -1263,7 +1259,6 @@ public class Board {
             refresh();
 
     }
-
 
     public void next(){
 
