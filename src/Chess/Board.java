@@ -167,61 +167,63 @@ public class Board {
             ChessPiece c1 = naLokaciji(newPosition);
             ChessPiece c2 = naLokaciji(oldPosition);
 
-            if(canCastle(oldPosition,newPosition)) {
-                //region Castling
-                newPosition = newPosition.toLowerCase();
-                castle1 = castle1.toLowerCase();
 
-                if (newPosition.equals(castle1)) {
+            testMove(oldPosition, newPosition);
 
-                    if (currentPlayer != turnColor) System.out.println("Castled");
-                    else System.out.println("I castled");
+            //region Castling
+            newPosition = newPosition.toLowerCase();
+            castle1 = castle1.toLowerCase();
 
-                    String rookStr = "xx";
+            if (newPosition.equals(castle1)) {
 
-                    c2.postaviNa(castle1);
+                if (currentPlayer != turnColor) System.out.println("Castled");
+                else System.out.println("I castled");
 
-                    if (castle1.charAt(0) == 'c') {
-                        int pom = castle1.charAt(1) - '0';
-                        rookStr = "a" + pom;
-                        naLokaciji(rookStr).postaviNa("d" + pom);
-                    } else if (castle1.charAt(0) == 'g') {
-                        int pom = castle1.charAt(1) - '0';
-                        rookStr = "h" + pom;
-                        naLokaciji(rookStr).postaviNa("f" + pom);
-                    }
-                    castle1 = "";
+                String rookStr = "xx";
 
+                c2.postaviNa(castle1);
 
+                if (castle1.charAt(0) == 'c') {
+                    int pom = castle1.charAt(1) - '0';
+                    rookStr = "a" + pom;
+                    naLokaciji(rookStr).postaviNa("d" + pom);
+                } else if (castle1.charAt(0) == 'g') {
+                    int pom = castle1.charAt(1) - '0';
+                    rookStr = "h" + pom;
+                    naLokaciji(rookStr).postaviNa("f" + pom);
                 }
-                //endregion
+                castle1 = "";
+
+
             }
-            else if(canPassant(oldPosition,newPosition)) {
-                //region EnPassant
-                if (newPosition.equals(passant1)) {
+            //endregion
 
-                    if (c2.getColor() == ChessPiece.Color.WHITE) {
-                        String passant = "" + newPosition.charAt(0);
-                        char pom = (char) (newPosition.charAt(1) - 1);
-                        passant += pom;
-                        c1 = naLokaciji(passant);
-                        c1.postaviNa("x");
-                        c2.postaviNa(passant1);
-                    }
-                    if (c2.getColor() == ChessPiece.Color.BLACK) {
-                        String passant = "" + newPosition.charAt(0);
-                        char pom = (char) (newPosition.charAt(1) + 1);
-                        passant += pom;
-                        c1 = naLokaciji(passant);
-                        c1.postaviNa("x");
-                        c2.postaviNa(passant1);
-                    }
-                    passant1 = "";
+            //region EnPassant
+            if (newPosition.equals(passant1)) {
 
+                if (c2.getColor() == ChessPiece.Color.WHITE) {
+                    String passant = "" + newPosition.charAt(0);
+                    char pom = (char) (newPosition.charAt(1) - 1);
+                    passant += pom;
+                    c1 = naLokaciji(passant);
+                    c1.postaviNa("x");
+                    c2.postaviNa(passant1);
                 }
-                //endregion
+                if (c2.getColor() == ChessPiece.Color.BLACK) {
+                    String passant = "" + newPosition.charAt(0);
+                    char pom = (char) (newPosition.charAt(1) + 1);
+                    passant += pom;
+                    c1 = naLokaciji(passant);
+                    c1.postaviNa("x");
+                    c2.postaviNa(passant1);
+                }
+                passant1 = "";
+
             }
-            else testMove(oldPosition, newPosition);
+            //endregion
+
+            newPosition = newPosition.toLowerCase();
+            castle1 = castle1.toLowerCase();
 
             c2.moved();
             lastMoved = c2;
@@ -796,7 +798,7 @@ public class Board {
         }
         //endregion
 
-        /*
+
         //region Castle
 
         if (staraLokacijaFigura.getMoves() == 0 && staraLokacijaFigura.getClass() == King.class && isCheck(staraLokacijaFigura.getColor()) == false) {//svi sem kinga vracaju uvijek -1, samo king moze 0 ako nije pomjeren
@@ -867,11 +869,11 @@ public class Board {
         }
 
         //endregion
-*/
 
-       if (canCastle(oldPosition,newPosition))return;
 
-        /*
+      // if (canCastle(oldPosition,newPosition))return;
+
+
         //region EnPassant
 
         if (staraLokacijaFigura.getClass() == Pawn.class) {
@@ -932,9 +934,9 @@ public class Board {
 
 
         //endregion
-*/
 
-        if(canPassant(oldPosition,newPosition))return;
+
+        //if(canPassant(oldPosition,newPosition))return;
 
 
 
