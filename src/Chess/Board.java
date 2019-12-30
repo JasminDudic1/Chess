@@ -31,7 +31,7 @@ public class Board {
     private String moves = "";//trebam
     private boolean gameReady = false;//myb mogu fixat
     private Label colorLab;//trebam
-    private int playerID, opponenetID;//mogu naci preko funkcija
+    private int whiteID, blackID;//mogu naci preko funkcija
     private ChessPiece.Color turnColor = ChessPiece.Color.WHITE;
     private ChessPiece.Color currentPlayer = ChessPiece.Color.WHITE;
     private ChessPiece[][] board = new ChessPiece[2][];
@@ -43,6 +43,7 @@ public class Board {
     ChessRoom controller=null;
     boolean rematch=false;
     boolean isImport=false;
+    boolean isSpectate=false;
 
     public void setController(ChessRoom controller) {
         this.controller = controller;
@@ -278,8 +279,8 @@ public class Board {
 
     public void setPlayersIds(int p1, int p2) {
 
-        playerID=p1;
-        opponenetID=p2;
+        whiteID=p1;
+        blackID=p2;
         if(currentPlayer== ChessPiece.Color.BLACK)return;
         Connection conn=ConnectionDAO.getConn();
         try {
@@ -1090,9 +1091,7 @@ public class Board {
             }
 
             Optional<ButtonType> result = a.showAndWait();
-            if (result.get() == ButtonType.YES) {
-                gameEnd(status, true);
-            }
+            if (result.get() == ButtonType.YES) gameEnd(status, true);
             else gameEnd(status, false);
 
 
@@ -1170,16 +1169,11 @@ public class Board {
 
                     upit.setInt(1,ConnectionDAO.maxPastGamesId()+1);
 
-                    if (currentPlayer == ChessPiece.Color.WHITE) {
-                        upit.setInt(2, playerID);
-                        upit.setInt(3, opponenetID);
-                    } else {
-                        upit.setInt(3, playerID);
-                        upit.setInt(2, opponenetID);
-                    }
+                   upit.setInt(2,whiteID);
+                   upit.setInt(3,blackID);
 
-                    if (status == 1) upit.setInt(4, playerID);
-                    else if (status == -1) upit.setInt(4, opponenetID);
+                    if (status == 1 && currentPlayer== ChessPiece.Color.WHITE) upit.setInt(4, whiteID);
+                    else if (status == 1 && currentPlayer== ChessPiece.Color.BLACK) upit.setInt(4, blackID);
                     else upit.setInt(4, 0);
 
                     upit.setString(5, moves);
@@ -1199,26 +1193,18 @@ public class Board {
         int wins, loss, draw;
         try {
             PreparedStatement upit = conn.prepareStatement("Select wins,loss,draw from player where id=?");
-            upit.setInt(1, playerID);
-            ResultSet result = upit.executeQuery();
-            result.next();
-            wins = result.getInt(1);
-            loss = result.getInt(2);
-            draw = result.getInt(3);
-            result.close();
-            if (status == 1) {
-                upit = conn.prepareStatement("Update player set wins=? where id=?");
-                upit.setInt(1, wins + 1);
-            } else if (status == -1) {
-                upit = conn.prepareStatement("Update player set loss=? where id=?");
-                upit.setInt(1, loss + 1);
-            } else {
-                upit = conn.prepareStatement("Update player set draw=? where id=?");
-                upit.setInt(1, draw + 1);
-            }
+            int playerID=0;
+            if(currentPlayer== ChessPiece.Color.WHITE)playerID=whiteID;
+            else playerID=blackID;
 
-            upit.setInt(2, playerID);
+            if (status == 1) upit = conn.prepareStatement("Update player set wins=wins+1 where id=?");
+             else if (status == -1) upit = conn.prepareStatement("Update player set loss=loss+1 where id=?");
+             else upit = conn.prepareStatement("Update player set draw=draw+1 where id=?");
+
+
+            upit.setInt(1, playerID);
             upit.executeUpdate();
+            System.out.printf("Update sam "+playerID);
 
 
         } catch (SQLException e) {
@@ -1262,6 +1248,10 @@ public class Board {
 
     }
 
+    public void spectateGame(){
+
+    }
+
     public void next(){
 
         if(currentBoard==allBoard.length-1)return;
@@ -1292,5 +1282,6 @@ public class Board {
         board=allBoard[currentBoard];
         refresh();
     }
+
 
 }

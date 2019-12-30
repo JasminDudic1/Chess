@@ -244,8 +244,6 @@ public class MainMenu implements Initializable {
 
 
 
-
-
     }
 
 
@@ -253,6 +251,11 @@ public class MainMenu implements Initializable {
 
         try {
 
+            for(Tab t:tabsTabPane.getTabs())
+                if(t.getText()=="Profiles"){
+                    tabsTabPane.getSelectionModel().select(t);
+                    return;
+                }
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ProfilePage.fxml"));
             Parent root = (Parent) fxmlLoader.load();

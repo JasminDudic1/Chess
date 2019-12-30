@@ -2,10 +2,7 @@ package Chess;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import java.sql.Connection;
@@ -145,6 +142,11 @@ public class ChessRoom {
     public void closeRoom() {
 
 
+        if(isImport==true){
+            currentTab.getTabPane().getTabs().remove(currentTab);
+            return;
+        }
+
         running=false;
         Connection conn=ConnectionDAO.getConn();
 
@@ -211,17 +213,23 @@ public class ChessRoom {
         }
     }
 
+
     public void leaveRoom(){
 
         running=false;
         Connection conn=ConnectionDAO.getConn();
 
+
         try {
+            int white,black;
             PreparedStatement upit = conn.prepareStatement("Select white,black from room where id=?");
             upit.setInt(1,roomId);
             ResultSet rs=upit.executeQuery();
             rs.next();
-            if(rs.getInt(1)<=0 || rs.getInt(2)<=0){
+            white=rs.getInt(1);
+            black=rs.getInt(2);
+            if(white<=0 || black<=0){
+                Alert a=new Alert(Alert.AlertType.CONFIRMATION);
                 System.out.println("Room id je "+roomId);
                 upit=conn.prepareStatement("delete from room where id=?");
                 upit.setInt(1,roomId);
@@ -232,6 +240,7 @@ public class ChessRoom {
                     upit=conn.prepareStatement("Update room set white=-1 where id=?");
                     upit.setInt(1,roomId);
                     upit.executeUpdate();
+
                 }else{
                     upit=conn.prepareStatement("Update room set black=-1 where id=?");
                     upit.setInt(1,roomId);

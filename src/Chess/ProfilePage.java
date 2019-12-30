@@ -77,11 +77,11 @@ public class ProfilePage {
             PreparedStatement ps = conn.prepareStatement("Select * from player where id=? limit 1");
             ps.setInt(1, id);
             rs = ps.executeQuery();
-            rs.next();
+            if(rs.next()) return rs;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return rs;
+        return null;
     }
 
     private void refresh() {
@@ -100,10 +100,29 @@ public class ProfilePage {
             ResultSet rs = getPastGames.executeQuery();
 
             while (rs.next()) {
-                String s = (rs.getInt(1) + " :White: " + getPlayerStats(rs.getInt(2)).getString(2) +
+                String s=rs.getInt(1)+" :White: ";
+                if(getPlayerStats(rs.getInt(2))==null)s+="Rufus";
+                else s+=getPlayerStats(rs.getInt(2)).getString(2);
+
+                s+=" :Black: ";
+                if(getPlayerStats(rs.getInt(3))==null)s+="Dufus";
+                else s+=getPlayerStats(rs.getInt(3)).getString(2);
+
+                s+=" :Winner: ";
+                if(getPlayerStats(rs.getInt(4))==null){
+                    if(rs.getInt(2)==rs.getInt(4))s+="Rufus";
+                    else s+="Dufus";
+                }
+                else s+=getPlayerStats(rs.getInt(4)).getString(2);
+
+                s+=" :Date: "+rs.getInt(6);
+
+
+                /*String s = (rs.getInt(1) + " :White: " + getPlayerStats(rs.getInt(2)).getString(2) +
                         " :Black: " + getPlayerStats(rs.getInt(3)).getString(2) +
                         " :Winner: " + getPlayerStats(rs.getInt(4)).getString(2) +
-                        " :Date: " + rs.getString(6));
+                        " :Date: " + rs.getString(6));*/
+
                 pastGamesList.getItems().add(s);
             }
 
