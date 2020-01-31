@@ -5,25 +5,23 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class MainMenu implements Initializable {
 
     public String username="";
-    //public ChoiceBox roomsCBox;
     public ListView roomsCBox;
     public PasswordField passwordPBox;
+    public Pane backgroundPane;
     private TabPane tabsTabPane;
-    private int id=0;
+    private int loggedinID =0;
 
 
     private String hash(String s){
@@ -35,10 +33,10 @@ public class MainMenu implements Initializable {
         return Integer.toString(hash);
     }
 
-    public void setId(int id) {
+    public void setLoggedinID(int loggedinID) {
 
-        this.id = id;
-        usernameLab.setText("Logged in as : "+username+" "+id);
+        this.loggedinID = loggedinID;
+        usernameLab.setText("Logged in as : "+username+" "+ loggedinID);
     }
 
     public Label usernameLab;
@@ -47,8 +45,7 @@ public class MainMenu implements Initializable {
         this.tabsTabPane = tabsTabPane;
     }
 
-    public void setUsername(String username)
-    {
+    public void setUsername(String username) {
         System.out.println("Called");
 
         this.username = username;
@@ -63,6 +60,10 @@ public class MainMenu implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        BackgroundImage bimg=new BackgroundImage(new Image("Backgroundimages/menuGif.gif",300,300,true,false), BackgroundRepeat.REPEAT,BackgroundRepeat.NO_REPEAT
+                , BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
+
+        backgroundPane.setBackground(new Background(bimg));
 
         new Thread(()->{
             while (true) {
@@ -106,11 +107,12 @@ public class MainMenu implements Initializable {
             Connection conn=ConnectionDAO.getConn();
             Statement stmt = conn.createStatement();
             PreparedStatement upit=conn.prepareStatement("Select id,roomName,length(moves) From room where white!=? and black!=?");
-            upit.setInt(1,id);
-            upit.setInt(2,id);
+            upit.setInt(1, loggedinID);
+            upit.setInt(2, loggedinID);
             ResultSet result = upit.executeQuery();
-            // if(result.next()==false) System.out.println("Nema");
             while(result.next()){
+
+                if(result.getInt(3)>1)continue;
 
                 String s=result.getInt(1)+" : "+result.getString(2);
                 upit=conn.prepareStatement("Select white,black,password From room where id=? limit 1");
@@ -182,7 +184,7 @@ public class MainMenu implements Initializable {
             upit=conn.prepareStatement("Update room set black=? where id=?");
             else upit=conn.prepareStatement("Update room set white=? where id=?");
 
-            upit.setInt(1,id);
+            upit.setInt(1, loggedinID);
             upit.setInt(2,pom);
             upit.executeUpdate();
 
@@ -219,7 +221,7 @@ public class MainMenu implements Initializable {
             Parent root =  fxmlLoader.load();
 
             CreateRoom controller = fxmlLoader.getController();
-            controller.setId(id);
+            controller.setId(loggedinID);
 
             //Stage stage = new Stage();
             //stage.setScene(new Scene(root));
@@ -246,7 +248,6 @@ public class MainMenu implements Initializable {
 
     }
 
-
     public void profilesClicked(ActionEvent actionEvent) {
 
         try {
@@ -261,7 +262,7 @@ public class MainMenu implements Initializable {
             Parent root = (Parent) fxmlLoader.load();
 
             ProfilePage controller = fxmlLoader.getController();
-            controller.setPlayer(id,id);
+            controller.setPlayer(loggedinID, loggedinID);
 
 
             Tab tab=new Tab("Profiles",root);
@@ -274,6 +275,19 @@ public class MainMenu implements Initializable {
         } catch(Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    public void logoutClicked(ActionEvent actionEvent) throws SQLException {
+
+        Connection conn=ConnectionDAO.getConn();
+        PreparedStatement ps=conn.prepareStatement("Update player set online=0 where id=?");
+        ps.setInt(1, loggedinID);
+        ps.executeUpdate();
+
+        Stage s= (Stage) passwordPBox.getScene().getWindow();
+        s.close();
+
 
     }
 }

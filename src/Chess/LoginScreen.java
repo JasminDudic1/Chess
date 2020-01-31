@@ -1,32 +1,29 @@
 package Chess;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.*;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class LoginScreen implements Initializable {
 
 
-    public Button RegisterBtn;
-    public Button LogInBtn;
+    public Button registerBtn;
+    public Button logInBtn;
     public TextField usernameTBox;
     public PasswordField passwordPBox;
     public CheckBox rememberMeCB;
+    public Pane backgroundPane;
     private int id=0;
 
     private String hash(String s){
@@ -152,7 +149,7 @@ public class LoginScreen implements Initializable {
 
                     MainMenu controller = fxmlLoader.getController();
                     controller.setUsername(usernameTBox.getText());
-                    controller.setId(id);
+                    controller.setLoggedinID(id);
 
                     fxmlLoader = new FXMLLoader(getClass().getResource("Tabs.fxml"));
                     Parent tabsRoot=(Parent)fxmlLoader.load();
@@ -191,6 +188,11 @@ public class LoginScreen implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        BackgroundImage bimg=new BackgroundImage(new Image("Backgroundimages/loginImage.jpg",600,520,false,false), BackgroundRepeat.REPEAT,BackgroundRepeat.NO_REPEAT
+        , BackgroundPosition.CENTER,BackgroundSize.DEFAULT);
+
+        backgroundPane.setBackground(new Background(bimg));
 
 
         File file = new File("login.txt");

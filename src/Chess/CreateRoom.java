@@ -2,20 +2,27 @@ package Chess;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 
-import java.sql.*;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
 
-public class CreateRoom {
+public class CreateRoom implements Initializable {
 
 
     public Button backBtn;
     public CheckBox colorCBox;
     public TextField nameText;
     public TextField passText;
+    public Pane backgroundPane;
     private int id;
     private Tab currentTab;
     private int roomID=0;
@@ -39,7 +46,7 @@ public class CreateRoom {
 
     public void backClicked(ActionEvent actionEvent) {
 
-        Stage stage = (Stage) backBtn.getScene().getWindow();
+        currentTab.getTabPane().getTabs().remove(currentTab);
 
     }
 
@@ -48,14 +55,6 @@ public class CreateRoom {
         if(nameText.getText().isEmpty())return;
         
         try {
-            /*Properties properties=new Properties();
-            properties.setProperty("user","Jasa");
-            properties.setProperty("password","1234");
-            properties.setProperty("useSSL","false");
-            properties.setProperty("serverTimezone","UTC");
-            String dburl = "jdbc:mysql://77.78.232.142:3306/chess";
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(dburl,properties);*/
 
             Class.forName("org.sqlite.JDBC");
             Connection conn=ConnectionDAO.getConn();
@@ -103,16 +102,6 @@ public class CreateRoom {
                 controller.setCurrentTab(currentTab);
                 currentTab.setText(roomID+":"+nameText.getText());
                 currentTab.setContent(root);
-
-                /*Stage stage = new Stage();
-                stage.setScene(new Scene(root));
-                stage.setOnHiding(e->controller.stop());
-                stage.show();
-
-                ((Stage) backBtn.getScene().getWindow()).close();*/
-
-
-                // ((Stage)usernameTBox.getScene().getWindow()).close();
             } catch(Exception e) {
                 e.printStackTrace();
             }
@@ -125,5 +114,16 @@ public class CreateRoom {
 
 
 
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+
+        BackgroundImage bimg=new BackgroundImage(new Image("Backgroundimages/createRoomGif.gif",800,550,false,false), BackgroundRepeat.SPACE,BackgroundRepeat.SPACE
+                , BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
+
+        backgroundPane.setBackground(new Background(bimg));
+        
     }
 }

@@ -3,21 +3,26 @@ package Chess;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 
-public class ProfilePage {
+public class ProfilePage implements Initializable {
 
     public ListView pastGamesList;
     public Label usernameLab, statusLab, ratingLab, winsLab, lossesLab, drawsLab;
     public ChoiceBox playersCBox;
-    PreparedStatement getPastGames, getPlayerStats, getPlayers, getMoves,getWhiteBlackFromPastGames;
+    public GridPane gridPaneBackground;
+    PreparedStatement getPastGames, getPlayerStats, getPlayers, getMoves, getWhiteBlackFromPastGames;
     private int currentPlayerID;
     private int loggedInID;
     private Tab currentTab;
@@ -49,7 +54,7 @@ public class ProfilePage {
 
             getMoves = conn.prepareStatement("Select moves from pastgames where id=?");
 
-            getWhiteBlackFromPastGames=conn.prepareStatement("Select white,black from pastgames where id=?");
+            getWhiteBlackFromPastGames = conn.prepareStatement("Select white,black from pastgames where id=?");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -60,12 +65,13 @@ public class ProfilePage {
             while (true) {
                 try {
                     Platform.runLater(() -> refresh());
-                    Thread.sleep(10000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
+
 
     }
 
@@ -77,7 +83,7 @@ public class ProfilePage {
             PreparedStatement ps = conn.prepareStatement("Select * from player where id=? limit 1");
             ps.setInt(1, id);
             rs = ps.executeQuery();
-            if(rs.next()) return rs;
+            if (rs.next()) return rs;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -86,7 +92,10 @@ public class ProfilePage {
 
     private void refresh() {
 
+        //if(playersCBox.getSelectionModel().getSelectedItem()==null)return;
+
         boolean show = playersCBox.isShowing();
+        boolean selected = playersCBox.getSelectionModel().getSelectedItem() != null;
 
         Connection conn = ConnectionDAO.getConn();
         Object o = (Object) pastGamesList.getSelectionModel().getSelectedItem();
@@ -100,22 +109,21 @@ public class ProfilePage {
             ResultSet rs = getPastGames.executeQuery();
 
             while (rs.next()) {
-                String s=rs.getInt(1)+" :White: ";
-                if(getPlayerStats(rs.getInt(2))==null)s+="Rufus";
-                else s+=getPlayerStats(rs.getInt(2)).getString(2);
+                String s = rs.getInt(1) + " :White: ";
+                if (getPlayerStats(rs.getInt(2)) == null) s += "Rufus";
+                else s += getPlayerStats(rs.getInt(2)).getString(2);
 
-                s+=" :Black: ";
-                if(getPlayerStats(rs.getInt(3))==null)s+="Dufus";
-                else s+=getPlayerStats(rs.getInt(3)).getString(2);
+                s += " :Black: ";
+                if (getPlayerStats(rs.getInt(3)) == null) s += "Dufus";
+                else s += getPlayerStats(rs.getInt(3)).getString(2);
 
-                s+=" :Winner: ";
-                if(getPlayerStats(rs.getInt(4))==null){
-                    if(rs.getInt(2)==rs.getInt(4))s+="Rufus";
-                    else s+="Dufus";
-                }
-                else s+=getPlayerStats(rs.getInt(4)).getString(2);
+                s += " :Winner: ";
+                if (getPlayerStats(rs.getInt(4)) == null) {
+                    if (rs.getInt(2) == rs.getInt(4)) s += "Rufus";
+                    else s += "Dufus";
+                } else s += getPlayerStats(rs.getInt(4)).getString(2);
 
-                s+=" :Date: "+rs.getInt(6);
+                s += " :Date: " + rs.getInt(6);
 
 
                 /*String s = (rs.getInt(1) + " :White: " + getPlayerStats(rs.getInt(2)).getString(2) +
@@ -143,8 +151,10 @@ public class ProfilePage {
 
             ResultSet rs = getPlayers.executeQuery();
 
-            while (rs.next())
+            while (rs.next()) {
                 playersCBox.getItems().add(rs.getInt(1) + " : " + rs.getString(2) + " : " + rs.getInt(3));
+                if (selected == false && rs.getInt(1) == loggedInID) playersCBox.getSelectionModel().selectLast();
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -202,7 +212,7 @@ public class ProfilePage {
 
                 String s = pastGamesList.getSelectionModel().getSelectedItem().toString();
                 s = s.substring(0, s.indexOf(":") - 1);
-                System.out.println("Id je "+s+"|");
+                System.out.println("Id je " + s + "|");
 
                 try {
 
@@ -220,15 +230,15 @@ public class ProfilePage {
                     //endregion
 
                     //region GetWhiteAndBlack
-                    getWhiteBlackFromPastGames.setInt(1,id);
-                    rs=getWhiteBlackFromPastGames.executeQuery();
-                    if(!rs.next()){
+                    getWhiteBlackFromPastGames.setInt(1, id);
+                    rs = getWhiteBlackFromPastGames.executeQuery();
+                    if (!rs.next()) {
                         System.out.println("Nema2");
                         refresh();
                         return;
                     }
-                    int whiteid=rs.getInt(1);
-                    int blackid=rs.getInt(2);
+                    int whiteid = rs.getInt(1);
+                    int blackid = rs.getInt(2);
                     rs.close();
                     //endregion
 
@@ -238,15 +248,15 @@ public class ProfilePage {
                     ChessRoom controller = fxmlLoader.getController();
                     controller.setRoomId(0);
 
-                    Tab tab=new Tab("Review",root);
-                    tab.setOnClosed(e->controller.closeRoom());
+                    Tab tab = new Tab("Review", root);
+                    tab.setOnClosed(e -> controller.closeRoom());
 
                     controller.setCurrentTab(tab);
 
                     currentTab.getTabPane().getTabs().add(tab);
                     currentTab.getTabPane().getSelectionModel().select(tab);
 
-                    controller.importGame(moves,whiteid,blackid);
+                    controller.importGame(moves, whiteid, blackid);
 
 
                 } catch (Exception e) {
@@ -259,7 +269,10 @@ public class ProfilePage {
     }
 
 
-
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        gridPaneBackground.setStyle("-fx-background-color: lightBlue");
+    }
 
 
 }

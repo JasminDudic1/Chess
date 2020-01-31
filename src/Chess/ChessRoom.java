@@ -2,7 +2,10 @@ package Chess;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 
 import java.sql.Connection;
@@ -20,12 +23,13 @@ public class ChessRoom {
     public Button previousBtn,nextBtn,lastBtn,firstBtn;
     private Board b;
     private int roomId;
-    private PreparedStatement getOpponent,getWhite,getBlack;
+    private PreparedStatement getOpponent, getWhiteStatment, getBlackStatment,getWhiteID,getBlackID;
     boolean running=true;
     private ChessPiece.Color bojaIgraca= ChessPiece.Color.WHITE;
     private Tab currentTab;
     boolean rematch=false;
     boolean isImport=false;
+    private int playerID=0;
 
     public void setCurrentTab(Tab t){
         currentTab=t;
@@ -37,16 +41,31 @@ public class ChessRoom {
 
     public void setPlayerLabels(int playerWhite,int playerBlack){
 
+       if(bojaIgraca==ChessPiece.Color.WHITE){
+           playerID=playerWhite;
+           System.out.println("White igrac je "+playerWhite);
+       }
+       else {
+           playerID=playerBlack;
+           System.out.println("Black igrac je "+playerBlack);
+       }
+
         try {
-            getWhite=ConnectionDAO.getConn().prepareStatement("Select username from player where id=?");
-            getWhite.setInt(1,playerWhite);
+            getWhiteStatment =ConnectionDAO.getConn().prepareStatement("Select username from player where id=?");
+            getWhiteStatment.setInt(1,playerWhite);
 
-            getBlack=ConnectionDAO.getConn().prepareStatement("Select username from player where id=?");
-            getBlack.setInt(1,playerBlack);
+            getBlackStatment =ConnectionDAO.getConn().prepareStatement("Select username from player where id=?");
+            getBlackStatment.setInt(1,playerBlack);
 
-            ResultSet rwhite=getWhite.executeQuery();
+            getWhiteID=ConnectionDAO.getConn().prepareStatement("Select white from room where id=?");
+            getWhiteID.setInt(1,roomId);
+
+            getBlackID=ConnectionDAO.getConn().prepareStatement("Select black from room where id=?");
+            getBlackID.setInt(1,roomId);
+
+            ResultSet rwhite= getWhiteStatment.executeQuery();
             rwhite.next();
-            ResultSet rblack=getBlack.executeQuery();
+            ResultSet rblack= getBlackStatment.executeQuery();
             rblack.next();
 
             if(isImport){
@@ -84,24 +103,26 @@ public class ChessRoom {
                 return;
             }
 
-            if(rs.getInt(1)!=0 && rs.getInt(2)!=0){
+            if(rs.getInt(1)>0 && rs.getInt(2)>0){
 
                 System.out.println("Ubacujem u sobu:"+roomId);
                 b.setGameReady();
 
                 if(rematch==false) {
-                    b.setPlayersIds(rs.getInt(1),rs.getInt(2));
+                  //  b.setPlayersIds(rs.getInt(1),rs.getInt(2));
                     setPlayerLabels(rs.getInt(1),rs.getInt(2));
                 }
                 else {
-                    b.setPlayersIds(rs.getInt(2),rs.getInt(1));
+                   // b.setPlayersIds(rs.getInt(2),rs.getInt(1));
                     setPlayerLabels(rs.getInt(2),rs.getInt(1));
                 }
+                b.setPlayersIds(getWhite(),getBlack());
                 b.setController(this);
                 running=false;
 
 
             }
+
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -150,17 +171,18 @@ public class ChessRoom {
         running=false;
         Connection conn=ConnectionDAO.getConn();
 
+        System.out.println("Player "+playerID+" Brise sobu 1");
+
         try {
             PreparedStatement upit = conn.prepareStatement("Select white,black from room where id=?");
             upit.setInt(1,roomId);
             ResultSet rs=upit.executeQuery();
             rs.next();
-            if(rs.getInt(1)==0 || rs.getInt(2)==0){
-                System.out.println("Room id je "+roomId);
+            if(rs.getInt(1)<=0 || rs.getInt(2)<=0){
                 upit=conn.prepareStatement("delete from room where id=?");
                 upit.setInt(1,roomId);
                 upit.executeUpdate();
-                System.out.println("Obrisana soba");
+                System.out.println("Played "+playerID+" je obrisao sobu "+roomId);
             }else{
                 if(bojaIgraca== ChessPiece.Color.WHITE){
                     upit=conn.prepareStatement("Update room set white=0 where id=?");
@@ -188,12 +210,10 @@ public class ChessRoom {
     public void rematch(){
 
         rematch=true;
-        Connection conn=ConnectionDAO.getConn();
-        clearRoom();
         running=true;
+        clearRoom();
         if(bojaIgraca== ChessPiece.Color.WHITE)draw(ChessPiece.Color.BLACK);
         else draw(ChessPiece.Color.WHITE);
-
     }
 
     private void clearRoom(){
@@ -202,51 +222,80 @@ public class ChessRoom {
 
             Connection conn=ConnectionDAO.getConn();
             try {
-                PreparedStatement upit = conn.prepareStatement("Update room set moves=? where id=?");
+
+                PreparedStatement upit = conn.prepareStatement("Update room set moves=?,white=?,black=? where id=?");
                 upit.setString(1, "");
-                upit.setInt(2, roomId);
+
+                int whiteID=getWhite();
+                int blackID=getBlack();
+                if(whiteID==-1 || blackID==-1){
+                    System.out.println("Neki je -1");
+                    closeRoom();
+                    return;
+                }
+
+                if(whiteID==0){
+
+                    upit.setInt(2,playerID);
+                    upit.setInt(3,blackID);//prepisujem istu vrijednost
+                    System.out.println("Igrac "+playerID+" je "+1);
+
+                }else if (blackID==0){
+
+                    upit.setInt(2,whiteID);//prepisujem istu vrijendost
+                    upit.setInt(3,playerID);
+                    System.out.println("Igrac "+playerID+" je "+2);
+
+                }else if (playerID==whiteID){
+
+                    upit.setInt(2,0);
+                    upit.setInt(3,whiteID);
+                    System.out.println("Igrac "+playerID+" je "+3);
+
+                }else if (playerID==blackID){
+                    upit.setInt(2,blackID);
+                    upit.setInt(3,0);
+                    System.out.println("Igrac "+playerID+" je "+4);
+
+                }else System.out.println("WHAT!!!!");
+
+                upit.setInt(4, roomId);
                 upit.executeUpdate();
-                System.out.println("Clearing room "+roomId);
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
 
-
     public void leaveRoom(){
 
         running=false;
         Connection conn=ConnectionDAO.getConn();
 
-
         try {
-            int white,black;
-            PreparedStatement upit = conn.prepareStatement("Select white,black from room where id=?");
+
+           int whiteID=getWhite();
+           int blackID=getBlack();
+
+            PreparedStatement upit=conn.prepareStatement("Update room set white=-1, black=-1 where id=?");
             upit.setInt(1,roomId);
-            ResultSet rs=upit.executeQuery();
-            rs.next();
-            white=rs.getInt(1);
-            black=rs.getInt(2);
-            if(white<=0 || black<=0){
-                Alert a=new Alert(Alert.AlertType.CONFIRMATION);
-                System.out.println("Room id je "+roomId);
-                upit=conn.prepareStatement("delete from room where id=?");
-                upit.setInt(1,roomId);
-                upit.executeUpdate();
-                System.out.println("Obrisana soba");
-            }else{
-                if(bojaIgraca== ChessPiece.Color.WHITE){
+            upit.executeUpdate();
+
+            /*
+                if(whiteID==0){
                     upit=conn.prepareStatement("Update room set white=-1 where id=?");
                     upit.setInt(1,roomId);
                     upit.executeUpdate();
+                    System.out.println("Stavio white na -1");
 
-                }else{
+                }else if (blackID==0){
                     upit=conn.prepareStatement("Update room set black=-1 where id=?");
                     upit.setInt(1,roomId);
                     upit.executeUpdate();
-                }
-            }
+                    System.out.println("Stavio black na -1");
+                }else if(whiteID==-1 ||blackID==-1)closeRoom();
+*/
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -271,7 +320,7 @@ public class ChessRoom {
         b.setPlayersIds(whiteid,blackid);
         b.setController(this);
 
-            b.importGame(moves);
+        b.importGame(moves);
 
 
 
@@ -294,4 +343,30 @@ public class ChessRoom {
     public void lastClicked(ActionEvent actionEvent) {
         b.last();
     }
+
+    private int getWhite(){
+
+        try {
+            ResultSet rs=getWhiteID.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+return 0;
+
+    }
+
+    private int getBlack(){
+        try {
+            ResultSet rs=getBlackID.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+
 }

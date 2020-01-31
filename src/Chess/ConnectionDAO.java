@@ -107,7 +107,7 @@ public  class ConnectionDAO {
             stm= conn.createStatement();
             stm.execute(setup);
 
-            setup="CREATE TABLE \"pastgames\" (\n" +
+           setup="CREATE TABLE \"pastgames\" (\n" +
                     "\t\"id\"\tINTEGER NOT NULL,\n" +
                     "\t\"white\"\tINTEGER NOT NULL,\n" +
                     "\t\"black\"\tINTEGER NOT NULL,\n" +
