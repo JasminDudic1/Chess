@@ -29,6 +29,7 @@ public class ChessRoom {
     private Tab currentTab;
     boolean rematch=false;
     boolean isImport=false;
+    boolean isSpectate=false;
     private int playerID=0;
 
     public void setCurrentTab(Tab t){
@@ -36,8 +37,10 @@ public class ChessRoom {
     }
 
     public void setRoomId(int roomId) {
+
         this.roomId = roomId;
     }
+
 
     public void setPlayerLabels(int playerWhite,int playerBlack){
 
@@ -91,7 +94,7 @@ public class ChessRoom {
 
     private void checkForOpponent(){
 
-        if(isImport)return;
+        if(isImport || isSpectate)return;
 
         try {
             ResultSet rs=getOpponent.executeQuery();
@@ -109,14 +112,14 @@ public class ChessRoom {
                 b.setGameReady();
 
                 if(rematch==false) {
-                  //  b.setPlayersIds(rs.getInt(1),rs.getInt(2));
+                    b.setPlayersIds(rs.getInt(1),rs.getInt(2));
                     setPlayerLabels(rs.getInt(1),rs.getInt(2));
                 }
                 else {
-                   // b.setPlayersIds(rs.getInt(2),rs.getInt(1));
+                    b.setPlayersIds(rs.getInt(2),rs.getInt(1));
                     setPlayerLabels(rs.getInt(2),rs.getInt(1));
                 }
-                b.setPlayersIds(getWhite(),getBlack());
+                //b.setPlayersIds(getWhite(),getBlack());
                 b.setController(this);
                 running=false;
 
@@ -136,6 +139,7 @@ public class ChessRoom {
         b=new Board(boardGridPane, bojaIgraca);
         b.setColorLab(colorLab);
         b.setRoomId(roomId);
+        if(isSpectate)b.spectateGame();
 
         try {
             getOpponent=ConnectionDAO.getConn().prepareStatement("Select white,black from room where id=?");
@@ -204,6 +208,7 @@ public class ChessRoom {
     }
 
     public void exitClicked(ActionEvent actionEvent) {
+        b.endGame();
         closeRoom();
     }
 
@@ -281,21 +286,6 @@ public class ChessRoom {
             PreparedStatement upit=conn.prepareStatement("Update room set white=-1, black=-1 where id=?");
             upit.setInt(1,roomId);
             upit.executeUpdate();
-
-            /*
-                if(whiteID==0){
-                    upit=conn.prepareStatement("Update room set white=-1 where id=?");
-                    upit.setInt(1,roomId);
-                    upit.executeUpdate();
-                    System.out.println("Stavio white na -1");
-
-                }else if (blackID==0){
-                    upit=conn.prepareStatement("Update room set black=-1 where id=?");
-                    upit.setInt(1,roomId);
-                    upit.executeUpdate();
-                    System.out.println("Stavio black na -1");
-                }else if(whiteID==-1 ||blackID==-1)closeRoom();
-*/
 
         } catch (SQLException e) {
             e.printStackTrace();

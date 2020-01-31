@@ -112,7 +112,7 @@ public class MainMenu implements Initializable {
             ResultSet result = upit.executeQuery();
             while(result.next()){
 
-                if(result.getInt(3)>1)continue;
+                if(result.getInt(3)>1 && (result.getInt(1)==0 || result.getInt(2)==0))continue;
 
                 String s=result.getInt(1)+" : "+result.getString(2);
                 upit=conn.prepareStatement("Select white,black,password From room where id=? limit 1");
@@ -149,11 +149,12 @@ public class MainMenu implements Initializable {
 
         if(roomsCBox.getSelectionModel().getSelectedItem()==null)return;
 
-        ChessPiece.Color bojaIgraca= ChessPiece.Color.WHITE;
+        ChessPiece.Color bojaIgraca=null;
         String s=roomsCBox.getSelectionModel().getSelectedItem().toString();
         roomsCBox.getSelectionModel().select(null);
         int pom=Integer.parseInt(s.substring(0,s.indexOf(':')-1));
         String roomName="";
+
 
         Connection conn=ConnectionDAO.getConn();
         PreparedStatement upit= null;
@@ -172,6 +173,7 @@ public class MainMenu implements Initializable {
             }
 
             if(result.getInt(2)==0)bojaIgraca= ChessPiece.Color.BLACK;
+            else if(result.getInt(1)==0)bojaIgraca=ChessPiece.Color.WHITE;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -179,14 +181,16 @@ public class MainMenu implements Initializable {
 
         try {
 
-            upit.close();
+
             if(bojaIgraca== ChessPiece.Color.BLACK)
             upit=conn.prepareStatement("Update room set black=? where id=?");
-            else upit=conn.prepareStatement("Update room set white=? where id=?");
+            else if(bojaIgraca==ChessPiece.Color.WHITE) upit=conn.prepareStatement("Update room set white=? where id=?");
 
-            upit.setInt(1, loggedinID);
-            upit.setInt(2,pom);
-            upit.executeUpdate();
+            if(bojaIgraca!=null) {
+                upit.setInt(1, loggedinID);
+                upit.setInt(2, pom);
+                upit.executeUpdate();
+            }
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ChessRoom.fxml"));
             Parent root = (Parent) fxmlLoader.load();

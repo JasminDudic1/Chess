@@ -47,6 +47,11 @@ public class Board {
 
     public Board(GridPane boardGridPane, ChessPiece.Color bojaIgraca) {
 
+        if(bojaIgraca==null){
+            spectateGame();
+            return;
+        }
+
         currentPlayer = bojaIgraca;
         playing = true;
         rematch = false;
@@ -308,6 +313,10 @@ public class Board {
 
     }
 
+    public void endGame(){
+        playing=false;
+    }
+
     private void setupGettingMovesFromDB() {
 
         try {
@@ -349,13 +358,18 @@ public class Board {
             if (res.next()) {
 
                 if (res.getInt(2) == 0 || res.getInt(3) == 0) {
+
+                    System.out.println("White id je "+whiteID + " a black id jd "+blackID);
                     if(currentPlayer==ChessPiece.Color.WHITE){
                         giveWin(whiteID);
                         giveLoss(blackID);
-                    }else{
+                        System.out.println("White brise");
+                    }else if(currentPlayer==ChessPiece.Color.BLACK){
+                        System.out.println("Black brise");
                         giveWin(blackID);
                         giveLoss(whiteID);
                     }
+
                     controller.closeRoom();
                     return;
                 }
@@ -507,7 +521,7 @@ public class Board {
     public void Clicked(MouseEvent mouseEvent) {
 
 
-        if (turnColor != currentPlayer || !gameReady) return;
+        if (turnColor != currentPlayer || !gameReady || isSpectate) return;
 
         Label label = (Label) mouseEvent.getSource();
 
@@ -1126,7 +1140,6 @@ public class Board {
         }
     }
 
-
     public void importGame(String importedMoves) {
 
         isImport = true;
@@ -1153,6 +1166,35 @@ public class Board {
     }
 
     public void spectateGame() {
+
+        isSpectate = true;
+       // currentBoard = 0;
+
+        String importedMoves="";
+
+        PreparedStatement getMoves= null;
+        try {
+            getMoves = ConnectionDAO.getConn().prepareStatement("Select moves from room where id=?");
+            getMoves.setInt(1,roomId);
+            ResultSet rs=getMoves.executeQuery();
+            rs.next();
+            importedMoves=rs.getString(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+
+        importMoves = new ArrayList<String>(Arrays.asList(importedMoves.split(",")));
+
+        for (String s : importMoves) {
+            String oldPosition = s.substring(s.indexOf("(") + 1, s.indexOf("-"));
+            String newPosition = s.substring(s.indexOf("-") + 1, s.indexOf(")"));
+            System.out.println("Sa " + oldPosition + " na " + newPosition);
+            move(oldPosition, newPosition);
+        }
+
+        refresh();
 
     }
 
