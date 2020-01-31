@@ -50,7 +50,6 @@ public  class ConnectionDAO {
         return conn;
     }
 
-
     public static void makeBase(){
 
         File dbfile=new File("baza.db");

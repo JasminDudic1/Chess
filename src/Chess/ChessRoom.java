@@ -41,7 +41,6 @@ public class ChessRoom {
         this.roomId = roomId;
     }
 
-
     public void setPlayerLabels(int playerWhite,int playerBlack){
 
        if(bojaIgraca==ChessPiece.Color.WHITE){
@@ -94,7 +93,7 @@ public class ChessRoom {
 
     private void checkForOpponent(){
 
-        if(isImport || isSpectate)return;
+        if(isImport)return;
 
         try {
             ResultSet rs=getOpponent.executeQuery();
@@ -139,7 +138,10 @@ public class ChessRoom {
         b=new Board(boardGridPane, bojaIgraca);
         b.setColorLab(colorLab);
         b.setRoomId(roomId);
-        if(isSpectate)b.spectateGame();
+        if(bojaIgraca==null){
+            isSpectate=true;
+            b.spectateGame();
+        }
 
         try {
             getOpponent=ConnectionDAO.getConn().prepareStatement("Select white,black from room where id=?");
@@ -167,7 +169,7 @@ public class ChessRoom {
     public void closeRoom() {
 
 
-        if(isImport==true){
+        if(isImport || isSpectate){
             currentTab.getTabPane().getTabs().remove(currentTab);
             return;
         }
@@ -208,8 +210,10 @@ public class ChessRoom {
     }
 
     public void exitClicked(ActionEvent actionEvent) {
-        b.endGame();
-        closeRoom();
+
+            b.endGame();
+            closeRoom();
+
     }
 
     public void rematch(){
@@ -282,8 +286,16 @@ public class ChessRoom {
 
            int whiteID=getWhite();
            int blackID=getBlack();
+            PreparedStatement upit=conn.prepareStatement("Select white,black from room where id=?");
+            upit.setInt(1,roomId);
+            ResultSet rs=upit.executeQuery();
+            rs.next();
+            if(rs.getInt(1)==-1 && rs.getInt(2)==-1){
+                closeRoom();
+                return;
+            }
 
-            PreparedStatement upit=conn.prepareStatement("Update room set white=-1, black=-1 where id=?");
+             upit=conn.prepareStatement("Update room set white=-1, black=-1 where id=?");
             upit.setInt(1,roomId);
             upit.executeUpdate();
 

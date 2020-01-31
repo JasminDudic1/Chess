@@ -47,11 +47,6 @@ public class Board {
 
     public Board(GridPane boardGridPane, ChessPiece.Color bojaIgraca) {
 
-        if(bojaIgraca==null){
-            spectateGame();
-            return;
-        }
-
         currentPlayer = bojaIgraca;
         playing = true;
         rematch = false;
@@ -254,7 +249,7 @@ public class Board {
                 return;
             }
 
-            if (isImport) return;
+            if (isImport || isSpectate) return;
 
             if (c2.getClass() == Pawn.class && (newPosition.charAt(1) == '8' || newPosition.charAt(1) == '1') && newPiece == ' ') {
                 moves += " (" + oldPosition.toLowerCase() + "-" + newPosition.toLowerCase();
@@ -399,6 +394,7 @@ public class Board {
 
     public void setRoomId(int id) {
         this.roomId = id;
+        System.out.println("Postavio sam roomid na "+id);
     }
 
     private void labSetup(Label l1) {
@@ -511,7 +507,7 @@ public class Board {
             turnColor = ChessPiece.Color.BLACK;
             colorLab.setStyle("-fx-background-color: BLACK;-fx-border-color: WHITE;-fx-text-fill: WHITE;");
 
-        } else {
+        } else if (turnColor == ChessPiece.Color.BLACK){
             colorLab.setStyle("-fx-background-color: WHITE;-fx-border-color: BLACK;-fx-text-fill: BLACK;");
             turnColor = ChessPiece.Color.WHITE;
         }
@@ -914,7 +910,7 @@ public class Board {
 
         //region CheckMate
 
-        if (isImport) return;
+        if (isImport || isSpectate) return;
 
         if (isCheckMate(ChessPiece.Color.WHITE)) {
             int status = 0;
@@ -1026,8 +1022,8 @@ public class Board {
 
     private void gameEnd(int status, boolean save) {
 
-        if (!playing) return;
-        if (isImport) return;
+        if (!playing || isSpectate ||isImport) return;
+
 
         playing = false;
         Connection conn = ConnectionDAO.getConn();
@@ -1165,10 +1161,21 @@ public class Board {
 
     }
 
+    private void catchUp(String newMoves){
+
+      /*  while(!moves.equals(newMoves)){
+
+            int baze=moves.length();
+
+
+        }*/
+
+
+    }
+
     public void spectateGame() {
 
         isSpectate = true;
-       // currentBoard = 0;
 
         String importedMoves="";
 
@@ -1176,6 +1183,7 @@ public class Board {
         try {
             getMoves = ConnectionDAO.getConn().prepareStatement("Select moves from room where id=?");
             getMoves.setInt(1,roomId);
+            System.out.println("Trazim na "+roomId);
             ResultSet rs=getMoves.executeQuery();
             rs.next();
             importedMoves=rs.getString(1);
@@ -1183,17 +1191,18 @@ public class Board {
             e.printStackTrace();
         }
 
+        if(importedMoves.isEmpty())return;
 
 
         importMoves = new ArrayList<String>(Arrays.asList(importedMoves.split(",")));
-
         for (String s : importMoves) {
             String oldPosition = s.substring(s.indexOf("(") + 1, s.indexOf("-"));
             String newPosition = s.substring(s.indexOf("-") + 1, s.indexOf(")"));
             System.out.println("Sa " + oldPosition + " na " + newPosition);
             move(oldPosition, newPosition);
+            changePlayer();
         }
-
+        moves=importedMoves;
         refresh();
 
     }

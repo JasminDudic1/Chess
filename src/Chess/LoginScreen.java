@@ -1,5 +1,6 @@
 package Chess;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -9,10 +10,17 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.*;
 import java.net.URL;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class LoginScreen implements Initializable {
@@ -20,10 +28,12 @@ public class LoginScreen implements Initializable {
 
     public Button registerBtn;
     public Button logInBtn;
-    public TextField usernameTBox;
     public PasswordField passwordPBox;
     public CheckBox rememberMeCB;
     public Pane backgroundPane;
+    public ComboBox usernameTBox;
+    private ArrayList<String> savedUsernames=new ArrayList<>();
+    private ArrayList<String> savedPasswords=new ArrayList<>();
     private int id=0;
 
     private String hash(String s){
@@ -37,13 +47,9 @@ public class LoginScreen implements Initializable {
 
     public void registerClicked(ActionEvent actionEvent) {
 
-     /*   Properties properties=new Properties();
-        properties.setProperty("user","Jasa");
-        properties.setProperty("password","1234");
-        properties.setProperty("useSSL","false");
-        properties.setProperty("serverTimezone","UTC");
-        String url = "jdbc:mysql://77.78.232.142:3306/chess";*/
-        String username=usernameTBox.getText();
+        if(usernameTBox.getSelectionModel().getSelectedItem()==null ||passwordPBox.getText().isEmpty())return;
+
+        String username=usernameTBox.getSelectionModel().getSelectedItem().toString();
         String password=passwordPBox.getText();
 
         try {
@@ -77,7 +83,7 @@ public class LoginScreen implements Initializable {
                 a.setHeaderText("");
                 a.show();
                 passwordPBox.clear();
-                usernameTBox.clear();
+               // usernameTBox.clear();
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -88,13 +94,11 @@ public class LoginScreen implements Initializable {
 
     public void logInClicked(ActionEvent actionEvent) {
 
-        String username=usernameTBox.getText();
+        String username=usernameTBox.getSelectionModel().getSelectedItem().toString();
         String password=passwordPBox.getText();
 
         try {
             System.out.printf("USAO");
-            //Class.forName("com.mysql.cj.jdbc.Driver");
-           // Connection conn = DriverManager.getConnection(url,properties);
 
             Class.forName("org.sqlite.JDBC");
             Connection conn=ConnectionDAO.getConn();
@@ -131,11 +135,26 @@ public class LoginScreen implements Initializable {
                 upit=conn.prepareStatement("Update player set online=1 where id=?");
                 upit.setInt(1,result.getInt(2));
                 upit.executeUpdate();
-                //MainMenu.username=username;
                 if(rememberMeCB.isSelected()) {
 
+                    if(!savedUsernames.contains(usernameTBox.getSelectionModel().getSelectedItem().toString())) {
+                        savedUsernames.add(usernameTBox.getSelectionModel().getSelectedItem().toString());
+                        savedPasswords.add(passwordPBox.getText());
+                    }
+
+                        XMLEncoder izlaz = new XMLEncoder(new FileOutputStream("login.xml"));
+                    for(int i=0;i<savedUsernames.size();i++){
+                        izlaz.writeObject(savedUsernames.get(i));
+                        izlaz.writeObject(savedPasswords.get(i));
+                    }
+
+                        izlaz.close();
+
+
+
+
                     BufferedWriter writer = new BufferedWriter(new FileWriter("login.txt"));
-                    writer.write(usernameTBox.getText());
+                    writer.write(usernameTBox.getSelectionModel().getSelectedItem().toString());
                     writer.write("\n");
                     writer.write(passwordPBox.getText());
                     writer.close();
@@ -148,7 +167,7 @@ public class LoginScreen implements Initializable {
 
 
                     MainMenu controller = fxmlLoader.getController();
-                    controller.setUsername(usernameTBox.getText());
+                    controller.setUsername(usernameTBox.getSelectionModel().getSelectedItem().toString());
                     controller.setLoggedinID(id);
 
                     fxmlLoader = new FXMLLoader(getClass().getResource("Tabs.fxml"));
@@ -160,18 +179,15 @@ public class LoginScreen implements Initializable {
                     Stage stage = new Stage();
                     stage.setScene(new Scene(tabsRoot));
                     stage.setTitle(username);
-                    //stage.setOnHiding(e->controller.stop());
                     stage.show();
 
 
-
-                   // ((Stage)usernameTBox.getScene().getWindow()).close();
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
 
-                passwordPBox.clear();
-                usernameTBox.clear();
+               // passwordPBox.clear();
+
             }
 
         } catch (SQLException e) {
@@ -195,13 +211,41 @@ public class LoginScreen implements Initializable {
         backgroundPane.setBackground(new Background(bimg));
 
 
-        File file = new File("login.txt");
+        Document xmldoc = null;
+        try {
+            DocumentBuilder docReader
+                    = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            xmldoc = docReader.parse("login.xml");
+            NodeList djeca=xmldoc.getElementsByTagName("string");
+            System.out.println("Ima "+djeca.getLength());
+
+            XMLDecoder ulaz = new XMLDecoder(new FileInputStream("login.xml"));
+            for(int i=0;i<djeca.getLength();i++) {
+                savedUsernames.add((String) ulaz.readObject());
+                savedPasswords.add((String) ulaz.readObject());
+            }
+
+
+        } catch (Exception e) {
+            System.out.println("login.xml nije validan XML dokument");
+        }
+
+        usernameTBox.setItems(FXCollections.observableList(savedUsernames));
+
+        usernameTBox.getSelectionModel().selectedItemProperty().addListener((obs, oldKorisnik, newKorisnik) -> {
+            if(savedUsernames.contains(newKorisnik))
+            passwordPBox.setText(savedPasswords.get(savedUsernames.indexOf(newKorisnik)));
+
+        });
+
+
+      /*  File file = new File("login.txt");
             if(file.exists()) {
 
-                String str = usernameTBox.getText()+"\n"+passwordPBox.getText();
+                String str = usernameTBox.getSelectionModel().getSelectedItem().toString()+"\n"+passwordPBox.getText();
                 try {
                     BufferedReader reader = new BufferedReader(new FileReader("login.txt"));
-                    usernameTBox.setText(reader.readLine());
+                    //usernameTBox.setText(reader.readLine());
                     passwordPBox.setText(reader.readLine());
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -210,7 +254,7 @@ public class LoginScreen implements Initializable {
                 }
 
 
-            }
+            }*/
 
     }
 }

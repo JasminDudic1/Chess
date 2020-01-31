@@ -106,13 +106,13 @@ public class MainMenu implements Initializable {
 
             Connection conn=ConnectionDAO.getConn();
             Statement stmt = conn.createStatement();
-            PreparedStatement upit=conn.prepareStatement("Select id,roomName,length(moves) From room where white!=? and black!=?");
+            PreparedStatement upit=conn.prepareStatement("Select id,roomName,length(moves),white,black From room where white!=? and black!=?");
             upit.setInt(1, loggedinID);
             upit.setInt(2, loggedinID);
             ResultSet result = upit.executeQuery();
             while(result.next()){
 
-                if(result.getInt(3)>1 && (result.getInt(1)==0 || result.getInt(2)==0))continue;
+                if(result.getInt(3)>1 && (result.getInt(4)==0 || result.getInt(5)==0))continue;
 
                 String s=result.getInt(1)+" : "+result.getString(2);
                 upit=conn.prepareStatement("Select white,black,password From room where id=? limit 1");
@@ -197,6 +197,10 @@ public class MainMenu implements Initializable {
 
             ChessRoom controller = fxmlLoader.getController();
             controller.setRoomId(pom);
+            if(bojaIgraca==null){
+                System.out.println("Spectator je postavljen na id " + pom);
+                controller.setRoomId(pom);
+            }
             controller.draw(bojaIgraca);
 
 

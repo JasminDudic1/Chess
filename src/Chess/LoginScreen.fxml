@@ -25,7 +25,6 @@
                <GridPane.margin>
                   <Insets />
                </GridPane.margin></Button>
-            <TextField fx:id="usernameTBox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <PasswordField fx:id="passwordPBox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Password: " textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                <font>
@@ -36,10 +35,11 @@
                <font>
                   <Font name="System Bold" size="15.0" />
                </font></CheckBox>
-            <Label text="UserName: " textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+            <Label text="Username: " textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font></Label>
+            <ComboBox fx:id="usernameTBox" editable="true" prefHeight="31.0" prefWidth="337.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>
