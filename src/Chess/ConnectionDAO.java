@@ -54,11 +54,13 @@ public  class ConnectionDAO {
     public static void makeBase(){
 
         File dbfile=new File("baza.db");
-        try {
+
+        /*try {
             dbfile.delete();
         }catch(Exception ex){
             ex.printStackTrace();
-        }
+        }*/
+
         try {
             String setup="DROP TABLE player";
             Statement stm= conn.createStatement();
@@ -72,11 +74,11 @@ public  class ConnectionDAO {
                 stm.executeUpdate(setup);
             }catch(Exception e){}
 
-          /*  try {
+            try {
                 setup = "DROP TABLE pastgames";
                 stm = conn.createStatement();
                 stm.executeUpdate(setup);
-            }catch(Exception e){}*/
+            }catch(Exception e){}
 
              setup="CREATE TABLE \"player\" (\n" +
                     "\t\"id\"\tINTEGER PRIMARY KEY,\n" +
@@ -88,10 +90,10 @@ public  class ConnectionDAO {
                     "\t\"rating\"\tINTEGER DEFAULT 1000,\n" +
                     "\t\"online\"\tINTEGER DEFAULT 0,\n" +
                     "\t\"challenges\"\tINTEGER DEFAULT 0\n" +
-                  //  "\tPRIMARY KEY(\"id\")\n" +
                     ");";
              stm= conn.createStatement();
             stm.execute(setup);
+
              setup="CREATE TABLE \"room\" (\n" +
                      "\t\"id\"\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n" +
                      "\t\"chat\"\tTEXT NOT NULL,\n" +
@@ -105,7 +107,7 @@ public  class ConnectionDAO {
             stm= conn.createStatement();
             stm.execute(setup);
 
-            /*setup="CREATE TABLE \"pastgames\" (\n" +
+            setup="CREATE TABLE \"pastgames\" (\n" +
                     "\t\"id\"\tINTEGER NOT NULL,\n" +
                     "\t\"white\"\tINTEGER NOT NULL,\n" +
                     "\t\"black\"\tINTEGER NOT NULL,\n" +
@@ -117,7 +119,7 @@ public  class ConnectionDAO {
                     ");";
 
             stm=conn.createStatement();
-            stm.execute(setup);*/
+            stm.execute(setup);
 
             System.out.printf("Napravio");
 
