@@ -77,7 +77,6 @@ public class MainMenu implements Initializable {
 
     }
 
-
     public void saveClicked(ActionEvent actionEvent) {
 
         int indeks=serverNames.size()-1;

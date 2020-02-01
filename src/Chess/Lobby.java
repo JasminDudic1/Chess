@@ -98,7 +98,7 @@ public class Lobby implements Initializable {
                 Stage s = (Stage) tabsTabPane.getScene().getWindow();
                 s.close();
             }
-            PreparedStatement selectRooms = conn.prepareStatement("Select id,roomName,length(moves),white,black From room where white!=? and black!=?");
+            PreparedStatement selectRooms = conn.prepareStatement("Select id,roomName,moves,white,black From room where white!=? and black!=?");
             selectRooms.setInt(1, loggedinID);
             selectRooms.setInt(2, loggedinID);
             ResultSet result = selectRooms.executeQuery();
@@ -109,7 +109,8 @@ public class Lobby implements Initializable {
                     continue;
                 }
 
-                if (result.getInt(3) > 1 && (result.getInt(4) == 0 || result.getInt(5) == 0)) continue;
+                if(result.getString(3).equals("Rematching"))continue;
+                if (result.getString(3).length()>1 && (result.getInt(4) == 0 || result.getInt(5) == 0)) continue;
 
                 String s = result.getInt(1) + " : " + result.getString(2);
                 selectRooms = conn.prepareStatement("Select white,black,password From room where id=? limit 1");

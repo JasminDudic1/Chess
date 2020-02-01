@@ -296,7 +296,7 @@ public class Board {
 
     }
 
-    public void endGame() {
+    public void stopGame() {
         playing = false;
     }
 
@@ -340,8 +340,15 @@ public class Board {
             ArrayList<String> temp;
             if (res.next()) {
 
-                if (res.getInt(2) == 0 || res.getInt(3) == 0) {
 
+
+                if ( (res.getInt(2) == 0 || res.getInt(3) == 0) ) {
+
+                    if(isSpectate){
+                        stopGame();
+                        new Alert(Alert.AlertType.NONE,"Game has ended").show();
+                        controller.getCurrentTab().getTabPane().getTabs().remove(controller.getCurrentTab());
+                    }
 
                     if (currentPlayer == ChessPiece.Color.WHITE) {
                         giveWin(whiteID, blackID);
@@ -808,7 +815,10 @@ public class Board {
     public void refresh() {
 
 
+
         if (!playing) return;
+
+
 
         //region ResetLabels
         for (int i = 0; i < 8; i++) {

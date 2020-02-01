@@ -107,7 +107,10 @@ public class ChessRoom {
 
             if (rs.getInt(1) > 0 && rs.getInt(2) > 0) {
 
+                clearMoves();
                 b.setGameReady();
+
+
 
                 if (rematch == false) {
                     setPlayerLabels(rs.getInt(1), rs.getInt(2));
@@ -209,7 +212,7 @@ public class ChessRoom {
     }
 
     public void endChessRoom() {
-        b.endGame();
+        b.stopGame();
         closeRoom();
     }
 
@@ -227,15 +230,31 @@ public class ChessRoom {
         }
     }
 
+    private void clearMoves(){
+
+        try {
+            PreparedStatement ps=ConnectionDAO.getConn().prepareStatement("Update room set moves=? where id=?");
+            ps.setString(1,"");
+            ps.setInt(2,roomId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
     private void clearRoom() {
+
+        System.out.println("Clearing room");
 
         if (roomId != 0) {
 
             Connection conn = ConnectionDAO.getConn();
             try {
 
-                PreparedStatement upit = conn.prepareStatement("Update room set moves=?,white=?,black=? where id=?");
-                upit.setString(1, "");
+                PreparedStatement ps = conn.prepareStatement("Update room set moves=?,white=?,black=? where id=?");
+                ps.setString(1, "Rematching");
 
                 int whiteID = getWhite();
                 int blackID = getBlack();
@@ -246,27 +265,27 @@ public class ChessRoom {
 
                 if (whiteID == 0) {
 
-                    upit.setInt(2, playerID);
-                    upit.setInt(3, blackID);//prepisujem istu vrijednost
+                    ps.setInt(2, playerID);
+                    ps.setInt(3, blackID);//prepisujem istu vrijednost
 
                 } else if (blackID == 0) {
 
-                    upit.setInt(2, whiteID);//prepisujem istu vrijendost
-                    upit.setInt(3, playerID);
+                    ps.setInt(2, whiteID);//prepisujem istu vrijendost
+                    ps.setInt(3, playerID);
 
                 } else if (playerID == whiteID) {
 
-                    upit.setInt(2, 0);
-                    upit.setInt(3, whiteID);
+                    ps.setInt(2, 0);
+                    ps.setInt(3, whiteID);
 
                 } else if (playerID == blackID) {
-                    upit.setInt(2, blackID);
-                    upit.setInt(3, 0);
+                    ps.setInt(2, blackID);
+                    ps.setInt(3, 0);
 
                 }
 
-                upit.setInt(4, roomId);
-                upit.executeUpdate();
+                ps.setInt(4, roomId);
+                ps.executeUpdate();
 
             } catch (SQLException e) {
                 e.printStackTrace();
