@@ -20,10 +20,10 @@ public class ChessRoom {
     public Label playerLab;
     public Label colorLab;
     public Button previousBtn, nextBtn, lastBtn, firstBtn;
-    boolean running = true;
-    boolean rematch = false;
-    boolean isImport = false;
-    boolean isSpectate = false;
+    private boolean running = true;
+    private boolean rematch = false;
+    private boolean isImport = false;
+    private boolean isSpectate = false;
     private Board b;
     private int roomId;
     private PreparedStatement getOpponent, getWhiteStatment, getBlackStatment, getWhiteID, getBlackID;

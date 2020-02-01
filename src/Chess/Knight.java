@@ -5,12 +5,12 @@ import javafx.scene.image.ImageView;
 
 public class Knight extends ChessPiece {
 
-    String pozicija;
-    Color boja;
-    char znak='N';
+    private String pozicija;
+    private Color boja;
+    private char znak='N';
 
-    static Image iconImgW=new Image("icons/WhiteKnight.png", 100, 150, false, false);
-    static Image iconImgB=new Image("icons/BlackKnight.png", 100, 150, false, false);
+    private static Image iconImgW=new Image("icons/WhiteKnight.png", 100, 150, false, false);
+    private static Image iconImgB=new Image("icons/BlackKnight.png", 100, 150, false, false);
 
     Knight(String pozicija,Color boja){
         if(pozicija.length()!=2)throw new IllegalArgumentException("Van ploce");

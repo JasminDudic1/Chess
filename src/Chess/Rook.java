@@ -5,13 +5,13 @@ import javafx.scene.image.ImageView;
 
 public class Rook extends ChessPiece {
 
-    String pozicija;
-    Color boja;
-    char znak='R';
-    int moves=0;
+    private String pozicija;
+    private Color boja;
+    private char znak='R';
+    private int moves=0;
 
-    static Image iconImgW=new Image("icons/WhiteRook.png", 100, 150, false, false);
-    static Image iconImgB=new Image("icons/BlackRook.png", 100, 150, false, false);
+    private static Image iconImgW=new Image("icons/WhiteRook.png", 100, 150, false, false);
+    private static Image iconImgB=new Image("icons/BlackRook.png", 100, 150, false, false);
 
     Rook(String pozicija,Color boja){
         if(pozicija.length()!=2)throw new IllegalArgumentException("Van ploce");

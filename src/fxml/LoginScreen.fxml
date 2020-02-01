@@ -40,6 +40,7 @@
                   <Font name="System Bold" size="15.0" />
                </font></Label>
             <ComboBox fx:id="usernameTBox" editable="true" prefHeight="31.0" prefWidth="337.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" onAction="#deleteClicked" text="%delete" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
          </children>
       </GridPane>
    </children>

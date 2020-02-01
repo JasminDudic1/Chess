@@ -5,13 +5,13 @@ import javafx.scene.image.ImageView;
 
 public class King extends ChessPiece {
 
-    String pozicija="";
-    Color boja;
-    char znak='K';
-    int moves=0;
+    private String pozicija="";
+    private Color boja;
+    private char znak='K';
+    private int moves=0;
 
-    static Image iconImgW=new Image("icons/WhiteKing.png", 100, 150, false, false);
-    static Image iconImgB=new Image("icons/BlackKing.png", 100, 150, false, false);
+    private static Image iconImgW=new Image("icons/WhiteKing.png", 100, 150, false, false);
+    private static Image iconImgB=new Image("icons/BlackKing.png", 100, 150, false, false);
 
     King(String pozicija,Color boja){
 

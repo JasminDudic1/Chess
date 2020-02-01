@@ -6,13 +6,13 @@ import javafx.scene.image.ImageView;
 
 public class Pawn extends ChessPiece {
 
-    String pozicija;
-    Color boja;
-    int mogucPomak=2;
-    char znak='P';
-    static Image iconImgW=new Image("icons/WhitePawn.png", 100, 150, false, false);
-    static Image iconImgB=new Image("icons/BlackPawn.png", 100, 150, false, false);
-    int moves=0;
+    private String pozicija;
+    private Color boja;
+    private int mogucPomak=2;
+    private char znak='P';
+    private static Image iconImgW=new Image("icons/WhitePawn.png", 100, 150, false, false);
+    private static Image iconImgB=new Image("icons/BlackPawn.png", 100, 150, false, false);
+    private int moves=0;
 
     Pawn(String pozicija,Color boja)
     {

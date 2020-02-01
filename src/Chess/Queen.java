@@ -5,12 +5,12 @@ import javafx.scene.image.ImageView;
 
 public class Queen extends ChessPiece {
 
-    String pozicija;
-    Color boja;
+    private String pozicija;
+    private Color boja;
     public char znak='Q';
 
-    static Image iconImgW=new Image("icons/WhiteQueen.png", 100, 150, false, false);
-    static Image iconImgB=new Image("icons/BlackQueen.png", 100, 150, false, false);
+    private static Image iconImgW=new Image("icons/WhiteQueen.png", 100, 150, false, false);
+    private static Image iconImgB=new Image("icons/BlackQueen.png", 100, 150, false, false);
 
     Queen(String pozicija,Color boja){
         if(pozicija.length()!=2)throw new IllegalArgumentException("Van ploce");

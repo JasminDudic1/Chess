@@ -20,12 +20,12 @@ import java.util.Optional;
 public class Board {
 
     public static int jede = 0;
-    ChessRoom controller = null;
-    PreparedStatement getMoves, setMoves;
-    String castle1 = "", passant1 = "";
-    String selectedPozicija = "";
-    ChessPiece lastMoved = null;
-    int currentBoard = 0;
+    private ChessRoom controller = null;
+    private PreparedStatement getMoves, setMoves;
+    private String castle1 = "", passant1 = "";
+    private String selectedPozicija = "";
+    private ChessPiece lastMoved = null;
+    private int currentBoard = 0;
     private boolean isImport = false, isSpectate = false, picking = false, playing = true, gameReady = false;
     private String moves = "";
     private Label colorLab;

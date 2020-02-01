@@ -265,10 +265,14 @@ public class Lobby implements Initializable {
 
     }
 
-    public void logoutClicked(ActionEvent actionEvent) throws SQLException {
+    public void logoutClicked(ActionEvent actionEvent){
 
+        try {
         Connection conn = ConnectionDAO.getConn();
-        PreparedStatement ps = conn.prepareStatement("Update player set online=0 where id=?");
+        PreparedStatement ps = null;
+
+            ps = conn.prepareStatement("Update player set online=0 where id=?");
+
         ps.setInt(1, loggedinID);
         ps.executeUpdate();
 
@@ -292,7 +296,15 @@ public class Lobby implements Initializable {
 
 
         }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
+    }
+
+    public void reportClicked(ActionEvent actionevent){
+
+       ConnectionDAO.generateReport();
 
     }
 

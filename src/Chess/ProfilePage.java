@@ -23,7 +23,7 @@ public class ProfilePage implements Initializable {
     public ChoiceBox playersCBox;
     public GridPane gridPaneBackground;
     public Button resetBtn;
-    PreparedStatement getPastGames, getPlayerStats, getPlayers, getMoves, getWhiteBlackFromPastGames;
+    private PreparedStatement getPastGames, getPlayerStats, getPlayers, getMoves, getWhiteBlackFromPastGames;
     private int currentPlayerID;
     private int loggedInID;
     private Tab currentTab;

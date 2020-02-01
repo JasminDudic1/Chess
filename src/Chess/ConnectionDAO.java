@@ -1,6 +1,7 @@
 package Chess;
 
 import javafx.scene.control.Alert;
+import net.sf.jasperreports.engine.JRException;
 
 import java.sql.*;
 import java.util.Properties;
@@ -320,6 +321,15 @@ public class ConnectionDAO {
 
     }
 
+    public static void generateReport(){
+
+        try {
+            new ChessReport().showReport(conn);
+        } catch ( JRException e1) {
+            e1.printStackTrace();
+        }
+
+    }
 
 
 }

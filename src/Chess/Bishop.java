@@ -5,12 +5,12 @@ import javafx.scene.image.ImageView;
 
 public class Bishop extends ChessPiece {
 
-    String pozicija;
-    Color boja;
-    char znak='B';
+    private String pozicija;
+    private Color boja;
+    private char znak='B';
 
-    Image iconImgW=new Image("icons/WhiteBishop.png",100, 150, false, false);
-    Image iconImgB=new Image("icons/BlackBishop.png", 100, 150, false, false);
+    private static Image iconImgW=new Image("icons/WhiteBishop.png",100, 150, false, false);
+    private static Image iconImgB=new Image("icons/BlackBishop.png", 100, 150, false, false);
 
     public Bishop(String pozicija,Color boja){
         if(pozicija.length()!=2)throw new IllegalArgumentException("Van ploce");

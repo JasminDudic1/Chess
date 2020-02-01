@@ -177,6 +177,7 @@ public class LoginScreen implements Initializable {
                     });
                     stage.setScene(new Scene(tabsRoot));
                     stage.setTitle(username);
+
                     stage.show();
 
                     if(ConnectionDAO.isOnline()) ((Stage) usernameTBox.getScene().getWindow()).close();
@@ -189,6 +190,19 @@ public class LoginScreen implements Initializable {
 
         } catch (SQLException | ClassNotFoundException | IOException e) {
             e.printStackTrace();
+        }
+
+    }
+
+    public void deleteClicked(ActionEvent actionEvent) {
+
+        if(usernameTBox.getSelectionModel().getSelectedItem()==null)return;
+
+        if(savedUsernames.contains(usernameTBox.getSelectionModel().getSelectedItem().toString())){
+            int indeks=savedUsernames.indexOf(usernameTBox.getSelectionModel().getSelectedItem().toString());
+            savedUsernames.remove(indeks);
+            savedPasswords.remove(indeks);
+            usernameTBox.getSelectionModel().selectFirst();
         }
 
     }
@@ -220,6 +234,7 @@ public class LoginScreen implements Initializable {
         } catch (Exception e) { }
 
         usernameTBox.setItems(FXCollections.observableList(savedUsernames));
+        usernameTBox.getSelectionModel().selectFirst();
 
         usernameTBox.getSelectionModel().selectedItemProperty().addListener((obs, oldKorisnik, newKorisnik) -> {
             if(savedUsernames.contains(newKorisnik))
