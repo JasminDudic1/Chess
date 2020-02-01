@@ -91,6 +91,8 @@ public class LoginScreen implements Initializable {
 
     public void logInClicked(ActionEvent actionEvent) {
 
+        if(usernameTBox.getSelectionModel().getSelectedItem()==null)return;
+
         String username=usernameTBox.getSelectionModel().getSelectedItem().toString();
         String password=passwordPBox.getText();
 

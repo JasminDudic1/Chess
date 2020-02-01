@@ -356,12 +356,12 @@ public class Board {
 
 
                     if(currentPlayer==ChessPiece.Color.WHITE){
-                        giveWin(whiteID);
+                        giveWin(whiteID,blackID);
                         giveLoss(blackID);
                         System.out.println("White brise");
                     }else if(currentPlayer==ChessPiece.Color.BLACK){
                         System.out.println("Black brise");
-                        giveWin(blackID);
+                        giveWin(blackID,whiteID);
                         giveLoss(whiteID);
                     }
 
@@ -967,7 +967,6 @@ public class Board {
             if (result.get() == ButtonType.YES) gameEnd(status, true);
             else gameEnd(status, false);
 
-
         }
 
 
@@ -1077,7 +1076,10 @@ public class Board {
             if (currentPlayer == ChessPiece.Color.WHITE) playerID = whiteID;
             else playerID = blackID;
 
-            if (status == 1) giveWin(playerID);
+            if (status == 1){
+                if(playerID==whiteID) giveWin(whiteID,blackID);
+                else giveWin(blackID,whiteID);
+            }
             else if (status == -1) giveLoss(playerID);
             else giveDraw(playerID);
 
@@ -1106,26 +1108,43 @@ public class Board {
 
     }
 
-    private void giveWin(int playerID) {
+    private void giveWin(int winnerID,int loserID) {
 
         try {
-            PreparedStatement upit = ConnectionDAO.getConn().prepareStatement("Update player set wins=wins+1 where id=?");
-            upit.setInt(1, playerID);
-            upit.executeUpdate();
+            PreparedStatement winStatment = ConnectionDAO.getConn().prepareStatement("Update player set wins=wins+1 where id=?");
+            winStatment.setInt(1, winnerID);
+            winStatment.executeUpdate();
+
+            PreparedStatement ratingStatment=ConnectionDAO.getConn().prepareStatement("Update player" +
+                    " set rating=rating+0.03*(Select pt.rating from player pt where pt.id=?) where id=? ");
+            ratingStatment.setInt(2,winnerID);
+            ratingStatment.setInt(1,loserID);
+            ratingStatment.executeUpdate();
+
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void giveLoss(int playerID) {
+    private void giveLoss(int loserID){
+
         try {
-            PreparedStatement upit = ConnectionDAO.getConn().prepareStatement("Update player set loss=loss+1 where id=?");
-            upit.setInt(1, playerID);
-            upit.executeUpdate();
+            PreparedStatement lossStatment = ConnectionDAO.getConn().prepareStatement("Update player set loss=loss+1 where id=?");
+            lossStatment.setInt(1, loserID);
+            lossStatment.executeUpdate();
+
+            PreparedStatement ratingStatment=ConnectionDAO.getConn().prepareStatement("Update player set rating=rating*0.97 where id=? ");
+            ratingStatment.setInt(1,loserID);
+            ratingStatment.executeUpdate();
+
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+
     }
 
     private void giveDraw(int playerID) {

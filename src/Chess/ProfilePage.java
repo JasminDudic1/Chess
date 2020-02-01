@@ -50,7 +50,7 @@ public class ProfilePage implements Initializable {
             getPlayerStats = conn.prepareStatement("Select * from player where id=?");
             getPlayerStats.setInt(1, currentPlayer);
 
-            getPlayers = conn.prepareStatement("Select id,username,rating from player");
+            getPlayers = conn.prepareStatement("Select id,username,rating from player order by rating desc");
 
             getMoves = conn.prepareStatement("Select moves from pastgames where id=?");
 
