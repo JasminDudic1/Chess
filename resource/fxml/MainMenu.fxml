@@ -23,11 +23,11 @@
       <RowConstraints />
    </rowConstraints>
    <children>
-      <Pane fx:id="backgroundPane" maxHeight="290.0" maxWidth="815.0" prefHeight="290.0" prefWidth="815.0" GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.rowSpan="4" />
             <Button fx:id="ExitBtn" mnemonicParsing="false" onAction="#exitClicked" prefHeight="49.0" prefWidth="100.0" text="Exit" GridPane.columnIndex="1" GridPane.rowIndex="6">
          <GridPane.margin>
             <Insets right="5.0" />
-         </GridPane.margin></Button>
+         </GridPane.margin>
+      </Button>
 
       <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logoutClicked" prefHeight="49.0" prefWidth="117.0" text="LogOut" GridPane.columnIndex="3" GridPane.rowIndex="6" />
       <Button fx:id="profilesBtn" mnemonicParsing="false" onAction="#profilesClicked" prefHeight="70.0" prefWidth="122.0" text="Profiles" GridPane.columnIndex="3" GridPane.rowIndex="4" />
@@ -36,7 +36,6 @@
             <Insets />
          </GridPane.margin>
       </Button>
-      <Label fx:id="usernameLab" text="Logged in as:" textFill="#f2f2f2" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
       <Label text="Password: " GridPane.columnIndex="2" GridPane.rowIndex="2">
          <GridPane.margin>
             <Insets />
@@ -53,5 +52,6 @@
            </GridPane.margin>
       </PasswordField>
       <ListView fx:id="roomsCBox" prefHeight="200.0" prefWidth="641.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+      <Label fx:id="usernameLab" text="Logged in as:" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
    </children>
 </GridPane>

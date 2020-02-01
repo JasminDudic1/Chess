@@ -354,7 +354,7 @@ public class Board {
 
                 if (res.getInt(2) == 0 || res.getInt(3) == 0) {
 
-                    System.out.println("White id je "+whiteID + " a black id jd "+blackID);
+
                     if(currentPlayer==ChessPiece.Color.WHITE){
                         giveWin(whiteID);
                         giveLoss(blackID);
@@ -364,6 +364,8 @@ public class Board {
                         giveWin(blackID);
                         giveLoss(whiteID);
                     }
+
+                    new Alert(Alert.AlertType.INFORMATION,"Opponent left, you win.").show();
 
                     controller.closeRoom();
                     return;

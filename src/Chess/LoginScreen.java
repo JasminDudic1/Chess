@@ -21,6 +21,7 @@ import java.io.*;
 import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class LoginScreen implements Initializable {
@@ -47,18 +48,20 @@ public class LoginScreen implements Initializable {
 
     public void registerClicked(ActionEvent actionEvent) {
 
-        if(usernameTBox.getSelectionModel().getSelectedItem()==null ||passwordPBox.getText().isEmpty())return;
+        if(usernameTBox.getSelectionModel().getSelectedItem()==null)return;
+
+        if(usernameTBox.getSelectionModel().getSelectedItem().toString().length()<5 || passwordPBox.getText().length()<5){
+            new Alert(Alert.AlertType.ERROR,"Username and password must be at least 5 characters").show();
+            return;
+        }
 
         String username=usernameTBox.getSelectionModel().getSelectedItem().toString();
         String password=passwordPBox.getText();
 
         try {
 
-            //Class.forName("com.mysql.cj.jdbc.Driver");
-            //Connection conn = DriverManager.getConnection(url,properties);
 
             Class.forName("org.sqlite.JDBC");
-          // Connection conn = DriverManager.getConnection("jdbc:sqlite:baza.db");
             Connection conn=ConnectionDAO.getConn();
 
             Statement stmt = conn.createStatement();
@@ -77,13 +80,7 @@ public class LoginScreen implements Initializable {
                 a.setHeaderText("");
                 a.show();
             }else {
-                Alert a=new Alert(Alert.AlertType.ERROR);
-                a.setContentText("Already Registered");
-                a.setTitle("ERROR");
-                a.setHeaderText("");
-                a.show();
-                passwordPBox.clear();
-               // usernameTBox.clear();
+                new Alert(Alert.AlertType.ERROR,"That username is already registered").show();
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -98,7 +95,6 @@ public class LoginScreen implements Initializable {
         String password=passwordPBox.getText();
 
         try {
-            System.out.printf("USAO");
 
             Class.forName("org.sqlite.JDBC");
             Connection conn=ConnectionDAO.getConn();
@@ -109,20 +105,19 @@ public class LoginScreen implements Initializable {
             upit.setString(2,hash(password));
             ResultSet result = upit.executeQuery();
             if(result.next()==false){
-                Alert a=new Alert(Alert.AlertType.ERROR);
-                a.setContentText("Login failed!");
-                a.setTitle("ERROR");
-                a.setHeaderText("");
-                a.show();
+                new Alert(Alert.AlertType.ERROR,"Wrong username and/or password.").show();
                 passwordPBox.clear();
                 return;
             }else if(result.getInt(1)==1){
-                Alert a=new Alert(Alert.AlertType.ERROR);
-                a.setContentText("Already Logged in");
-                a.setTitle("ERROR");
-                a.setHeaderText("");
-                a.show();
-                passwordPBox.clear();
+
+                Alert a=new Alert(Alert.AlertType.ERROR,"Account is already logged in, do you wish to logout?",ButtonType.YES,ButtonType.NO);
+                Optional answer=a.showAndWait();
+                if(answer.get()==ButtonType.YES){
+                    ConnectionDAO.logout(result.getInt(2));
+                    new Alert(Alert.AlertType.CONFIRMATION,"Try logging in now",ButtonType.OK).show();
+                    return;
+                }
+
                 return;
             }
             else{
@@ -162,7 +157,7 @@ public class LoginScreen implements Initializable {
                 }
 
                 try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/MainMenu.fxml"));
                     Parent root = (Parent) fxmlLoader.load();
 
 
@@ -170,13 +165,16 @@ public class LoginScreen implements Initializable {
                     controller.setUsername(usernameTBox.getSelectionModel().getSelectedItem().toString());
                     controller.setLoggedinID(id);
 
-                    fxmlLoader = new FXMLLoader(getClass().getResource("Tabs.fxml"));
+                    fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/Tabs.fxml"));
                     Parent tabsRoot=(Parent)fxmlLoader.load();
                     Tabs tabsController=fxmlLoader.getController();
                     tabsController.getTabsPane().getTabs().add(new Tab("Main menu",root));
                     controller.setTabsTabPane(tabsController.getTabsPane());
 
                     Stage stage = new Stage();
+                    stage.setOnHiding((e)-> {
+                        controller.exit();
+                    });
                     stage.setScene(new Scene(tabsRoot));
                     stage.setTitle(username);
                     stage.show();
@@ -185,8 +183,6 @@ public class LoginScreen implements Initializable {
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
-
-               // passwordPBox.clear();
 
             }
 
@@ -205,7 +201,7 @@ public class LoginScreen implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        BackgroundImage bimg=new BackgroundImage(new Image("Backgroundimages/loginImage.jpg",600,520,false,false), BackgroundRepeat.REPEAT,BackgroundRepeat.NO_REPEAT
+        BackgroundImage bimg=new BackgroundImage(new Image("Backgroundimages/loginBackground.jpg",600,520,false,false), BackgroundRepeat.REPEAT,BackgroundRepeat.NO_REPEAT
         , BackgroundPosition.CENTER,BackgroundSize.DEFAULT);
 
         backgroundPane.setBackground(new Background(bimg));
@@ -220,7 +216,7 @@ public class LoginScreen implements Initializable {
             System.out.println("Ima "+djeca.getLength());
 
             XMLDecoder ulaz = new XMLDecoder(new FileInputStream("login.xml"));
-            for(int i=0;i<djeca.getLength();i++) {
+            for(int i=0;i<djeca.getLength()/2;i++) {
                 savedUsernames.add((String) ulaz.readObject());
                 savedPasswords.add((String) ulaz.readObject());
             }

@@ -93,7 +93,7 @@ public class CreateRoom implements Initializable {
 
 
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ChessRoom.fxml"));
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/ChessRoom.fxml"));
                 Parent root = (Parent) fxmlLoader.load();
 
                 ChessRoom controller = fxmlLoader.getController();

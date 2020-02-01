@@ -242,7 +242,7 @@ public class ProfilePage implements Initializable {
                     rs.close();
                     //endregion
 
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ChessRoom.fxml"));
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/ChessRoom.fxml"));
                     Parent root = (Parent) fxmlLoader.load();
 
                     ChessRoom controller = fxmlLoader.getController();

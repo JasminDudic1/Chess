@@ -52,32 +52,17 @@ public  class ConnectionDAO {
 
     public static void makeBase(){
 
+
         File dbfile=new File("baza.db");
 
-        /*try {
-            dbfile.delete();
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }*/
 
+
+        if(!dbfile.exists())
         try {
-            String setup="DROP TABLE player";
-            Statement stm= conn.createStatement();
-            try {
-                stm.executeUpdate(setup);
-            }catch(Exception ex){}
 
-            try {
-                setup = "DROP TABLE room";
-                stm = conn.createStatement();
-                stm.executeUpdate(setup);
-            }catch(Exception e){}
 
-            try {
-                setup = "DROP TABLE pastgames";
-                stm = conn.createStatement();
-                stm.executeUpdate(setup);
-            }catch(Exception e){}
+            String setup="";
+            Statement stm;
 
              setup="CREATE TABLE \"player\" (\n" +
                     "\t\"id\"\tINTEGER PRIMARY KEY,\n" +
@@ -93,7 +78,7 @@ public  class ConnectionDAO {
              stm= conn.createStatement();
             stm.execute(setup);
 
-             setup="CREATE TABLE \"room\" (\n" +
+            setup="CREATE TABLE \"room\" (\n" +
                      "\t\"id\"\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n" +
                      "\t\"chat\"\tTEXT NOT NULL,\n" +
                      "\t\"moves\"\tTEXT NOT NULL,\n" +
@@ -126,6 +111,7 @@ public  class ConnectionDAO {
             e.printStackTrace();
         }
 
+
         try {
             maxPlayer=conn.prepareStatement("select max(id) from player");
             maxPast=conn.prepareStatement("select max(id) from pastgames");
@@ -133,7 +119,6 @@ public  class ConnectionDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
 
 
     }
@@ -176,6 +161,36 @@ public  class ConnectionDAO {
             e.printStackTrace();
         }
         return playerid;
+
+    }
+
+    public static void logout(int playerID){
+        System.out.println("Logging out "+playerID);
+        try {
+            PreparedStatement logoutWhite=conn.prepareStatement("update room set white=0 where white=?");
+            logoutWhite.setInt(1,playerID);
+            PreparedStatement logoutBlack=conn.prepareStatement("update room set black=0 where black=?");
+            logoutBlack.setInt(1,playerID);
+            PreparedStatement logout=conn.prepareStatement("Update player set online=0 where id=?");
+            logout.setInt(1,playerID);
+            logoutWhite.executeUpdate();
+            logoutBlack.executeUpdate();
+            logout.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void removeRoom(int roomID){
+
+        try {
+            PreparedStatement removeRoom=conn.prepareStatement("Delete from room where id="+roomID);
+            System.out.println("Brise viska sobu "+roomID);
+            removeRoom.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 }

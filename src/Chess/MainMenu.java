@@ -6,8 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -36,6 +35,7 @@ public class MainMenu implements Initializable {
     public void setLoggedinID(int loggedinID) {
 
         this.loggedinID = loggedinID;
+        System.out.println("Logged in as : "+username+" "+ loggedinID);
         usernameLab.setText("Logged in as : "+username+" "+ loggedinID);
     }
 
@@ -60,10 +60,6 @@ public class MainMenu implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        BackgroundImage bimg=new BackgroundImage(new Image("Backgroundimages/menuGif.gif",300,300,true,false), BackgroundRepeat.REPEAT,BackgroundRepeat.NO_REPEAT
-                , BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
-
-        backgroundPane.setBackground(new Background(bimg));
 
         new Thread(()->{
             while (true) {
@@ -86,7 +82,7 @@ public class MainMenu implements Initializable {
 
     public void refresh(){
 
-        //boolean isShowing=roomsCBox.isShowing();
+
         Object selected=null;
         if(roomsCBox.getSelectionModel().getSelectedItem()!=null)
             selected=roomsCBox.getSelectionModel().getSelectedItem();
@@ -95,30 +91,35 @@ public class MainMenu implements Initializable {
 
 
         try {
-            /*Properties properties=new Properties();
-            properties.setProperty("user","Jasa");
-            properties.setProperty("password","1234");
-            properties.setProperty("useSSL","false");
-            properties.setProperty("serverTimezone","UTC");
-            String dburl = "jdbc:mysql://77.78.232.142:3306/chess";
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(dburl,properties);*/
 
             Connection conn=ConnectionDAO.getConn();
             Statement stmt = conn.createStatement();
-            PreparedStatement upit=conn.prepareStatement("Select id,roomName,length(moves),white,black From room where white!=? and black!=?");
-            upit.setInt(1, loggedinID);
-            upit.setInt(2, loggedinID);
-            ResultSet result = upit.executeQuery();
+            PreparedStatement selectStatus=conn.prepareStatement("Select online from player where id="+loggedinID);
+            ResultSet rs=selectStatus.executeQuery();
+            if(!rs.next()) return;
+            if(rs.getInt(1)==0){
+                new Alert(Alert.AlertType.ERROR,"You have been logged out ");
+                Stage s= (Stage) tabsTabPane.getScene().getWindow();
+                s.close();
+            }
+            PreparedStatement selectRooms=conn.prepareStatement("Select id,roomName,length(moves),white,black From room where white!=? and black!=?");
+            selectRooms.setInt(1, loggedinID);
+            selectRooms.setInt(2, loggedinID);
+            ResultSet result = selectRooms.executeQuery();
             while(result.next()){
+
+                if(result.getInt(4)==0 && result.getInt(5)==0){
+                    ConnectionDAO.removeRoom(result.getInt(1));
+                    continue;
+                }
 
                 if(result.getInt(3)>1 && (result.getInt(4)==0 || result.getInt(5)==0))continue;
 
                 String s=result.getInt(1)+" : "+result.getString(2);
-                upit=conn.prepareStatement("Select white,black,password From room where id=? limit 1");
-                upit.setInt(1,Integer.parseInt(s.substring(0,s.indexOf(":")-1)));
+                selectRooms=conn.prepareStatement("Select white,black,password From room where id=? limit 1");
+                selectRooms.setInt(1,Integer.parseInt(s.substring(0,s.indexOf(":")-1)));
 
-                ResultSet result2=upit.executeQuery();
+                ResultSet result2=selectRooms.executeQuery();
                 result2.next();
 
                 if(result2.getInt(1)==0)s+=":White Empty";
@@ -192,7 +193,7 @@ public class MainMenu implements Initializable {
                 upit.executeUpdate();
             }
 
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ChessRoom.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/ChessRoom.fxml"));
             Parent root = (Parent) fxmlLoader.load();
 
             ChessRoom controller = fxmlLoader.getController();
@@ -203,9 +204,7 @@ public class MainMenu implements Initializable {
             }
             controller.draw(bojaIgraca);
 
-
             Tab tab=new Tab(pom+":"+roomName,root);
-            tab.setOnClosed(e->controller.closeRoom());
 
             controller.setCurrentTab(tab);
 
@@ -225,7 +224,7 @@ public class MainMenu implements Initializable {
 
         try {
 
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("CreateRoom.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/CreateRoom.fxml"));
             Parent root =  fxmlLoader.load();
 
             CreateRoom controller = fxmlLoader.getController();
@@ -266,7 +265,7 @@ public class MainMenu implements Initializable {
                     return;
                 }
 
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ProfilePage.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/ProfilePage.fxml"));
             Parent root = (Parent) fxmlLoader.load();
 
             ProfilePage controller = fxmlLoader.getController();
@@ -295,6 +294,15 @@ public class MainMenu implements Initializable {
 
         Stage s= (Stage) passwordPBox.getScene().getWindow();
         s.close();
+
+
+    }
+
+    public void exit() {
+
+        ConnectionDAO.logout(loggedinID);
+       Stage s= (Stage) tabsTabPane.getScene().getWindow();
+       s.close();
 
 
     }

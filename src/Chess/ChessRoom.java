@@ -111,14 +111,12 @@ public class ChessRoom {
                 b.setGameReady();
 
                 if(rematch==false) {
-                    b.setPlayersIds(rs.getInt(1),rs.getInt(2));
                     setPlayerLabels(rs.getInt(1),rs.getInt(2));
                 }
                 else {
-                    b.setPlayersIds(rs.getInt(2),rs.getInt(1));
                     setPlayerLabels(rs.getInt(2),rs.getInt(1));
                 }
-                //b.setPlayersIds(getWhite(),getBlack());
+                b.setPlayersIds(rs.getInt(1),rs.getInt(2));
                 b.setController(this);
                 running=false;
 
@@ -177,19 +175,20 @@ public class ChessRoom {
         running=false;
         Connection conn=ConnectionDAO.getConn();
 
-        System.out.println("Player "+playerID+" Brise sobu 1");
-
         try {
             PreparedStatement upit = conn.prepareStatement("Select white,black from room where id=?");
             upit.setInt(1,roomId);
             ResultSet rs=upit.executeQuery();
             rs.next();
+            System.out.println("Played "+playerID+" je obrisao sobu "+roomId+ " jer je white bio "
+                    +rs.getInt(1)+" a black "+rs.getInt(2));
             if(rs.getInt(1)<=0 || rs.getInt(2)<=0){
                 upit=conn.prepareStatement("delete from room where id=?");
                 upit.setInt(1,roomId);
                 upit.executeUpdate();
-                System.out.println("Played "+playerID+" je obrisao sobu "+roomId);
+
             }else{
+
                 if(bojaIgraca== ChessPiece.Color.WHITE){
                     upit=conn.prepareStatement("Update room set white=0 where id=?");
                     upit.setInt(1,roomId);
@@ -210,10 +209,12 @@ public class ChessRoom {
     }
 
     public void exitClicked(ActionEvent actionEvent) {
+            endChessRoom();
+    }
 
-            b.endGame();
-            closeRoom();
-
+    public void endChessRoom(){
+        b.endGame();
+        closeRoom();
     }
 
     public void rematch(){
@@ -221,8 +222,14 @@ public class ChessRoom {
         rematch=true;
         running=true;
         clearRoom();
-        if(bojaIgraca== ChessPiece.Color.WHITE)draw(ChessPiece.Color.BLACK);
-        else draw(ChessPiece.Color.WHITE);
+        if(bojaIgraca== ChessPiece.Color.WHITE) {
+            bojaIgraca=ChessPiece.Color.BLACK;
+            draw(bojaIgraca);
+        }
+        else if(bojaIgraca== ChessPiece.Color.BLACK) {
+            bojaIgraca=ChessPiece.Color.WHITE;
+            draw(bojaIgraca);
+        }
     }
 
     private void clearRoom(){
