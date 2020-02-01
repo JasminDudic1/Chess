@@ -123,7 +123,7 @@ public class ProfilePage implements Initializable {
                     else s += "Dufus";
                 } else s += getPlayerStats(rs.getInt(4)).getString(2);
 
-                s += " :Date: " + rs.getInt(6);
+                s += " :Date: " + rs.getString(6);
 
 
                 /*String s = (rs.getInt(1) + " :White: " + getPlayerStats(rs.getInt(2)).getString(2) +

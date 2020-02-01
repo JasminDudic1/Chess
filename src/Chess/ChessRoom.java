@@ -26,6 +26,11 @@ public class ChessRoom {
     private PreparedStatement getOpponent, getWhiteStatment, getBlackStatment,getWhiteID,getBlackID;
     boolean running=true;
     private ChessPiece.Color bojaIgraca= ChessPiece.Color.WHITE;
+
+    public Tab getCurrentTab() {
+        return currentTab;
+    }
+
     private Tab currentTab;
     boolean rematch=false;
     boolean isImport=false;

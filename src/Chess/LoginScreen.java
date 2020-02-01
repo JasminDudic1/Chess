@@ -159,11 +159,11 @@ public class LoginScreen implements Initializable {
                 }
 
                 try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/MainMenu.fxml"));
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/Lobby.fxml"));
                     Parent root = (Parent) fxmlLoader.load();
 
 
-                    MainMenu controller = fxmlLoader.getController();
+                    Lobby controller = fxmlLoader.getController();
                     controller.setUsername(usernameTBox.getSelectionModel().getSelectedItem().toString());
                     controller.setLoggedinID(id);
 

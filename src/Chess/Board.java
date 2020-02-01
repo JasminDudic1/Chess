@@ -254,10 +254,12 @@ public class Board {
             if (c2.getClass() == Pawn.class && (newPosition.charAt(1) == '8' || newPosition.charAt(1) == '1') && newPiece == ' ') {
                 moves += " (" + oldPosition.toLowerCase() + "-" + newPosition.toLowerCase();
                 picking = true;
+
             } else if (currentPlayer == turnColor) {
                 moves += " (" + oldPosition.toLowerCase() + "-" + newPosition.toLowerCase() + ") ,";
                 setMoves.setString(1, moves);
                 setMoves.executeUpdate();
+                controller.getCurrentTab().setStyle("-fx-background-color: Green;");
                 refresh();
                 changePlayer();
             }
@@ -377,7 +379,8 @@ public class Board {
                 temp = new ArrayList<String>(Arrays.asList(baseMoves.split(",")));
 
                 if (!baseMoves.equals(moves)) {
-
+                    controller.getCurrentTab().setStyle("-fx-background-color: Red;");
+                 //   controller.getCurrentTab().getTabPane().setStyle("-fx-background-color: Red;");
                     String move = temp.get(temp.size() - 1);
                     String oldPosition = move.substring(move.indexOf("(") + 1, move.indexOf("-"));
                     String newPosition = move.substring(move.indexOf("-") + 1, move.indexOf(")"));
@@ -1056,7 +1059,7 @@ public class Board {
                     } else upit.setInt(4, 0);
 
                     upit.setString(5, moves);
-                    upit.setString(6, "OK");
+                    upit.setString(6, String.valueOf(java.time.LocalDate.now()));
                     upit.setInt(7, roomId);
 
                     upit.executeUpdate();

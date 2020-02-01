@@ -73,7 +73,6 @@ public  class ConnectionDAO {
                     "\t\"draw\"\tINTEGER DEFAULT 0,\n" +
                     "\t\"rating\"\tINTEGER DEFAULT 1000,\n" +
                     "\t\"online\"\tINTEGER DEFAULT 0,\n" +
-                    "\t\"challenges\"\tINTEGER DEFAULT 0\n" +
                     ");";
              stm= conn.createStatement();
             stm.execute(setup);
