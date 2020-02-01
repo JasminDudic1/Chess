@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="512.0" prefWidth="827.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Chess.ChessRoom">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="512.0" prefWidth="827.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane fx:id="boardGridPane" layoutX="305.0" layoutY="56.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0">
         <columnConstraints>
@@ -30,14 +30,14 @@
           <RowConstraints minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-      <TextArea fx:id="errorText" layoutX="14.0" layoutY="15.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="260.0" />
+      <TextArea fx:id="movesText" layoutX="14.0" layoutY="15.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="260.0" />
       <Label fx:id="opponentLab" layoutX="316.0" layoutY="14.0" text="Opponent:" />
       <Label fx:id="playerLab" layoutX="299.0" layoutY="469.0" text="Player: " />
       <Label fx:id="colorLab" layoutX="742.0" layoutY="206.0" prefHeight="39.0" prefWidth="71.0" text="'s Turn" />
-      <Button fx:id="exitBtn" layoutX="14.0" layoutY="454.0" mnemonicParsing="false" onAction="#exitClicked" text="Exit" />
-      <Button fx:id="nextBtn" disable="true" layoutX="198.0" layoutY="441.0" mnemonicParsing="false" onAction="#nextClicked" prefHeight="31.0" prefWidth="76.0" text="Next" />
-      <Button fx:id="previousBtn" disable="true" layoutX="106.0" layoutY="441.0" mnemonicParsing="false" onAction="#previousClicked" prefHeight="31.0" prefWidth="76.0" text="Previous" />
-      <Button fx:id="firstBtn" disable="true" layoutX="106.0" layoutY="475.0" mnemonicParsing="false" onAction="#firstClicked" prefHeight="31.0" prefWidth="76.0" text="First" />
-      <Button fx:id="lastBtn" disable="true" layoutX="198.0" layoutY="475.0" mnemonicParsing="false" onAction="#lastClicked" prefHeight="31.0" prefWidth="76.0" text="Last" />
+      <Button fx:id="exitBtn" layoutX="14.0" layoutY="454.0" mnemonicParsing="false" onAction="#exitClicked" text="%exit" />
+      <Button fx:id="nextBtn" disable="true" layoutX="198.0" layoutY="441.0" mnemonicParsing="false" onAction="#nextClicked" prefHeight="31.0" prefWidth="76.0" text="%next" />
+      <Button fx:id="previousBtn" disable="true" layoutX="106.0" layoutY="441.0" mnemonicParsing="false" onAction="#previousClicked" prefHeight="31.0" prefWidth="76.0" text="%previous" />
+      <Button fx:id="firstBtn" disable="true" layoutX="106.0" layoutY="475.0" mnemonicParsing="false" onAction="#firstClicked" prefHeight="31.0" prefWidth="76.0" text="%first" />
+      <Button fx:id="lastBtn" disable="true" layoutX="198.0" layoutY="475.0" mnemonicParsing="false" onAction="#lastClicked" prefHeight="31.0" prefWidth="76.0" text="%last" />
    </children>
 </AnchorPane>

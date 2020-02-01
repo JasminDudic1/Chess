@@ -1,20 +1,31 @@
 package Chess;
 
+import javafx.scene.control.Alert;
+
 import java.sql.*;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 public class ConnectionDAO {
 
     private static ConnectionDAO instance = null;
     private static Connection conn = null;
     private static PreparedStatement maxRoom, maxPast, maxPlayer;
+    private static ResourceBundle resourcebundle=ResourceBundle.getBundle("Translation");
+
+    public static ResourceBundle getResourcebundle() {
+        return resourcebundle;
+    }
+
+    public static void setResourcebundle(String s) {
+        resourcebundle=ResourceBundle.getBundle(s);
+    }
 
     public static boolean isOnline() {
         return online;
     }
 
     private static boolean online =false;
-
 
     public static void createOffline() {
 
@@ -54,10 +65,7 @@ public class ConnectionDAO {
             ps = conn.prepareStatement("Select * from pastgames");
             ps.executeQuery();
         } catch (SQLException e) {
-
             makeNewBaseOffline();
-            System.out.println("Offline created new base");
-
         }
 
     }
@@ -137,7 +145,6 @@ public class ConnectionDAO {
 
     }
 
-
     public static void createOnline(String user, String pass, String url) {
 
         online =true;
@@ -147,11 +154,11 @@ public class ConnectionDAO {
             properties.setProperty("password", pass);
             properties.setProperty("useSSL", "false");
             properties.setProperty("serverTimezone", "UTC");
-            //String url = "jdbc:mysql://77.78.232.142:3306/chess";
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection(url, properties);
             testBaseOnline();
         } catch (ClassNotFoundException | SQLException e) {
+            (new Alert(Alert.AlertType.ERROR,"Error connecting to that database")).show();
             e.printStackTrace();
         }
         try {
@@ -176,12 +183,7 @@ public class ConnectionDAO {
             ps.executeQuery();
             ps = conn.prepareStatement("Select * from pastgames");
             ps.executeQuery();
-        } catch (SQLException e) {
-
-            makeNewBaseOnline();
-            System.out.println("Online created new base");
-
-        }
+        } catch (SQLException e) { makeNewBaseOnline(); }
 
     }
 
@@ -276,7 +278,7 @@ public class ConnectionDAO {
     }
 
     public static void logout(int playerID) {
-        System.out.println("Logging out " + playerID);
+
         try {
             PreparedStatement logoutWhite = conn.prepareStatement("update room set white=0 where white=?");
             logoutWhite.setInt(1, playerID);
@@ -297,7 +299,6 @@ public class ConnectionDAO {
 
         try {
             PreparedStatement removeRoom = conn.prepareStatement("Delete from room where id=" + roomID);
-            System.out.println("Brise viska sobu " + roomID);
             removeRoom.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

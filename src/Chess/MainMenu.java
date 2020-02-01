@@ -58,16 +58,10 @@ public class MainMenu implements Initializable {
                 passwords.add((String) ulaz.readObject());
                 urls.add((String) ulaz.readObject());
             }
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
         }
-       refresh();
+        refresh();
 
         serversCBox.getSelectionModel().selectedItemProperty().addListener((obs, oldKorisnik, newKorisnik) -> {
 
@@ -153,12 +147,12 @@ public class MainMenu implements Initializable {
     private void gotoLogin(boolean online){
 
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/LoginScreen.fxml"));
-            Parent root = (Parent) fxmlLoader.load();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/LoginScreen.fxml"),ConnectionDAO.getResourcebundle());
+            LoginScreen controller=new LoginScreen();
+            fxmlLoader.setController(controller);
+            Parent root = fxmlLoader.load();
             Stage s=new Stage();
             s.setTitle("Login");
-
-            LoginScreen controller = fxmlLoader.getController();
 
             s.setScene(new Scene(root));
             if(online==false) s.setOnHiding((e)-> Platform.exit());
@@ -193,4 +187,37 @@ public class MainMenu implements Initializable {
 
 
     }
+
+    public void changeClicked(ActionEvent actionEvent) {
+
+        if(ConnectionDAO.getResourcebundle().getLocale().toString().equals("en_US"))ConnectionDAO.setResourcebundle("Translation_bs");
+        else ConnectionDAO.setResourcebundle("Translation_en_US");
+
+        napuniXML();
+
+        Stage s= (Stage) passwordBox.getScene().getWindow();
+        s.close();
+
+        try {
+
+
+        FXMLLoader fxmlLoader=new FXMLLoader(getClass().getClassLoader().getResource("fxml/MainMenu.fxml"), ConnectionDAO.getResourcebundle());
+        fxmlLoader.setController(new MainMenu());
+
+        Parent root = fxmlLoader.load();
+        s=new Stage();
+        s.setScene(new Scene(root));
+        s.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+    }
+
+
+
 }

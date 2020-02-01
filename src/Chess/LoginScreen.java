@@ -17,7 +17,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
@@ -77,7 +79,6 @@ public class LoginScreen implements Initializable {
                 upit.setString(1,username);
                 upit.setString(2,hash(password));
 
-                System.out.println(upit.toString());
                 upit.executeUpdate();
                 Alert a=new Alert(Alert.AlertType.INFORMATION);
                 a.setContentText("Registered, you can now login.");
@@ -143,38 +144,30 @@ public class LoginScreen implements Initializable {
                         savedUsernames.add(usernameTBox.getSelectionModel().getSelectedItem().toString());
                         savedPasswords.add(passwordPBox.getText());
                     }
-
                         XMLEncoder izlaz = new XMLEncoder(new FileOutputStream("login.xml"));
                     for(int i=0;i<savedUsernames.size();i++){
                         izlaz.writeObject(savedUsernames.get(i));
                         izlaz.writeObject(savedPasswords.get(i));
                     }
-
                         izlaz.close();
-
-
-
-
-                    BufferedWriter writer = new BufferedWriter(new FileWriter("login.txt"));
-                    writer.write(usernameTBox.getSelectionModel().getSelectedItem().toString());
-                    writer.write("\n");
-                    writer.write(passwordPBox.getText());
-                    writer.close();
 
                 }
 
                 try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/Lobby.fxml"));
-                    Parent root = (Parent) fxmlLoader.load();
 
+                    Lobby controller =new Lobby();
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/Lobby.fxml"),ConnectionDAO.getResourcebundle());
+                    fxmlLoader.setController(controller);
+                    Parent root = fxmlLoader.load();
 
-                    Lobby controller = fxmlLoader.getController();
                     controller.setUsername(usernameTBox.getSelectionModel().getSelectedItem().toString());
                     controller.setLoggedinID(id);
 
-                    fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/Tabs.fxml"));
+                    Tabs tabsController=new Tabs();
+                    fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/Tabs.fxml"),ConnectionDAO.getResourcebundle());
+                    fxmlLoader.setController(tabsController);
                     Parent tabsRoot=(Parent)fxmlLoader.load();
-                    Tabs tabsController=fxmlLoader.getController();
+
                     tabsController.getTabsPane().getTabs().add(new Tab("Lobbies",root));
                     controller.setTabsTabPane(tabsController.getTabsPane());
 
@@ -188,22 +181,13 @@ public class LoginScreen implements Initializable {
 
                     if(ConnectionDAO.isOnline()) ((Stage) usernameTBox.getScene().getWindow()).close();
 
-
-
-
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
 
             }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }  catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
 
@@ -225,7 +209,6 @@ public class LoginScreen implements Initializable {
                     = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             xmldoc = docReader.parse("login.xml");
             NodeList djeca=xmldoc.getElementsByTagName("string");
-            System.out.println("Ima "+djeca.getLength());
 
             XMLDecoder ulaz = new XMLDecoder(new FileInputStream("login.xml"));
             for(int i=0;i<djeca.getLength()/2;i++) {
@@ -234,9 +217,7 @@ public class LoginScreen implements Initializable {
             }
 
 
-        } catch (Exception e) {
-            System.out.println("login.xml nije validan XML dokument");
-        }
+        } catch (Exception e) { }
 
         usernameTBox.setItems(FXCollections.observableList(savedUsernames));
 
@@ -246,23 +227,6 @@ public class LoginScreen implements Initializable {
 
         });
 
-
-      /*  File file = new File("login.txt");
-            if(file.exists()) {
-
-                String str = usernameTBox.getSelectionModel().getSelectedItem().toString()+"\n"+passwordPBox.getText();
-                try {
-                    BufferedReader reader = new BufferedReader(new FileReader("login.txt"));
-                    //usernameTBox.setText(reader.readLine());
-                    passwordPBox.setText(reader.readLine());
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-            }*/
 
     }
 }

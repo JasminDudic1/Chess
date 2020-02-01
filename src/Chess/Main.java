@@ -11,17 +11,14 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
+        MainMenu controller=new MainMenu();
+        FXMLLoader fxmlLoader=new FXMLLoader(getClass().getClassLoader().getResource("fxml/MainMenu.fxml"), ConnectionDAO.getResourcebundle());
+        fxmlLoader.setController(controller);
 
-       // ConnectionDAO.createConn();
-       // ConnectionDAO.makeBase();
+        Parent root = fxmlLoader.load();
 
-      //  Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/LoginScreen.fxml"));
-
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/MainMenu.fxml"));
-
-        primaryStage.setTitle("Login");
+        primaryStage.setTitle("MainMenu");
         primaryStage.setScene(new Scene(root));
-       // primaryStage.setOnHiding((e)-> Platform.exit());
 
         primaryStage.show();
     }

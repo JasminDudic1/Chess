@@ -93,9 +93,8 @@ public class ProfilePage implements Initializable {
 
     private void refresh() {
 
-        //if(playersCBox.getSelectionModel().getSelectedItem()==null)return;
 
-        if(currentPlayerID==loggedInID) resetBtn.setVisible(true);
+        if (currentPlayerID == loggedInID) resetBtn.setVisible(true);
         else resetBtn.setVisible(false);
 
         boolean show = playersCBox.isShowing();
@@ -128,12 +127,6 @@ public class ProfilePage implements Initializable {
                 } else s += getPlayerStats(rs.getInt(4)).getString(2);
 
                 s += " :Date: " + rs.getString(6);
-
-
-                /*String s = (rs.getInt(1) + " :White: " + getPlayerStats(rs.getInt(2)).getString(2) +
-                        " :Black: " + getPlayerStats(rs.getInt(3)).getString(2) +
-                        " :Winner: " + getPlayerStats(rs.getInt(4)).getString(2) +
-                        " :Date: " + rs.getString(6));*/
 
                 pastGamesList.getItems().add(s);
             }
@@ -169,7 +162,6 @@ public class ProfilePage implements Initializable {
 
         //region Labels
         try {
-            //getPlayerStats.setInt(1,currentPlayerID);
             usernameLab.setText("Username:" + getPlayerStats(currentPlayerID).getString(2));
             winsLab.setText("Wins:" + getPlayerStats(currentPlayerID).getInt(4));
             lossesLab.setText("Losses:" + getPlayerStats(currentPlayerID).getInt(5));
@@ -217,7 +209,6 @@ public class ProfilePage implements Initializable {
 
                 String s = pastGamesList.getSelectionModel().getSelectedItem().toString();
                 s = s.substring(0, s.indexOf(":") - 1);
-                System.out.println("Id je " + s + "|");
 
                 try {
 
@@ -226,7 +217,6 @@ public class ProfilePage implements Initializable {
                     getMoves.setInt(1, id);
                     ResultSet rs = getMoves.executeQuery();
                     if (!rs.next()) {
-                        System.out.println("Nema1");
                         refresh();
                         return;
                     }
@@ -238,7 +228,6 @@ public class ProfilePage implements Initializable {
                     getWhiteBlackFromPastGames.setInt(1, id);
                     rs = getWhiteBlackFromPastGames.executeQuery();
                     if (!rs.next()) {
-                        System.out.println("Nema2");
                         refresh();
                         return;
                     }
@@ -247,10 +236,11 @@ public class ProfilePage implements Initializable {
                     rs.close();
                     //endregion
 
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/ChessRoom.fxml"));
+                    ChessRoom controller = new ChessRoom();
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/ChessRoom.fxml"),ConnectionDAO.getResourcebundle());
+                    fxmlLoader.setController(controller);
                     Parent root = (Parent) fxmlLoader.load();
 
-                    ChessRoom controller = fxmlLoader.getController();
                     controller.setRoomId(0);
 
                     Tab tab = new Tab("Review", root);
@@ -261,7 +251,10 @@ public class ProfilePage implements Initializable {
                     currentTab.getTabPane().getTabs().add(tab);
                     currentTab.getTabPane().getSelectionModel().select(tab);
 
+                    Alert al = new Alert(Alert.AlertType.NONE, "Loading, please wait.", ButtonType.OK);
+                    al.show();
                     controller.importGame(moves, whiteid, blackid);
+                    al.close();
 
 
                 } catch (Exception e) {
@@ -272,7 +265,6 @@ public class ProfilePage implements Initializable {
 
         }
     }
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -286,7 +278,6 @@ public class ProfilePage implements Initializable {
         refresh();
 
     }
-
 
 
 }

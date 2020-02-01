@@ -2,10 +2,10 @@ package Chess;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 
 import java.sql.Connection;
@@ -19,26 +19,24 @@ public class ChessRoom {
     public Label opponentLab;
     public Label playerLab;
     public Label colorLab;
-    public TextArea errorText;
-    public Button previousBtn,nextBtn,lastBtn,firstBtn;
+    public Button previousBtn, nextBtn, lastBtn, firstBtn;
+    boolean running = true;
+    boolean rematch = false;
+    boolean isImport = false;
+    boolean isSpectate = false;
     private Board b;
     private int roomId;
-    private PreparedStatement getOpponent, getWhiteStatment, getBlackStatment,getWhiteID,getBlackID;
-    boolean running=true;
-    private ChessPiece.Color bojaIgraca= ChessPiece.Color.WHITE;
+    private PreparedStatement getOpponent, getWhiteStatment, getBlackStatment, getWhiteID, getBlackID;
+    private ChessPiece.Color bojaIgraca = ChessPiece.Color.WHITE;
+    private Tab currentTab;
+    private int playerID = 0;
 
     public Tab getCurrentTab() {
         return currentTab;
     }
 
-    private Tab currentTab;
-    boolean rematch=false;
-    boolean isImport=false;
-    boolean isSpectate=false;
-    private int playerID=0;
-
-    public void setCurrentTab(Tab t){
-        currentTab=t;
+    public void setCurrentTab(Tab t) {
+        currentTab = t;
     }
 
     public void setRoomId(int roomId) {
@@ -46,45 +44,40 @@ public class ChessRoom {
         this.roomId = roomId;
     }
 
-    public void setPlayerLabels(int playerWhite,int playerBlack){
+    public void setPlayerLabels(int playerWhite, int playerBlack) {
 
-       if(bojaIgraca==ChessPiece.Color.WHITE){
-           playerID=playerWhite;
-           System.out.println("White igrac je "+playerWhite);
-       }
-       else {
-           playerID=playerBlack;
-           System.out.println("Black igrac je "+playerBlack);
-       }
+        if (bojaIgraca == ChessPiece.Color.WHITE) playerID = playerWhite;
+         else playerID = playerBlack;
+
 
         try {
-            getWhiteStatment =ConnectionDAO.getConn().prepareStatement("Select username from player where id=?");
-            getWhiteStatment.setInt(1,playerWhite);
+            getWhiteStatment = ConnectionDAO.getConn().prepareStatement("Select username from player where id=?");
+            getWhiteStatment.setInt(1, playerWhite);
 
-            getBlackStatment =ConnectionDAO.getConn().prepareStatement("Select username from player where id=?");
-            getBlackStatment.setInt(1,playerBlack);
+            getBlackStatment = ConnectionDAO.getConn().prepareStatement("Select username from player where id=?");
+            getBlackStatment.setInt(1, playerBlack);
 
-            getWhiteID=ConnectionDAO.getConn().prepareStatement("Select white from room where id=?");
-            getWhiteID.setInt(1,roomId);
+            getWhiteID = ConnectionDAO.getConn().prepareStatement("Select white from room where id=?");
+            getWhiteID.setInt(1, roomId);
 
-            getBlackID=ConnectionDAO.getConn().prepareStatement("Select black from room where id=?");
-            getBlackID.setInt(1,roomId);
+            getBlackID = ConnectionDAO.getConn().prepareStatement("Select black from room where id=?");
+            getBlackID.setInt(1, roomId);
 
-            ResultSet rwhite= getWhiteStatment.executeQuery();
+            ResultSet rwhite = getWhiteStatment.executeQuery();
             rwhite.next();
-            ResultSet rblack= getBlackStatment.executeQuery();
+            ResultSet rblack = getBlackStatment.executeQuery();
             rblack.next();
 
-            if(isImport){
+            if (isImport) {
                 playerLab.setText(rwhite.getString(1));
                 opponentLab.setText(rblack.getString(1));
                 return;
             }
 
-            if(b.getCurrentPlayer()== ChessPiece.Color.WHITE){
+            if (b.getCurrentPlayer() == ChessPiece.Color.WHITE) {
                 playerLab.setText(rwhite.getString(1));
                 opponentLab.setText(rblack.getString(1));
-            }else{
+            } else {
                 opponentLab.setText(rwhite.getString(1));
                 playerLab.setText(rblack.getString(1));
             }
@@ -96,35 +89,34 @@ public class ChessRoom {
 
     }
 
-    private void checkForOpponent(){
+    private void checkForOpponent() {
 
-        if(isImport)return;
+        if (isImport) return;
 
         try {
-            ResultSet rs=getOpponent.executeQuery();
-            if(!rs.next()) System.out.println("Uhm fix here");
+            ResultSet rs = getOpponent.executeQuery();
 
-            if(rs.getInt(1)==-1 || rs.getInt(1)==-1){
-                running=false;
-                System.out.println("opponent je -1 gasi pretragu protivnika");
+            if (!rs.next()) new Alert(Alert.AlertType.ERROR,"Someone already deleted the room, shouldnt happen, just press exit").show();
+
+
+            if (rs.getInt(1) == -1 || rs.getInt(1) == -1) {
+                running = false;
                 closeRoom();
                 return;
             }
 
-            if(rs.getInt(1)>0 && rs.getInt(2)>0){
+            if (rs.getInt(1) > 0 && rs.getInt(2) > 0) {
 
-                System.out.println("Ubacujem u sobu:"+roomId);
                 b.setGameReady();
 
-                if(rematch==false) {
-                    setPlayerLabels(rs.getInt(1),rs.getInt(2));
+                if (rematch == false) {
+                    setPlayerLabels(rs.getInt(1), rs.getInt(2));
+                } else {
+                    setPlayerLabels(rs.getInt(2), rs.getInt(1));
                 }
-                else {
-                    setPlayerLabels(rs.getInt(2),rs.getInt(1));
-                }
-                b.setPlayersIds(rs.getInt(1),rs.getInt(2));
+                b.setPlayersIds(rs.getInt(1), rs.getInt(2));
                 b.setController(this);
-                running=false;
+                running = false;
 
 
             }
@@ -136,29 +128,29 @@ public class ChessRoom {
 
     }
 
-    public void draw(ChessPiece.Color bojaIgraca){
+    public void draw(ChessPiece.Color bojaIgraca) {
 
-        this.bojaIgraca=bojaIgraca;
-        b=new Board(boardGridPane, bojaIgraca);
+        this.bojaIgraca = bojaIgraca;
+        b = new Board(boardGridPane, bojaIgraca);
         b.setColorLab(colorLab);
         b.setRoomId(roomId);
-        if(bojaIgraca==null){
-            isSpectate=true;
+        if (bojaIgraca == null) {
+            isSpectate = true;
             b.spectateGame();
         }
 
         try {
-            getOpponent=ConnectionDAO.getConn().prepareStatement("Select white,black from room where id=?");
-            getOpponent.setInt(1,roomId);
+            getOpponent = ConnectionDAO.getConn().prepareStatement("Select white,black from room where id=?");
+            getOpponent.setInt(1, roomId);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        new Thread(()->{
+        new Thread(() -> {
 
-            while(running){
+            while (running) {
                 try {
-                    Platform.runLater(()->checkForOpponent());
+                    Platform.runLater(() -> checkForOpponent());
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -173,36 +165,33 @@ public class ChessRoom {
     public void closeRoom() {
 
 
-        if(isImport || isSpectate){
+        if (isImport || isSpectate) {
             currentTab.getTabPane().getTabs().remove(currentTab);
             return;
         }
 
-        running=false;
-        Connection conn=ConnectionDAO.getConn();
+        running = false;
+        Connection conn = ConnectionDAO.getConn();
 
         try {
             PreparedStatement upit = conn.prepareStatement("Select white,black from room where id=?");
-            upit.setInt(1,roomId);
-            ResultSet rs=upit.executeQuery();
+            upit.setInt(1, roomId);
+            ResultSet rs = upit.executeQuery();
             rs.next();
-            System.out.println("Played "+playerID+" je obrisao sobu "+roomId+ " jer je white bio "
-                    +rs.getInt(1)+" a black "+rs.getInt(2));
-            if(rs.getInt(1)<=0 || rs.getInt(2)<=0){
-                upit=conn.prepareStatement("delete from room where id=?");
-                upit.setInt(1,roomId);
+            if (rs.getInt(1) <= 0 || rs.getInt(2) <= 0) {
+                upit = conn.prepareStatement("delete from room where id=?");
+                upit.setInt(1, roomId);
                 upit.executeUpdate();
-                System.out.println("Player "+playerID+" brise sobu "+roomId+" usao je u closeroom");
 
-            }else{
+            } else {
 
-                if(bojaIgraca== ChessPiece.Color.WHITE){
-                    upit=conn.prepareStatement("Update room set white=0 where id=?");
-                    upit.setInt(1,roomId);
+                if (bojaIgraca == ChessPiece.Color.WHITE) {
+                    upit = conn.prepareStatement("Update room set white=0 where id=?");
+                    upit.setInt(1, roomId);
                     upit.executeUpdate();
-                }else{
-                    upit=conn.prepareStatement("Update room set black=0 where id=?");
-                    upit.setInt(1,roomId);
+                } else {
+                    upit = conn.prepareStatement("Update room set black=0 where id=?");
+                    upit.setInt(1, roomId);
                     upit.executeUpdate();
                 }
             }
@@ -216,71 +205,65 @@ public class ChessRoom {
     }
 
     public void exitClicked(ActionEvent actionEvent) {
-            endChessRoom();
+        endChessRoom();
     }
 
-    public void endChessRoom(){
+    public void endChessRoom() {
         b.endGame();
         closeRoom();
     }
 
-    public void rematch(){
+    public void rematch() {
 
-        rematch=true;
-        running=true;
+        rematch = true;
+        running = true;
         clearRoom();
-        if(bojaIgraca== ChessPiece.Color.WHITE) {
-            bojaIgraca=ChessPiece.Color.BLACK;
+        if (bojaIgraca == ChessPiece.Color.WHITE) {
+            bojaIgraca = ChessPiece.Color.BLACK;
             draw(bojaIgraca);
-        }
-        else if(bojaIgraca== ChessPiece.Color.BLACK) {
-            bojaIgraca=ChessPiece.Color.WHITE;
+        } else if (bojaIgraca == ChessPiece.Color.BLACK) {
+            bojaIgraca = ChessPiece.Color.WHITE;
             draw(bojaIgraca);
         }
     }
 
-    private void clearRoom(){
+    private void clearRoom() {
 
-        if(roomId!=0) {
+        if (roomId != 0) {
 
-            Connection conn=ConnectionDAO.getConn();
+            Connection conn = ConnectionDAO.getConn();
             try {
 
                 PreparedStatement upit = conn.prepareStatement("Update room set moves=?,white=?,black=? where id=?");
                 upit.setString(1, "");
 
-                int whiteID=getWhite();
-                int blackID=getBlack();
-                if(whiteID==-1 || blackID==-1){
-                    System.out.println("Neki je -1");
+                int whiteID = getWhite();
+                int blackID = getBlack();
+                if (whiteID == -1 || blackID == -1) {
                     closeRoom();
                     return;
                 }
 
-                if(whiteID==0){
+                if (whiteID == 0) {
 
-                    upit.setInt(2,playerID);
-                    upit.setInt(3,blackID);//prepisujem istu vrijednost
-                    System.out.println("Igrac "+playerID+" je "+1);
+                    upit.setInt(2, playerID);
+                    upit.setInt(3, blackID);//prepisujem istu vrijednost
 
-                }else if (blackID==0){
+                } else if (blackID == 0) {
 
-                    upit.setInt(2,whiteID);//prepisujem istu vrijendost
-                    upit.setInt(3,playerID);
-                    System.out.println("Igrac "+playerID+" je "+2);
+                    upit.setInt(2, whiteID);//prepisujem istu vrijendost
+                    upit.setInt(3, playerID);
 
-                }else if (playerID==whiteID){
+                } else if (playerID == whiteID) {
 
-                    upit.setInt(2,0);
-                    upit.setInt(3,whiteID);
-                    System.out.println("Igrac "+playerID+" je "+3);
+                    upit.setInt(2, 0);
+                    upit.setInt(3, whiteID);
 
-                }else if (playerID==blackID){
-                    upit.setInt(2,blackID);
-                    upit.setInt(3,0);
-                    System.out.println("Igrac "+playerID+" je "+4);
+                } else if (playerID == blackID) {
+                    upit.setInt(2, blackID);
+                    upit.setInt(3, 0);
 
-                }else System.out.println("WHAT!!!!");
+                }
 
                 upit.setInt(4, roomId);
                 upit.executeUpdate();
@@ -291,27 +274,26 @@ public class ChessRoom {
         }
     }
 
-    public void leaveRoom(){
+    public void leaveRoom() {
 
-        running=false;
-        Connection conn=ConnectionDAO.getConn();
+        running = false;
+        Connection conn = ConnectionDAO.getConn();
 
         try {
 
-           int whiteID=getWhite();
-           int blackID=getBlack();
-            PreparedStatement upit=conn.prepareStatement("Select white,black from room where id=?");
-            upit.setInt(1,roomId);
-            ResultSet rs=upit.executeQuery();
+            int whiteID = getWhite();
+            int blackID = getBlack();
+            PreparedStatement upit = conn.prepareStatement("Select white,black from room where id=?");
+            upit.setInt(1, roomId);
+            ResultSet rs = upit.executeQuery();
             rs.next();
-            if(rs.getInt(1)==-1 && rs.getInt(2)==-1){
-                System.out.println("Oba su -1");
+            if (rs.getInt(1) == -1 && rs.getInt(2) == -1) {
                 closeRoom();
                 return;
             }
 
-             upit=conn.prepareStatement("Update room set white=-1, black=-1 where id=?");
-            upit.setInt(1,roomId);
+            upit = conn.prepareStatement("Update room set white=-1, black=-1 where id=?");
+            upit.setInt(1, roomId);
             upit.executeUpdate();
 
         } catch (SQLException e) {
@@ -322,23 +304,22 @@ public class ChessRoom {
 
     }
 
-    public void importGame(String moves,int whiteid,int blackid){
+    public void importGame(String moves, int whiteid, int blackid) {
 
-        isImport=true;
+        isImport = true;
 
         lastBtn.setDisable(false);
         firstBtn.setDisable(false);
         nextBtn.setDisable(false);
         previousBtn.setDisable(false);
 
-        b=new Board(boardGridPane, ChessPiece.Color.WHITE);
+        b = new Board(boardGridPane, ChessPiece.Color.WHITE);
         b.setColorLab(colorLab);
         b.setRoomId(0);
-        b.setPlayersIds(whiteid,blackid);
+        b.setPlayersIds(whiteid, blackid);
         b.setController(this);
 
         b.importGame(moves);
-
 
 
     }
@@ -361,22 +342,22 @@ public class ChessRoom {
         b.last();
     }
 
-    private int getWhite(){
+    private int getWhite() {
 
         try {
-            ResultSet rs=getWhiteID.executeQuery();
+            ResultSet rs = getWhiteID.executeQuery();
             rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-return 0;
+        return 0;
 
     }
 
-    private int getBlack(){
+    private int getBlack() {
         try {
-            ResultSet rs=getBlackID.executeQuery();
+            ResultSet rs = getBlackID.executeQuery();
             rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {

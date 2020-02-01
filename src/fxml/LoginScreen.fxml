@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<Pane fx:id="backgroundPane" prefHeight="517.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Chess.LoginScreen">
+<Pane fx:id="backgroundPane" prefHeight="517.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="515.0" prefWidth="600.0">
          <columnConstraints>
@@ -26,16 +26,16 @@
                   <Insets />
                </GridPane.margin></Button>
             <PasswordField fx:id="passwordPBox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Password: " textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+            <Label text="%password" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font></Label>
-            <Button fx:id="logInBtn" mnemonicParsing="false" onAction="#logInClicked" prefHeight="31.0" prefWidth="89.0" text="LogIn" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-            <CheckBox fx:id="rememberMeCB" mnemonicParsing="false" text="Remember me" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+            <Button fx:id="logInBtn" mnemonicParsing="false" onAction="#logInClicked" prefHeight="31.0" prefWidth="89.0" text="Login" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+            <CheckBox fx:id="rememberMeCB" mnemonicParsing="false" text="%rememberme" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font></CheckBox>
-            <Label text="Username: " textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+            <Label text="%username" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font></Label>

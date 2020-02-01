@@ -20,28 +20,20 @@ import java.util.Optional;
 public class Board {
 
     public static int jede = 0;
-    String castle1 = "";//vv
-    String passant1 = "";//mozda mogu spojit oba u jedan
-    boolean picking = false;//vv
-    boolean playing = true;//myb mogu spojit sve u jedan int sa vise vrijednosti
-    PreparedStatement getMoves, setMoves;//
-    String selectedPozicija = "";//trebam
-    ChessPiece lastMoved = null;//prolly worthless
-    int currentBoard = 0;
     ChessRoom controller = null;
-    boolean rematch = false;
-    boolean isImport = false;
-    boolean isSpectate = false;
-    private int roomId = 0;//bez ovoga ne mogu nista uraditi
-    private String moves = "";//trebam
-    private boolean gameReady = false;//myb mogu fixat
-    private Label colorLab;//trebam
-    private int whiteID, blackID;//mogu naci preko funkcija
+    PreparedStatement getMoves, setMoves;
+    String castle1 = "", passant1 = "";
+    String selectedPozicija = "";
+    ChessPiece lastMoved = null;
+    int currentBoard = 0;
+    private boolean isImport = false, isSpectate = false, picking = false, playing = true, gameReady = false;
+    private String moves = "";
+    private Label colorLab;
+    private int whiteID, blackID, roomId = 0;
     private ChessPiece.Color turnColor = ChessPiece.Color.WHITE;
     private ChessPiece.Color currentPlayer = ChessPiece.Color.WHITE;
     private ChessPiece[][] board = new ChessPiece[2][];
     private Label[][] UIboard = new Label[8][];
-    //private ArrayList<ChessPiece[][]>allBoard=new ArrayList<>();
     private ChessPiece[][][] allBoard;
     private ArrayList<String> importMoves;
 
@@ -49,7 +41,6 @@ public class Board {
 
         currentPlayer = bojaIgraca;
         playing = true;
-        rematch = false;
 
         for (int i = 0; i < 8; i++)
             UIboard[i] = new Label[8];
@@ -177,8 +168,6 @@ public class Board {
 
             if (newPosition.equals(castle1)) {
 
-                if (currentPlayer != turnColor) System.out.println("Castled");
-                else System.out.println("I castled");
 
                 String rookStr = "xx";
 
@@ -233,7 +222,7 @@ public class Board {
                 c1.postaviNa("X");
 
             if (newPiece != ' ') {
-                System.out.println("Changing");
+
 
                 for (int i = 0; i < 2; i++)
                     for (int j = 0; j < 16; j++)
@@ -265,11 +254,6 @@ public class Board {
             }
 
         } catch (Exception e) {
-            if (currentPlayer == ChessPiece.Color.WHITE)
-                controller.errorText.setText("Error kod white " + e.toString() + " sa " + oldPosition + " na " + newPosition);
-            else
-                controller.errorText.setText("Error kod black " + e.toString() + " sa " + oldPosition + " na " + newPosition);
-            e.printStackTrace();
             throw new IllegalChessMoveException(e.toString());
         }
 
@@ -312,8 +296,8 @@ public class Board {
 
     }
 
-    public void endGame(){
-        playing=false;
+    public void endGame() {
+        playing = false;
     }
 
     private void setupGettingMovesFromDB() {
@@ -359,17 +343,15 @@ public class Board {
                 if (res.getInt(2) == 0 || res.getInt(3) == 0) {
 
 
-                    if(currentPlayer==ChessPiece.Color.WHITE){
-                        giveWin(whiteID,blackID);
+                    if (currentPlayer == ChessPiece.Color.WHITE) {
+                        giveWin(whiteID, blackID);
                         giveLoss(blackID);
-                        System.out.println("White brise");
-                    }else if(currentPlayer==ChessPiece.Color.BLACK){
-                        System.out.println("Black brise");
-                        giveWin(blackID,whiteID);
+                    } else if (currentPlayer == ChessPiece.Color.BLACK) {
+                        giveWin(blackID, whiteID);
                         giveLoss(whiteID);
                     }
 
-                    new Alert(Alert.AlertType.INFORMATION,"Opponent left, you win.").show();
+                    new Alert(Alert.AlertType.INFORMATION, "Opponent left, you win.").show();
 
                     controller.closeRoom();
                     return;
@@ -382,7 +364,6 @@ public class Board {
 
                 if (!baseMoves.equals(moves)) {
                     controller.getCurrentTab().setStyle("-fx-background-color: Red;");
-                 //   controller.getCurrentTab().getTabPane().setStyle("-fx-background-color: Red;");
                     String move = temp.get(temp.size() - 1);
                     String oldPosition = move.substring(move.indexOf("(") + 1, move.indexOf("-"));
                     String newPosition = move.substring(move.indexOf("-") + 1, move.indexOf(")"));
@@ -401,7 +382,6 @@ public class Board {
 
     public void setRoomId(int id) {
         this.roomId = id;
-        System.out.println("Postavio sam roomid na "+id);
     }
 
     private void labSetup(Label l1) {
@@ -514,7 +494,7 @@ public class Board {
             turnColor = ChessPiece.Color.BLACK;
             colorLab.setStyle("-fx-background-color: BLACK;-fx-border-color: WHITE;-fx-text-fill: WHITE;");
 
-        } else if (turnColor == ChessPiece.Color.BLACK){
+        } else if (turnColor == ChessPiece.Color.BLACK) {
             colorLab.setStyle("-fx-background-color: WHITE;-fx-border-color: BLACK;-fx-text-fill: BLACK;");
             turnColor = ChessPiece.Color.WHITE;
         }
@@ -747,9 +727,6 @@ public class Board {
         //endregion
 
 
-        // if (canCastle(oldPosition,newPosition))return;
-
-
         //region EnPassant
 
         if (staraLokacijaFigura.getClass() == Pawn.class) {
@@ -812,8 +789,6 @@ public class Board {
         //endregion
 
 
-        //if(canPassant(oldPosition,newPosition))return;
-
 
         staraLokacijaFigura.move(newPosition);
         if (novaLokacijaFigura != null) novaLokacijaFigura.postaviNa("X");
@@ -832,11 +807,8 @@ public class Board {
 
     public void refresh() {
 
-        if (isImport) {
-            System.out.println(currentBoard + " turn");
-        }
 
-        if (playing == false) return;
+        if (!playing) return;
 
         //region ResetLabels
         for (int i = 0; i < 8; i++) {
@@ -941,7 +913,7 @@ public class Board {
                 }
             }
 
-            gameEnd(status,a);
+            gameEnd(status, a);
 
 
         }
@@ -966,7 +938,7 @@ public class Board {
                 }
             }
 
-            gameEnd(status,a);
+            gameEnd(status, a);
 
         }
 
@@ -1018,21 +990,16 @@ public class Board {
         jede = 0;
     }
 
-    public void Undo(MouseEvent mouseEvent) {
-        changePlayer();
-    }
+    private void gameEnd(int status, Alert al) {
 
-    private void gameEnd(int status,Alert al ) {
-
-        if (!playing || isSpectate ||isImport) return;
-
+        if (!playing || isSpectate || isImport) return;
 
 
         playing = false;
-        boolean save=false;
+        boolean save = false;
 
         Optional<ButtonType> resultAl = al.showAndWait();
-        if (resultAl.get() == ButtonType.YES) save=true;
+        if (resultAl.get() == ButtonType.YES) save = true;
 
         Connection conn = ConnectionDAO.getConn();
 
@@ -1050,11 +1017,6 @@ public class Board {
 
                     upit.setInt(2, whiteID);
                     upit.setInt(3, blackID);
-
-                    System.out.println("Status je " + status + " a player je ");
-                    if (currentPlayer == ChessPiece.Color.WHITE) System.out.println("White");
-                    else if (currentPlayer == ChessPiece.Color.BLACK) System.out.println("BLack");
-                    else System.out.println("Sivo");
 
                     if ((status == 1 && currentPlayer == ChessPiece.Color.WHITE) || (status == -1 && currentPlayer == ChessPiece.Color.BLACK)) {
                         upit.setInt(4, whiteID);
@@ -1083,14 +1045,11 @@ public class Board {
             if (currentPlayer == ChessPiece.Color.WHITE) playerID = whiteID;
             else playerID = blackID;
 
-            if (status == 1){
-                if(playerID==whiteID) giveWin(whiteID,blackID);
-                else giveWin(blackID,whiteID);
-            }
-            else if (status == -1) giveLoss(playerID);
+            if (status == 1) {
+                if (playerID == whiteID) giveWin(whiteID, blackID);
+                else giveWin(blackID, whiteID);
+            } else if (status == -1) giveLoss(playerID);
             else giveDraw(playerID);
-
-            System.out.printf("Update sam " + playerID);
 
             if (status == 1) {
                 upit = conn.prepareStatement("Update pastgames set winner=? where roomid=?");
@@ -1115,21 +1074,21 @@ public class Board {
 
     }
 
-    private void giveWin(int winnerID,int loserID) {
+    private void giveWin(int winnerID, int loserID) {
 
         try {
             PreparedStatement winStatment = ConnectionDAO.getConn().prepareStatement("Update player set wins=wins+1 where id=?");
             winStatment.setInt(1, winnerID);
             winStatment.executeUpdate();
 
-            PreparedStatement getLoserRating=ConnectionDAO.getConn().prepareStatement("Select rating from player where id="+loserID);
-            ResultSet rs=getLoserRating.executeQuery();
-            if(!rs.next())return;
-            int lRating=rs.getInt(1);
+            PreparedStatement getLoserRating = ConnectionDAO.getConn().prepareStatement("Select rating from player where id=" + loserID);
+            ResultSet rs = getLoserRating.executeQuery();
+            if (!rs.next()) return;
+            int lRating = rs.getInt(1);
 
-            PreparedStatement ratingStatment=ConnectionDAO.getConn().prepareStatement("Update player" +
-                    " set rating=rating+0.03*"+lRating+" where id=? ");
-            ratingStatment.setInt(1,winnerID);
+            PreparedStatement ratingStatment = ConnectionDAO.getConn().prepareStatement("Update player" +
+                    " set rating=rating+0.03*" + lRating + " where id=? ");
+            ratingStatment.setInt(1, winnerID);
             ratingStatment.executeUpdate();
 
 
@@ -1139,15 +1098,15 @@ public class Board {
 
     }
 
-    private void giveLoss(int loserID){
+    private void giveLoss(int loserID) {
 
         try {
             PreparedStatement lossStatment = ConnectionDAO.getConn().prepareStatement("Update player set loss=loss+1 where id=?");
             lossStatment.setInt(1, loserID);
             lossStatment.executeUpdate();
 
-            PreparedStatement ratingStatment=ConnectionDAO.getConn().prepareStatement("Update player set rating=rating*0.97 where id=? ");
-            ratingStatment.setInt(1,loserID);
+            PreparedStatement ratingStatment = ConnectionDAO.getConn().prepareStatement("Update player set rating=rating*0.97 where id=? ");
+            ratingStatment.setInt(1, loserID);
             ratingStatment.executeUpdate();
 
 
@@ -1181,7 +1140,7 @@ public class Board {
             addCurrentBoard();
             String oldPosition = s.substring(s.indexOf("(") + 1, s.indexOf("-"));
             String newPosition = s.substring(s.indexOf("-") + 1, s.indexOf(")"));
-            System.out.println("Sa " + oldPosition + " na " + newPosition);
+
             move(oldPosition, newPosition);
         }
         addCurrentBoard();
@@ -1197,32 +1156,30 @@ public class Board {
 
         isSpectate = true;
 
-        String importedMoves="";
+        String importedMoves = "";
 
-        PreparedStatement getMoves= null;
+        PreparedStatement getMoves = null;
         try {
             getMoves = ConnectionDAO.getConn().prepareStatement("Select moves from room where id=?");
-            getMoves.setInt(1,roomId);
-            System.out.println("Trazim na "+roomId);
-            ResultSet rs=getMoves.executeQuery();
+            getMoves.setInt(1, roomId);
+            ResultSet rs = getMoves.executeQuery();
             rs.next();
-            importedMoves=rs.getString(1);
+            importedMoves = rs.getString(1);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        if(importedMoves.isEmpty())return;
+        if (importedMoves.isEmpty()) return;
 
 
         importMoves = new ArrayList<String>(Arrays.asList(importedMoves.split(",")));
         for (String s : importMoves) {
             String oldPosition = s.substring(s.indexOf("(") + 1, s.indexOf("-"));
             String newPosition = s.substring(s.indexOf("-") + 1, s.indexOf(")"));
-            System.out.println("Sa " + oldPosition + " na " + newPosition);
             move(oldPosition, newPosition);
             changePlayer();
         }
-        moves=importedMoves;
+        moves = importedMoves;
         refresh();
 
     }

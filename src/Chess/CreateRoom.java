@@ -75,16 +75,12 @@ public class CreateRoom implements Initializable {
 
                if(ConnectionDAO.isOnline()) ps=conn.prepareStatement("INSERT into room values(0,'',0,?,?,?)");
                else ps=conn.prepareStatement("INSERT into room values(null,'',0,?,?,?)");
-                System.out.println("HERE1");
             }
 
             else{
                 if(ConnectionDAO.isOnline())  ps=conn.prepareStatement("INSERT into room values(0,'',?,0,?,?)");
                 else ps=conn.prepareStatement("INSERT into room values(null,'',?,0,?,?)");
-                System.out.println("HERE2");
             }
-
-            System.out.println("Here3");
 
             ps.setInt(1,id);
             ps.setString(2,nameText.getText());
@@ -106,10 +102,11 @@ public class CreateRoom implements Initializable {
 
 
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/ChessRoom.fxml"));
-                Parent root = (Parent) fxmlLoader.load();
 
-                ChessRoom controller = fxmlLoader.getController();
+                ChessRoom controller=new ChessRoom();
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/ChessRoom.fxml"),ConnectionDAO.getResourcebundle());
+                fxmlLoader.setController(controller);
+                Parent root = (Parent) fxmlLoader.load();
                 controller.setRoomId(roomID);
                 controller.draw(bojaIgraca);
                 controller.setCurrentTab(currentTab);
