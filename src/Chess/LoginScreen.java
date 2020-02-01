@@ -54,7 +54,7 @@ public class LoginScreen implements Initializable {
 
         if(usernameTBox.getSelectionModel().getSelectedItem().toString().length()<5 || passwordPBox.getText().length()<5 ||
                 usernameTBox.getSelectionModel().getSelectedItem().toString().length()>15 || passwordPBox.getText().length()>15 ){
-            new Alert(Alert.AlertType.ERROR,"Username and password must be between 5 and 15 characters").show();
+            new Alert(Alert.AlertType.ERROR,ConnectionDAO.getResourcebundle().getString("usernamelimit")).show();
             return;
         }
 
@@ -81,12 +81,12 @@ public class LoginScreen implements Initializable {
 
                 upit.executeUpdate();
                 Alert a=new Alert(Alert.AlertType.INFORMATION);
-                a.setContentText("Registered, you can now login.");
+                a.setContentText(ConnectionDAO.getResourcebundle().getString("register"));
                 a.setTitle("Success");
                 a.setHeaderText("");
                 a.show();
             }else {
-                new Alert(Alert.AlertType.ERROR,"That username is already registered").show();
+                new Alert(Alert.AlertType.ERROR,ConnectionDAO.getResourcebundle().getString("alreadyregistered")).show();
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -113,16 +113,16 @@ public class LoginScreen implements Initializable {
             upit.setString(2,hash(password));
             ResultSet result = upit.executeQuery();
             if(result.next()==false){
-                new Alert(Alert.AlertType.ERROR,"Wrong username and/or password.").show();
+                new Alert(Alert.AlertType.ERROR,ConnectionDAO.getResourcebundle().getString("wronguserorpass")).show();
                 passwordPBox.clear();
                 return;
             }else if(result.getInt(1)==1){
 
-                Alert a=new Alert(Alert.AlertType.ERROR,"Account is already logged in, do you wish to logout?",ButtonType.YES,ButtonType.NO);
+                Alert a=new Alert(Alert.AlertType.ERROR,ConnectionDAO.getResourcebundle().getString("alreadyloggedinalert"),ButtonType.YES,ButtonType.NO);
                 Optional answer=a.showAndWait();
                 if(answer.get()==ButtonType.YES){
                     ConnectionDAO.logout(result.getInt(2));
-                    new Alert(Alert.AlertType.CONFIRMATION,"Try logging in now",ButtonType.OK).show();
+                    new Alert(Alert.AlertType.CONFIRMATION,ConnectionDAO.getResourcebundle().getString("trynow"),ButtonType.OK).show();
                     return;
                 }
 
@@ -130,7 +130,7 @@ public class LoginScreen implements Initializable {
             }
             else{
                 Alert a=new Alert(Alert.AlertType.INFORMATION);
-                a.setContentText("Logged in!");
+                a.setContentText(ConnectionDAO.getResourcebundle().getString("login"));
                 a.setTitle("Logged in!");
                 a.setHeaderText("");
                 a.showAndWait();

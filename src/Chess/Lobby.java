@@ -94,7 +94,7 @@ public class Lobby implements Initializable {
             ResultSet rs = selectStatus.executeQuery();
             if (!rs.next()) return;
             if (rs.getInt(1) == 0) {
-                new Alert(Alert.AlertType.ERROR, "You have been logged out ");
+                new Alert(Alert.AlertType.ERROR, ConnectionDAO.getResourcebundle().getString("gotloggedout"));
                 Stage s = (Stage) tabsTabPane.getScene().getWindow();
                 s.close();
             }

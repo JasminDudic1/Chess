@@ -351,7 +351,7 @@ public class Board {
                         giveLoss(whiteID);
                     }
 
-                    new Alert(Alert.AlertType.INFORMATION, "Opponent left, you win.").show();
+                    new Alert(Alert.AlertType.INFORMATION, ConnectionDAO.getResourcebundle().getString("opponentleftalert")).show();
 
                     controller.closeRoom();
                     return;
@@ -898,17 +898,17 @@ public class Board {
             Alert a = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.YES, ButtonType.NO);
             if (isCheck(ChessPiece.Color.WHITE)) {
                 if (currentPlayer == ChessPiece.Color.BLACK) {
-                    a.setContentText("You won with checkmate\nDo you want to save the game?");
+                    a.setContentText(ConnectionDAO.getResourcebundle().getString("wonchekmatealert"));
                     status = 1;
                 } else {
-                    a.setContentText("You lost with checkmate\nDo you want to save the game?");
+                    a.setContentText(ConnectionDAO.getResourcebundle().getString("lostcheckmate"));
                     status = -1;
                 }
             } else {
 
                 if ((currentPlayer == turnColor && currentPlayer != ChessPiece.Color.WHITE) ||
                         (currentPlayer != turnColor && currentPlayer == ChessPiece.Color.WHITE)) {
-                    a.setContentText("White is in stalemate\nDo you want to save the game?");
+                    a.setContentText(ConnectionDAO.getResourcebundle().getString("whitestalematealert"));
                     status = 0;
                 }
             }
@@ -924,16 +924,16 @@ public class Board {
             Alert a = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.YES, ButtonType.NO);
             if (isCheck(ChessPiece.Color.BLACK)) {
                 if (currentPlayer == ChessPiece.Color.WHITE) {
-                    a.setContentText("You won with checkmate\nDo you want to save the game?");
+                    a.setContentText(ConnectionDAO.getResourcebundle().getString("wonchekmatealert"));
                     status = 1;
                 } else {
-                    a.setContentText("You lost with checkmate\nDo you want to save the game?");
+                    a.setContentText(ConnectionDAO.getResourcebundle().getString("lostcheckmate"));
                     status = -1;
                 }
             } else {
                 if ((currentPlayer == turnColor && currentPlayer != ChessPiece.Color.BLACK) ||
                         (currentPlayer != turnColor && currentPlayer == ChessPiece.Color.BLACK)) {
-                    a.setContentText("BLACK is in stalemate\nDo you want to save the game?");
+                    a.setContentText(ConnectionDAO.getResourcebundle().getString("blackstalematealert"));
                     status = 0;
                 }
             }

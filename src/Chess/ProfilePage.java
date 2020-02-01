@@ -251,7 +251,7 @@ public class ProfilePage implements Initializable {
                     currentTab.getTabPane().getTabs().add(tab);
                     currentTab.getTabPane().getSelectionModel().select(tab);
 
-                    Alert al = new Alert(Alert.AlertType.NONE, "Loading, please wait.", ButtonType.OK);
+                    Alert al = new Alert(Alert.AlertType.NONE, "Loading.", ButtonType.OK);
                     al.show();
                     controller.importGame(moves, whiteid, blackid);
                     al.close();
