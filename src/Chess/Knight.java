@@ -9,8 +9,8 @@ public class Knight extends ChessPiece {
     Color boja;
     char znak='N';
 
-    static Image iconImgW=new Image("Icons/WhiteKnight.png", 100, 150, false, false);
-    static Image iconImgB=new Image("Icons/BlackKnight.png", 100, 150, false, false);
+    static Image iconImgW=new Image("icons/WhiteKnight.png", 100, 150, false, false);
+    static Image iconImgB=new Image("icons/BlackKnight.png", 100, 150, false, false);
 
     Knight(String pozicija,Color boja){
         if(pozicija.length()!=2)throw new IllegalArgumentException("Van ploce");

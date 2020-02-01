@@ -64,7 +64,6 @@ public class Lobby implements Initializable {
         new Thread(()->{
             while (true) {
 
-
                 try {
                    Platform.runLater(()->refresh());
                     Thread.sleep(1000);

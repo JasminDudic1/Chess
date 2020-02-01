@@ -1,7 +1,6 @@
 package Chess;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -13,14 +12,16 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
 
 
-        ConnectionDAO.createConn();
-        ConnectionDAO.makeBase();
+       // ConnectionDAO.createConn();
+       // ConnectionDAO.makeBase();
 
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/LoginScreen.fxml"));
+      //  Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/LoginScreen.fxml"));
+
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/MainMenu.fxml"));
 
         primaryStage.setTitle("Login");
         primaryStage.setScene(new Scene(root));
-        primaryStage.setOnHiding((e)-> Platform.exit());
+       // primaryStage.setOnHiding((e)-> Platform.exit());
 
         primaryStage.show();
     }

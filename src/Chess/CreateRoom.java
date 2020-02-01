@@ -58,10 +58,10 @@ public class CreateRoom implements Initializable {
 
             Class.forName("org.sqlite.JDBC");
             Connection conn=ConnectionDAO.getConn();
-            PreparedStatement upit;
-            upit=conn.prepareStatement("Select id from room where roomname=?");
-            upit.setString(1,nameText.getText());
-            ResultSet rs=upit.executeQuery();
+            PreparedStatement ps;
+            ps=conn.prepareStatement("Select id from room where roomname=?");
+            ps.setString(1,nameText.getText());
+            ResultSet rs=ps.executeQuery();
             if(rs.next()){
                 Alert a=new Alert(Alert.AlertType.ERROR);
                 a.setContentText("Already exists");
@@ -71,19 +71,32 @@ public class CreateRoom implements Initializable {
                 return;
             }
 
-            if(colorCBox.isSelected()) upit=conn.prepareStatement("INSERT into room values(null,'','',0,?,?,?)");
-            else upit=conn.prepareStatement("INSERT into room values(null,'','',?,0,?,?)");
-            upit.setInt(1,id);
-            upit.setString(2,nameText.getText());
-            if(passText.getText().isEmpty())upit.setString(3,"");
-            else upit.setString(3,hash(passText.getText()));
+            if(colorCBox.isSelected()){
+
+               if(ConnectionDAO.isOnline()) ps=conn.prepareStatement("INSERT into room values(0,'',0,?,?,?)");
+               else ps=conn.prepareStatement("INSERT into room values(null,'',0,?,?,?)");
+                System.out.println("HERE1");
+            }
+
+            else{
+                if(ConnectionDAO.isOnline())  ps=conn.prepareStatement("INSERT into room values(0,'',?,0,?,?)");
+                else ps=conn.prepareStatement("INSERT into room values(null,'',?,0,?,?)");
+                System.out.println("HERE2");
+            }
+
+            System.out.println("Here3");
+
+            ps.setInt(1,id);
+            ps.setString(2,nameText.getText());
+            if(passText.getText().isEmpty())ps.setString(3,"");
+            else ps.setString(3,hash(passText.getText()));
 
 
-            upit.executeUpdate();
+            ps.executeUpdate();
 
-            upit=conn.prepareStatement("Select Max(id) from room");
+            ps=conn.prepareStatement("Select Max(id) from room");
             rs.close();
-            rs=upit.executeQuery();
+            rs=ps.executeQuery();
 
             if(rs.next()) roomID=rs.getInt(1);
             rs.close();
@@ -120,7 +133,7 @@ public class CreateRoom implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
 
-        BackgroundImage bimg=new BackgroundImage(new Image("Backgroundimages/createRoomGif.gif",800,550,false,false), BackgroundRepeat.SPACE,BackgroundRepeat.SPACE
+        BackgroundImage bimg=new BackgroundImage(new Image("backgroundimages/createRoomGif.gif",800,550,false,false), BackgroundRepeat.SPACE,BackgroundRepeat.SPACE
                 , BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
 
         backgroundPane.setBackground(new Background(bimg));

@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="fxml.MainMenu"
-            prefHeight="400.0" prefWidth="600.0">
-
-</AnchorPane>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Chess.MainMenu">
+  <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="114.0" minWidth="10.0" prefWidth="28.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="114.0" minWidth="10.0" prefWidth="56.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="229.0" minWidth="10.0" prefWidth="229.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="229.0" minWidth="10.0" prefWidth="229.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="108.0" minWidth="10.0" prefWidth="67.0" />
+  </columnConstraints>
+  <rowConstraints>
+      <RowConstraints maxHeight="227.0" minHeight="10.0" prefHeight="115.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="227.0" minHeight="4.0" prefHeight="50.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="220.0" minHeight="10.0" prefHeight="97.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="220.0" minHeight="10.0" prefHeight="83.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="220.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="269.0" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="269.0" minHeight="10.0" prefHeight="49.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <Label text="Server:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
+      <Button mnemonicParsing="false" onAction="#enterClicked" prefHeight="31.0" prefWidth="137.0" text="Enter Server" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+      <Button mnemonicParsing="false" onAction="#offlineClicked" prefHeight="31.0" prefWidth="141.0" text="Play Offline" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+      <Button mnemonicParsing="false" onAction="#saveClicked" prefHeight="31.0" prefWidth="137.0" text="Save Server" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+      <Button mnemonicParsing="false" onAction="#exitClicked" prefHeight="31.0" prefWidth="135.0" text="Exit" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+      <PasswordField fx:id="passwordBox" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+      <TextField fx:id="usernameBox" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+      <TextField fx:id="servernameBox" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+      <TextField fx:id="urlBox" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+      <Label text="Username" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
+      <Label layoutX="186.0" layoutY="187.0" text="Password" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
+      <Label text="Servername" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP" />
+      <Label text="Base URL" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP" />
+      <ComboBox fx:id="serversCBox" prefHeight="31.0" prefWidth="488.0" GridPane.columnIndex="2" GridPane.columnSpan="2" />
+      <Button fx:id="createNewButton" mnemonicParsing="false" onAction="#newClicked" prefHeight="31.0" prefWidth="79.0" text="New" GridPane.columnIndex="4" />
+      <Button mnemonicParsing="false" onAction="#deleteClicked" text="Delete" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+   </children>
+</GridPane>

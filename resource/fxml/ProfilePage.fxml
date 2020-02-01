@@ -29,7 +29,7 @@
       <Label fx:id="winsLab" text="Wins:" GridPane.rowIndex="2" GridPane.valignment="TOP" />
       <Label fx:id="lossesLab" text="Losses:" GridPane.rowIndex="2" />
       <Label fx:id="drawsLab" text="Draws" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
-      <Button mnemonicParsing="false" text="Reset" GridPane.rowIndex="3" />
+      <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#resetClicked" text="Reset" GridPane.rowIndex="3" />
       <ListView fx:id="pastGamesList" onMouseClicked="#pastGameClicked" prefHeight="325.0" prefWidth="399.0" GridPane.columnIndex="3" GridPane.columnSpan="4" GridPane.rowIndex="2" GridPane.rowSpan="3" />
       <ChoiceBox fx:id="playersCBox" maxWidth="1.7976931348623157E308" onAction="#playerChangedClicked" prefHeight="31.0" prefWidth="273.0" GridPane.columnIndex="3" GridPane.columnSpan="4" GridPane.rowIndex="1" />
    </children>

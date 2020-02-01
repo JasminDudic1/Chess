@@ -106,6 +106,7 @@ public class ChessRoom {
 
             if(rs.getInt(1)==-1 || rs.getInt(1)==-1){
                 running=false;
+                System.out.println("opponent je -1 gasi pretragu protivnika");
                 closeRoom();
                 return;
             }
@@ -191,6 +192,7 @@ public class ChessRoom {
                 upit=conn.prepareStatement("delete from room where id=?");
                 upit.setInt(1,roomId);
                 upit.executeUpdate();
+                System.out.println("Player "+playerID+" brise sobu "+roomId+" usao je u closeroom");
 
             }else{
 
@@ -303,6 +305,7 @@ public class ChessRoom {
             ResultSet rs=upit.executeQuery();
             rs.next();
             if(rs.getInt(1)==-1 && rs.getInt(2)==-1){
+                System.out.println("Oba su -1");
                 closeRoom();
                 return;
             }

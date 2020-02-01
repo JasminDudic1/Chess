@@ -22,6 +22,7 @@ public class ProfilePage implements Initializable {
     public Label usernameLab, statusLab, ratingLab, winsLab, lossesLab, drawsLab;
     public ChoiceBox playersCBox;
     public GridPane gridPaneBackground;
+    public Button resetBtn;
     PreparedStatement getPastGames, getPlayerStats, getPlayers, getMoves, getWhiteBlackFromPastGames;
     private int currentPlayerID;
     private int loggedInID;
@@ -93,6 +94,9 @@ public class ProfilePage implements Initializable {
     private void refresh() {
 
         //if(playersCBox.getSelectionModel().getSelectedItem()==null)return;
+
+        if(currentPlayerID==loggedInID) resetBtn.setVisible(true);
+        else resetBtn.setVisible(false);
 
         boolean show = playersCBox.isShowing();
         boolean selected = playersCBox.getSelectionModel().getSelectedItem() != null;
@@ -196,6 +200,7 @@ public class ProfilePage implements Initializable {
                 currentPlayerID = Integer.parseInt(s);
                 refresh();
             }
+
         }
 
     }
@@ -275,4 +280,14 @@ public class ProfilePage implements Initializable {
     }
 
 
+    public void resetClicked(ActionEvent actionEvent) {
+
+        ConnectionDAO.resetPlayer(loggedInID);
+        refresh();
+
+    }
+
+
+
 }
+

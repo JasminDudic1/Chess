@@ -272,6 +272,8 @@ public class Board {
             e.printStackTrace();
             throw new IllegalChessMoveException(e.toString());
         }
+
+
     }///////////////////////////////////OVDJE SAM
 
     public void setPlayersIds(int p1, int p2) {
@@ -567,6 +569,7 @@ public class Board {
                                 try {
                                     setMoves.setString(1, moves);
                                     setMoves.executeUpdate();
+                                    controller.getCurrentTab().setStyle("-fx-background-color: Green;");
                                 } catch (SQLException e) {
                                     e.printStackTrace();
                                 }
@@ -938,10 +941,7 @@ public class Board {
                 }
             }
 
-            Optional<ButtonType> result = a.showAndWait();
-            if (result.get() == ButtonType.YES) {
-                gameEnd(status, true);
-            } else gameEnd(status, false);
+            gameEnd(status,a);
 
 
         }
@@ -966,9 +966,7 @@ public class Board {
                 }
             }
 
-            Optional<ButtonType> result = a.showAndWait();
-            if (result.get() == ButtonType.YES) gameEnd(status, true);
-            else gameEnd(status, false);
+            gameEnd(status,a);
 
         }
 
@@ -1024,12 +1022,18 @@ public class Board {
         changePlayer();
     }
 
-    private void gameEnd(int status, boolean save) {
+    private void gameEnd(int status,Alert al ) {
 
         if (!playing || isSpectate ||isImport) return;
 
 
+
         playing = false;
+        boolean save=false;
+
+        Optional<ButtonType> resultAl = al.showAndWait();
+        if (resultAl.get() == ButtonType.YES) save=true;
+
         Connection conn = ConnectionDAO.getConn();
 
         if (save) {
@@ -1118,10 +1122,14 @@ public class Board {
             winStatment.setInt(1, winnerID);
             winStatment.executeUpdate();
 
+            PreparedStatement getLoserRating=ConnectionDAO.getConn().prepareStatement("Select rating from player where id="+loserID);
+            ResultSet rs=getLoserRating.executeQuery();
+            if(!rs.next())return;
+            int lRating=rs.getInt(1);
+
             PreparedStatement ratingStatment=ConnectionDAO.getConn().prepareStatement("Update player" +
-                    " set rating=rating+0.03*(Select pt.rating from player pt where pt.id=?) where id=? ");
-            ratingStatment.setInt(2,winnerID);
-            ratingStatment.setInt(1,loserID);
+                    " set rating=rating+0.03*"+lRating+" where id=? ");
+            ratingStatment.setInt(1,winnerID);
             ratingStatment.executeUpdate();
 
 
@@ -1182,18 +1190,6 @@ public class Board {
         currentBoard = 0;
         board = allBoard[currentBoard];
         refresh();
-
-    }
-
-    private void catchUp(String newMoves){
-
-      /*  while(!moves.equals(newMoves)){
-
-            int baze=moves.length();
-
-
-        }*/
-
 
     }
 

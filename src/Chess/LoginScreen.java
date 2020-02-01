@@ -50,8 +50,9 @@ public class LoginScreen implements Initializable {
 
         if(usernameTBox.getSelectionModel().getSelectedItem()==null)return;
 
-        if(usernameTBox.getSelectionModel().getSelectedItem().toString().length()<5 || passwordPBox.getText().length()<5){
-            new Alert(Alert.AlertType.ERROR,"Username and password must be at least 5 characters").show();
+        if(usernameTBox.getSelectionModel().getSelectedItem().toString().length()<5 || passwordPBox.getText().length()<5 ||
+                usernameTBox.getSelectionModel().getSelectedItem().toString().length()>15 || passwordPBox.getText().length()>15 ){
+            new Alert(Alert.AlertType.ERROR,"Username and password must be between 5 and 15 characters").show();
             return;
         }
 
@@ -68,11 +69,15 @@ public class LoginScreen implements Initializable {
             PreparedStatement upit=conn.prepareStatement("Select * From Player Where username=?");
             upit.setString(1,username);
             ResultSet result = upit.executeQuery();
+
             if(result.next()==false && !username.isEmpty() && !password.isEmpty()){
-                ///upit=conn.prepareStatement("Insert into Player values(null,?,?,default,default,default,default,default,default)");
-                upit=conn.prepareStatement("Insert into Player values(null,?,?,0,0,0,1000,0,0)");
+            if(ConnectionDAO.isOnline()) upit=conn.prepareStatement("Insert into Player values(0,?,?,0,0,0,1000,0)");
+            else upit=conn.prepareStatement("Insert into Player values(null,?,?,0,0,0,1000,0)");
+
                 upit.setString(1,username);
                 upit.setString(2,hash(password));
+
+                System.out.println(upit.toString());
                 upit.executeUpdate();
                 Alert a=new Alert(Alert.AlertType.INFORMATION);
                 a.setContentText("Registered, you can now login.");
@@ -170,7 +175,7 @@ public class LoginScreen implements Initializable {
                     fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/Tabs.fxml"));
                     Parent tabsRoot=(Parent)fxmlLoader.load();
                     Tabs tabsController=fxmlLoader.getController();
-                    tabsController.getTabsPane().getTabs().add(new Tab("Main menu",root));
+                    tabsController.getTabsPane().getTabs().add(new Tab("Lobbies",root));
                     controller.setTabsTabPane(tabsController.getTabsPane());
 
                     Stage stage = new Stage();
@@ -180,6 +185,10 @@ public class LoginScreen implements Initializable {
                     stage.setScene(new Scene(tabsRoot));
                     stage.setTitle(username);
                     stage.show();
+
+                    if(ConnectionDAO.isOnline()) ((Stage) usernameTBox.getScene().getWindow()).close();
+
+
 
 
                 } catch(Exception e) {
@@ -203,7 +212,8 @@ public class LoginScreen implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        BackgroundImage bimg=new BackgroundImage(new Image("Backgroundimages/loginBackground.jpg",600,520,false,false), BackgroundRepeat.REPEAT,BackgroundRepeat.NO_REPEAT
+
+        BackgroundImage bimg=new BackgroundImage(new Image("backgroundimages/loginBackground.jpg",600,520,false,false), BackgroundRepeat.REPEAT,BackgroundRepeat.NO_REPEAT
         , BackgroundPosition.CENTER,BackgroundSize.DEFAULT);
 
         backgroundPane.setBackground(new Background(bimg));
