@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="chess" default="all">
+  
+  
+  <property file="chess.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.klib"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.zip"/>
+    <include name="*.ane"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.10" value="${jdk.home.10}/bin"/>
+  <path id="jdk.classpath.10">
+    <fileset dir="${jdk.home.10}">
+      <include name="../jdk-10.0.2!/java.activation"/>
+      <include name="../jdk-10.0.2!/java.base"/>
+      <include name="../jdk-10.0.2!/java.compiler"/>
+      <include name="../jdk-10.0.2!/java.corba"/>
+      <include name="../jdk-10.0.2!/java.datatransfer"/>
+      <include name="../jdk-10.0.2!/java.desktop"/>
+      <include name="../jdk-10.0.2!/java.instrument"/>
+      <include name="../jdk-10.0.2!/java.logging"/>
+      <include name="../jdk-10.0.2!/java.management"/>
+      <include name="../jdk-10.0.2!/java.management.rmi"/>
+      <include name="../jdk-10.0.2!/java.naming"/>
+      <include name="../jdk-10.0.2!/java.prefs"/>
+      <include name="../jdk-10.0.2!/java.rmi"/>
+      <include name="../jdk-10.0.2!/java.scripting"/>
+      <include name="../jdk-10.0.2!/java.se"/>
+      <include name="../jdk-10.0.2!/java.se.ee"/>
+      <include name="../jdk-10.0.2!/java.security.jgss"/>
+      <include name="../jdk-10.0.2!/java.security.sasl"/>
+      <include name="../jdk-10.0.2!/java.smartcardio"/>
+      <include name="../jdk-10.0.2!/java.sql"/>
+      <include name="../jdk-10.0.2!/java.sql.rowset"/>
+      <include name="../jdk-10.0.2!/java.transaction"/>
+      <include name="../jdk-10.0.2!/java.xml"/>
+      <include name="../jdk-10.0.2!/java.xml.bind"/>
+      <include name="../jdk-10.0.2!/java.xml.crypto"/>
+      <include name="../jdk-10.0.2!/java.xml.ws"/>
+      <include name="../jdk-10.0.2!/java.xml.ws.annotation"/>
+      <include name="../jdk-10.0.2!/jdk.accessibility"/>
+      <include name="../jdk-10.0.2!/jdk.aot"/>
+      <include name="../jdk-10.0.2!/jdk.attach"/>
+      <include name="../jdk-10.0.2!/jdk.charsets"/>
+      <include name="../jdk-10.0.2!/jdk.compiler"/>
+      <include name="../jdk-10.0.2!/jdk.crypto.cryptoki"/>
+      <include name="../jdk-10.0.2!/jdk.crypto.ec"/>
+      <include name="../jdk-10.0.2!/jdk.crypto.mscapi"/>
+      <include name="../jdk-10.0.2!/jdk.dynalink"/>
+      <include name="../jdk-10.0.2!/jdk.editpad"/>
+      <include name="../jdk-10.0.2!/jdk.hotspot.agent"/>
+      <include name="../jdk-10.0.2!/jdk.httpserver"/>
+      <include name="../jdk-10.0.2!/jdk.incubator.httpclient"/>
+      <include name="../jdk-10.0.2!/jdk.internal.ed"/>
+      <include name="../jdk-10.0.2!/jdk.internal.jvmstat"/>
+      <include name="../jdk-10.0.2!/jdk.internal.le"/>
+      <include name="../jdk-10.0.2!/jdk.internal.opt"/>
+      <include name="../jdk-10.0.2!/jdk.internal.vm.ci"/>
+      <include name="../jdk-10.0.2!/jdk.internal.vm.compiler"/>
+      <include name="../jdk-10.0.2!/jdk.internal.vm.compiler.management"/>
+      <include name="../jdk-10.0.2!/jdk.jartool"/>
+      <include name="../jdk-10.0.2!/jdk.javadoc"/>
+      <include name="../jdk-10.0.2!/jdk.jcmd"/>
+      <include name="../jdk-10.0.2!/jdk.jconsole"/>
+      <include name="../jdk-10.0.2!/jdk.jdeps"/>
+      <include name="../jdk-10.0.2!/jdk.jdi"/>
+      <include name="../jdk-10.0.2!/jdk.jdwp.agent"/>
+      <include name="../jdk-10.0.2!/jdk.jlink"/>
+      <include name="../jdk-10.0.2!/jdk.jshell"/>
+      <include name="../jdk-10.0.2!/jdk.jsobject"/>
+      <include name="../jdk-10.0.2!/jdk.jstatd"/>
+      <include name="../jdk-10.0.2!/jdk.localedata"/>
+      <include name="../jdk-10.0.2!/jdk.management"/>
+      <include name="../jdk-10.0.2!/jdk.management.agent"/>
+      <include name="../jdk-10.0.2!/jdk.naming.dns"/>
+      <include name="../jdk-10.0.2!/jdk.naming.rmi"/>
+      <include name="../jdk-10.0.2!/jdk.net"/>
+      <include name="../jdk-10.0.2!/jdk.pack"/>
+      <include name="../jdk-10.0.2!/jdk.rmic"/>
+      <include name="../jdk-10.0.2!/jdk.scripting.nashorn"/>
+      <include name="../jdk-10.0.2!/jdk.scripting.nashorn.shell"/>
+      <include name="../jdk-10.0.2!/jdk.sctp"/>
+      <include name="../jdk-10.0.2!/jdk.security.auth"/>
+      <include name="../jdk-10.0.2!/jdk.security.jgss"/>
+      <include name="../jdk-10.0.2!/jdk.unsupported"/>
+      <include name="../jdk-10.0.2!/jdk.xml.bind"/>
+      <include name="../jdk-10.0.2!/jdk.xml.dom"/>
+      <include name="../jdk-10.0.2!/jdk.xml.ws"/>
+      <include name="../jdk-10.0.2!/jdk.zipfs"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.10}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.10}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.10"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.lib.classpath">
+    <fileset dir="${idea.home}/javafx-sdk-11.0.2/lib">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="library.lib1.classpath">
+    <fileset dir="//media/etf-1-11/data/tools/javafx-sdk-13.0.1/lib">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="library.mysql:mysql-connector-java:8.0.11.classpath">
+    <pathelement location="${path.variable.maven_repository}/com/google/protobuf/protobuf-java/2.6.0/protobuf-java-2.6.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/mysql/mysql-connector-java/8.0.11/mysql-connector-java-8.0.11.jar"/>
+  </path>
+  
+  <path id="library.net.sf.jasperreports:jasperreports:6.11.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-annotations/2.10.0/jackson-annotations-2.10.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-core/2.10.0/jackson-core-2.10.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-databind/2.10.0/jackson-databind-2.10.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/com/lowagie/itext/2.1.7.js7/itext-2.1.7.js7.jar"/>
+    <pathelement location="${path.variable.maven_repository}/commons-beanutils/commons-beanutils/1.9.4/commons-beanutils-1.9.4.jar"/>
+    <pathelement location="${path.variable.maven_repository}/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar"/>
+    <pathelement location="${path.variable.maven_repository}/commons-digester/commons-digester/2.1/commons-digester-2.1.jar"/>
+    <pathelement location="${path.variable.maven_repository}/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
+    <pathelement location="${path.variable.maven_repository}/javax/inject/javax.inject/1/javax.inject-1.jar"/>
+    <pathelement location="${path.variable.maven_repository}/net/sf/jasperreports/jasperreports/6.11.0/jasperreports-6.11.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/apache/commons/commons-collections4/4.2/commons-collections4-4.2.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/bouncycastle/bcprov-jdk15on/1.62/bcprov-jdk15on-1.62.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/codehaus/castor/castor-core/1.4.1/castor-core-1.4.1.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/codehaus/castor/castor-xml/1.4.1/castor-xml-1.4.1.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/eclipse/jdt/core/compiler/ecj/4.4.2/ecj-4.4.2.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/jfree/jcommon/1.0.23/jcommon-1.0.23.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/jfree/jfreechart/1.0.19/jfreechart-1.0.19.jar"/>
+  </path>
+  
+  <path id="library.org.xerial:sqlite-jdbc:3.21.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/xerial/sqlite-jdbc/3.21.0/sqlite-jdbc-3.21.0.jar"/>
+  </path>
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <fileset dir="${javac2.home}">
+      <include name="javac2.jar"/>
+      <include name="jdom.jar"/>
+      <include name="asm-all*.jar"/>
+      <include name="forms-*.jar"/>
+    </fileset>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module Chess -->
+  
+  <dirname property="module.chess.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.chess" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.chess" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.chess" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.chess" value="-encoding UTF-8 -source 10 -target 10 ${compiler.args}"/>
+  
+  <property name="chess.output.dir" value="${module.chess.basedir}/out/production/Chess"/>
+  <property name="chess.testoutput.dir" value="${module.chess.basedir}/out/test/Chess"/>
+  
+  <path id="chess.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="chess.module.production.classpath">
+    <path refid="${module.jdk.classpath.chess}"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.lib1.classpath"/>
+    <path refid="library.mysql:mysql-connector-java:8.0.11.classpath"/>
+    <path refid="library.org.xerial:sqlite-jdbc:3.21.0.classpath"/>
+    <path refid="library.net.sf.jasperreports:jasperreports:6.11.0.classpath"/>
+  </path>
+  
+  <path id="chess.runtime.production.module.classpath">
+    <pathelement location="${chess.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.lib1.classpath"/>
+    <path refid="library.mysql:mysql-connector-java:8.0.11.classpath"/>
+    <path refid="library.org.xerial:sqlite-jdbc:3.21.0.classpath"/>
+    <path refid="library.net.sf.jasperreports:jasperreports:6.11.0.classpath"/>
+  </path>
+  
+  <path id="chess.module.classpath">
+    <path refid="${module.jdk.classpath.chess}"/>
+    <pathelement location="${chess.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.lib1.classpath"/>
+    <path refid="library.mysql:mysql-connector-java:8.0.11.classpath"/>
+    <path refid="library.org.xerial:sqlite-jdbc:3.21.0.classpath"/>
+    <path refid="library.net.sf.jasperreports:jasperreports:6.11.0.classpath"/>
+  </path>
+  
+  <path id="chess.runtime.module.classpath">
+    <pathelement location="${chess.testoutput.dir}"/>
+    <pathelement location="${chess.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.lib1.classpath"/>
+    <path refid="library.mysql:mysql-connector-java:8.0.11.classpath"/>
+    <path refid="library.org.xerial:sqlite-jdbc:3.21.0.classpath"/>
+    <path refid="library.net.sf.jasperreports:jasperreports:6.11.0.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.chess">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.chess">
+    <patternset refid="excluded.from.module.chess"/>
+  </patternset>
+  
+  <path id="chess.module.sourcepath">
+    <dirset dir="${module.chess.basedir}">
+      <include name="src"/>
+      <include name="resource"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.chess" depends="compile.module.chess.production,compile.module.chess.tests" description="Compile module Chess"/>
+  
+  <target name="compile.module.chess.production" depends="register.custom.compilers" description="Compile module Chess; production classes">
+    <mkdir dir="${chess.output.dir}"/>
+    <javac2 destdir="${chess.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.chess}/javac">
+      <compilerarg line="${compiler.args.chess}"/>
+      <bootclasspath refid="chess.module.bootclasspath"/>
+      <classpath refid="chess.module.production.classpath"/>
+      <src refid="chess.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.chess"/>
+    </javac2>
+    
+    <copy todir="${chess.output.dir}">
+      <fileset dir="${module.chess.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.chess.basedir}/resource">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.chess.tests" depends="register.custom.compilers,compile.module.chess.production" description="compile module Chess; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.chess" description="cleanup module">
+    <delete dir="${chess.output.dir}"/>
+    <delete dir="${chess.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.chess" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.chess" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.chess:jar" value="${basedir}/out/artifacts/Chess_jar"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.Chess.jar" value="${artifacts.temp.dir}/Chess.jar"/>
+  </target>
+  
+  <target name="artifact.chess:jar" depends="init.artifacts, compile.module.chess" description="Build &#39;Chess:jar&#39; artifact">
+    <property name="artifact.temp.output.chess:jar" value="${artifacts.temp.dir}/Chess_jar"/>
+    <mkdir dir="${artifact.temp.output.chess:jar}"/>
+    <jar destfile="${temp.jar.path.Chess.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${chess.output.dir}"/>
+      <zipfileset src="${idea.home}/javafx-sdk-11.0.2/lib/src.zip"/>
+      <zipfileset src="${idea.home}/javafx-sdk-11.0.2/lib/javafx-swt.jar"/>
+      <zipfileset src="${idea.home}/javafx-sdk-11.0.2/lib/javafx.web.jar"/>
+      <zipfileset src="${idea.home}/javafx-sdk-11.0.2/lib/javafx.base.jar"/>
+      <zipfileset src="${idea.home}/javafx-sdk-11.0.2/lib/javafx.fxml.jar"/>
+      <zipfileset src="${idea.home}/javafx-sdk-11.0.2/lib/javafx.media.jar"/>
+      <zipfileset src="${idea.home}/javafx-sdk-11.0.2/lib/javafx.swing.jar"/>
+      <zipfileset src="${idea.home}/javafx-sdk-11.0.2/lib/javafx.controls.jar"/>
+      <zipfileset src="${idea.home}/javafx-sdk-11.0.2/lib/javafx.graphics.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/mysql/mysql-connector-java/8.0.11/mysql-connector-java-8.0.11.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/com/google/protobuf/protobuf-java/2.6.0/protobuf-java-2.6.0.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/net/sf/jasperreports/jasperreports/6.11.0/jasperreports-6.11.0.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/commons-beanutils/commons-beanutils/1.9.4/commons-beanutils-1.9.4.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/commons-digester/commons-digester/2.1/commons-digester-2.1.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/org/apache/commons/commons-collections4/4.2/commons-collections4-4.2.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/com/lowagie/itext/2.1.7.js7/itext-2.1.7.js7.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/org/bouncycastle/bcprov-jdk15on/1.62/bcprov-jdk15on-1.62.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/org/jfree/jcommon/1.0.23/jcommon-1.0.23.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/org/jfree/jfreechart/1.0.19/jfreechart-1.0.19.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/org/eclipse/jdt/core/compiler/ecj/4.4.2/ecj-4.4.2.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/org/codehaus/castor/castor-xml/1.4.1/castor-xml-1.4.1.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/org/codehaus/castor/castor-core/1.4.1/castor-core-1.4.1.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/javax/inject/javax.inject/1/javax.inject-1.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-core/2.10.0/jackson-core-2.10.0.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-databind/2.10.0/jackson-databind-2.10.0.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/com/fasterxml/jackson/core/jackson-annotations/2.10.0/jackson-annotations-2.10.0.jar"/>
+      <zipfileset src="${path.variable.maven_repository}/org/xerial/sqlite-jdbc/3.21.0/sqlite-jdbc-3.21.0.jar"/>
+    </jar>
+    <copy file="${temp.jar.path.Chess.jar}" tofile="${artifact.temp.output.chess:jar}/Chess.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.chess:jar" description="Build all artifacts">
+    <mkdir dir="${artifact.output.chess:jar}"/>
+    <copy todir="${artifact.output.chess:jar}">
+      <fileset dir="${artifact.temp.output.chess:jar}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="10.0.2" class="java.beans.XMLDecoder">
+ <string>Player2</string>
+ <string>password2</string>
+ <string>Player3</string>
+ <string>password5</string>
+ <string>Jasmin</string>
+ <string>12345</string>
+ <string>Jasmin2</string>
+ <string>12345</string>
+</java>

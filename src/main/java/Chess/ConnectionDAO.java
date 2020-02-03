@@ -12,7 +12,7 @@ public class ConnectionDAO {
     private static ConnectionDAO instance = null;
     private static Connection conn = null;
     private static PreparedStatement maxRoom, maxPast, maxPlayer;
-    private static ResourceBundle resourcebundle=ResourceBundle.getBundle("Translation");
+    private static ResourceBundle resourcebundle=ResourceBundle.getBundle("Translation_en_US");
 
     public static ResourceBundle getResourcebundle() {
         return resourcebundle;

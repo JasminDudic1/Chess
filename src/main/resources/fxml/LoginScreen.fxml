@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<Pane fx:id="backgroundPane" prefHeight="517.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="515.0" prefWidth="600.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="176.0" minWidth="10.0" prefWidth="61.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="314.0" minWidth="10.0" prefWidth="305.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="395.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="395.0" minHeight="10.0" prefHeight="109.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="395.0" minHeight="10.0" prefHeight="89.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="395.0" minHeight="10.0" prefHeight="68.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="199.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="123.0" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Button fx:id="registerBtn" mnemonicParsing="false" onAction="#registerClicked" prefHeight="31.0" prefWidth="89.0" text="Register" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin></Button>
+            <PasswordField fx:id="passwordPBox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="%password" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font></Label>
+            <Button fx:id="logInBtn" mnemonicParsing="false" onAction="#logInClicked" prefHeight="31.0" prefWidth="89.0" text="Login" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+            <CheckBox fx:id="rememberMeCB" mnemonicParsing="false" text="%rememberme" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font></CheckBox>
+            <Label text="%username" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font></Label>
+            <ComboBox fx:id="usernameTBox" editable="true" prefHeight="31.0" prefWidth="337.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" onAction="#deleteClicked" text="%delete" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+         </children>
+      </GridPane>
+   </children>
+</Pane>

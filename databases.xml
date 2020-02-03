@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="10.0.2" class="java.beans.XMLDecoder">
+ <string>Base 0</string>
+ <string>Username 0</string>
+ <string>password</string>
+ <string>Type database URL here</string>
+</java>

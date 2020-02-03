@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="10.0.2" class="java.beans.XMLDecoder">
+ <string>TestServer</string>
+ <string>Jasa</string>
+ <string>1234</string>
+ <string>jdbc:mysql://77.78.232.142:3306/chess</string>
+</java>
